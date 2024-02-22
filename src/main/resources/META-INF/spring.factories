@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.heath.mybatisplus.util.utils.ApplicationContextProvider,\
+cn.heath.mybatisplus.util.config.MyBatisPlusUtilConfig
