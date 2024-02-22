@@ -14,6 +14,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -39,7 +40,6 @@ public class MyBatisPlusUtil {
         dateTime.setField(DateField.SECOND, 59);
         dateTime.setField(DateField.MINUTE, 59);
         dateTime.setField(DateField.MILLISECOND, 999);
-
         return dateTime.toJdkDate();
     }
 
@@ -135,6 +135,132 @@ public class MyBatisPlusUtil {
         ArrayList<CustomerOrder> orderList = new ArrayList<>();
 
         //从类上注解获取排序字段(不参与筛选,但参与排序的字段)
+        checkColumnOrderOnClass(clazz, orderList);
+
+        //遍历map然后从子级逐级反射获得注解判断比较类型
+        queryWrapper = buildQueryByReflect(clazz, queryWrapper, map, orderList);
+
+        //获取不到注解的,默认做精确匹配
+        if (CollectionUtil.isNotEmpty(map)) {
+            Set<Map.Entry<String, Object>> entries = map.entrySet();
+            for (Map.Entry<String, Object> entry : entries) {
+                queryWrapper.eq(StrUtil.toUnderlineCase(entry.getKey()), entry.getValue());
+            }
+        }
+        //构筑排序
+        buildQueryOrder(queryWrapper, startPage, orderList);
+
+        return queryWrapper;
+    }
+
+
+    /**
+     * 递归反射获取注解构建单表查询
+     *
+     * @param clazz        clazz
+     * @param queryWrapper 查询包装
+     * @param map          地图
+     * @param orderList    订单列表
+     * @return {@link QueryWrapper }
+     * @author HeathCHEN
+     * 2023/08/03
+     */
+    public static <T> QueryWrapper buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper, Map<String, Object> map, List<CustomerOrder> orderList) {
+
+        //如果父类为空,则不再递归
+        if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
+            return queryWrapper;
+        }
+
+        //创建用于剔除已被使用的字段的集合
+        List<String> usedProperties = new ArrayList<>();
+        Field[] clazzDeclaredFields = clazz.getDeclaredFields();
+        if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
+            for (Field clazzDeclaredField : clazzDeclaredFields) {
+                Field field = clazzDeclaredField;
+                try {
+                    //如果没有注解就暂且跳过,留到父类看看能否匹配,如果都没有匹配,最后做eq匹配
+                    if (!field.isAnnotationPresent(CustomerQuery.class)) {
+                        continue;
+                    }
+                    //获取属性上的注解
+                    CustomerQuery customerQuery = field.getAnnotation(CustomerQuery.class);
+                    //获取dto中参数
+                    Object value = map.get(field.getName());
+                    String queryType = customerQuery.value().getCompareType();
+                    //剔除不参与的参数
+                    if (!customerQuery.exist()) {
+                        usedProperties.add(field.getName());
+                        continue;
+                    }
+                    //将属性转为下划线格式
+                    String underlineCase = getTableColumnName(field);
+                    String[] orColumns = customerQuery.orColumn();
+                    QueryTypeStrategy queryTypeStrategy = QueryTypeStrategyManager.getQueryTypeStrategyToManager(queryType);
+                    //根据查询类型构建查询
+                    queryTypeStrategy.buildQuery(customerQuery, queryWrapper, map, value, orColumns, underlineCase, usedProperties);
+                    //检查是否使用排序
+                    checkColumnOrderOnField(customerQuery, field, orderList);
+                    //加入需要剔除的已匹配的值
+                    usedProperties.add(field.getName());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        //清除已用参数
+        removeUsedProperties(usedProperties, map);
+        //如果已匹配全部则直接返回查询,否则继续迭代
+        if (CollectionUtil.isNotEmpty(map)) {
+            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper, map, orderList);
+        } else {
+            return queryWrapper;
+        }
+    }
+
+
+    /**
+     * 清除已用参数
+     *
+     * @param usedProperties
+     * @param map
+     */
+    private static <T> void removeUsedProperties(List<String> usedProperties, Map<String, Object> map){
+        if (CollectionUtil.isNotEmpty(usedProperties)) {
+            //剔除已匹配的值,已减少匹配遍历数和防止字段重复匹配
+            for (String key : usedProperties) {
+                map.remove(key);
+            }
+        }
+    }
+    /**
+     * 检查是否使用排序
+     *
+     * @param customerQuery
+     * @param field
+     * @param orderList
+     */
+    private static <T> void checkColumnOrderOnField(CustomerQuery customerQuery, Field field, List<CustomerOrder> orderList) {
+        //检测是否启用排序
+        if (customerQuery.orderColumn()) {
+            CustomerOrder customerOrder = new CustomerOrder();
+            customerOrder.setOrderColumn(field.getName());
+            customerOrder.setOrderPriority(customerQuery.orderPriority());
+            customerOrder.setOrderType(customerQuery.orderType());
+            orderList.add(customerOrder);
+
+        }
+    }
+
+
+    /**
+     * 构筑排序
+     *
+     * @param clazz
+     * @param orderList
+     */
+    private static <T> void checkColumnOrderOnClass(Class<?> clazz, List<CustomerOrder> orderList) {
         CustomerQuery customerQuery = clazz.getDeclaredAnnotation(CustomerQuery.class);
         if (ObjectUtil.isNotNull(customerQuery)) {
             String[] columns = customerQuery.orderColumns();
@@ -154,24 +280,20 @@ public class MyBatisPlusUtil {
                 PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
 
             }
-
-
         }
 
 
-        //遍历map然后从子级逐级反射获得注解判断比较类型
-        queryWrapper = buildQueryByReflect(clazz, queryWrapper, map, orderList);
+    }
 
 
-        //获取不到注解的,默认做精确匹配
-        if (CollectionUtil.isNotEmpty(map)) {
-            Set<Map.Entry<String, Object>> entries = map.entrySet();
-            for (Map.Entry<String, Object> entry : entries) {
-                queryWrapper.eq(StrUtil.toUnderlineCase(entry.getKey()), entry.getValue());
-            }
-        }
-
-
+    /**
+     *  构筑排序
+     *
+     * @param queryWrapper
+     * @param startPage
+     * @param orderList
+     */
+    private static <T> void buildQueryOrder(QueryWrapper<T> queryWrapper, Boolean startPage, List<CustomerOrder> orderList) {
         if (ObjectUtil.isNull(startPage)) {
             startPage = true;
         }
@@ -191,9 +313,40 @@ public class MyBatisPlusUtil {
 
         }
 
-
-        return queryWrapper;
     }
+
+    /**
+     *  获取表字段命
+     *
+     * @param field
+     * @return {@link String}
+     */
+    public static String getTableColumnName(Field field) {
+
+        String columnName = "";
+        if (field.isAnnotationPresent(CustomerQuery.class)) {
+            CustomerQuery customerQuery = field.getAnnotation(CustomerQuery.class);
+            columnName = customerQuery.columnName();
+            if (StrUtil.isNotBlank(columnName)) {
+                return columnName;
+            }
+        }
+
+        if (field.isAnnotationPresent(TableField.class)) {
+            TableField tableField = field.getAnnotation(TableField.class);
+            columnName = tableField.value();
+            if (StrUtil.isNotBlank(columnName)) {
+                return columnName;
+            }
+        }
+
+        columnName = StrUtil.toUnderlineCase(field.getName());
+
+
+        return columnName;
+    }
+
+
 //    /**
 //     * 根据CustomerQuery注解构筑多表联查
 //     *
@@ -275,94 +428,6 @@ public class MyBatisPlusUtil {
 //    }
 
 
-    /**
-     * 递归反射获取注解构建单表查询
-     *
-     * @param clazz        clazz
-     * @param queryWrapper 查询包装
-     * @param map          地图
-     * @param orderList    订单列表
-     * @return {@link QueryWrapper }
-     * @author HeathCHEN
-     * 2023/08/03
-     */
-    public static <T> QueryWrapper buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper, Map<String, Object> map, ArrayList<CustomerOrder> orderList) {
-
-        //如果父类为空,则不再递归
-        if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
-            return queryWrapper;
-        }
-
-        //创建用于剔除已被使用的字段的集合
-        List<String> usedProperties = new ArrayList<>();
-
-        Field[] clazzDeclaredFields = clazz.getDeclaredFields();
-
-        if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
-            for (Field clazzDeclaredField : clazzDeclaredFields) {
-                Field field = clazzDeclaredField;
-                try {
-                    //如果没有注解就暂且跳过,留到父类看看能否匹配,如果都没有匹配,最后做eq匹配
-                    if (!field.isAnnotationPresent(CustomerQuery.class)) {
-                        continue;
-                    }
-                    //获取属性上的注解
-                    CustomerQuery customerQuery = field.getAnnotation(CustomerQuery.class);
-                    //获取dto中参数
-                    Object value = map.get(field.getName());
-                    String queryType = customerQuery.value().getCompareType();
-
-                    //剔除不参与的参数
-                    if (!customerQuery.exist()) {
-                        usedProperties.add(field.getName());
-                        continue;
-                    }
-
-                    //将属性转为下划线格式
-                    String underlineCase = StrUtil.toUnderlineCase(field.getName());
-                    //如果自定义了字段名,直接采用
-                    if (StrUtil.isNotBlank(customerQuery.column())) {
-                        underlineCase = customerQuery.column();
-                    }
-
-                    String[] orColumns = customerQuery.orColumn();
-
-                    QueryTypeStrategy queryTypeStrategy = QueryTypeStrategyManager.getQueryTypeStrategyToManager(queryType);
-                    //根据查询类型构建查询
-                    queryTypeStrategy.buildQuery(customerQuery,queryWrapper ,map,value,orColumns,underlineCase,usedProperties);
-
-
-                    //检测是否启用排序
-                    if (customerQuery.orderColumn()) {
-                        CustomerOrder customerOrder = new CustomerOrder();
-                        customerOrder.setOrderColumn(field.getName());
-                        customerOrder.setOrderPriority(customerQuery.orderPriority());
-                        customerOrder.setOrderType(customerQuery.orderType());
-                        orderList.add(customerOrder);
-
-                    }
-                    //加入需要剔除的已匹配的值
-                    usedProperties.add(field.getName());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if ( CollectionUtil.isNotEmpty(usedProperties)) {
-            //剔除已匹配的值,已减少匹配遍历数和防止字段重复匹配
-            for (String key : usedProperties) {
-                map.remove(key);
-            }
-        }
-        //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(map)) {
-            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper, map, orderList);
-        } else {
-            return queryWrapper;
-        }
-    }
 //
 //    /**
 //     * 递归反射获取注解构建单表查询

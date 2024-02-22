@@ -6,17 +6,16 @@ package cn.heath.mybatisplus.util.enums;
  * 2023/10/21
  */
 public enum OrderType {
-    /**
-     * 正序
-     */
-    ASC,
-    /**
-     * 倒序
-     */
-    DESC;
 
-    OrderType() {
+    ASC("正序"),
+    DESC("倒序");
+    /**
+     * 描述
+     */
+    private final String description;
 
+    OrderType(String description) {
+        this.description = description;
     }
 
 

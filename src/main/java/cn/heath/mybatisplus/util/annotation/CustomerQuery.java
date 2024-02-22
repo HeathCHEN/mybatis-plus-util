@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  * 2023/07/24
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD,ElementType.TYPE})
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface CustomerQuery {
     /**
      * 查询类型 默认精确匹配
@@ -27,7 +27,7 @@ public @interface CustomerQuery {
 
     /**
      *  or 查询, 用于匹配多个字段
-     * 对IN\NOT_IN\BETWENN\NOT_BETWEEN\SQL等QueryType不生效
+     * 对IN\NOT_IN\BETWEEN\NOT_BETWEEN\SQL等QueryType不生效
      * @return
      */
     String[] orColumn() default {};
@@ -37,7 +37,8 @@ public @interface CustomerQuery {
      * 如果该属性非空则默认以该字段查询数据库
      * @return
      */
-    String column() default "";
+
+    String columnName() default "";
 
     /**
      * 用于放在requestDto类上直接对结果做排序 排序字段
@@ -52,7 +53,7 @@ public @interface CustomerQuery {
      * @return
      */
 
-    OrderType[] orderTypes()  default {};
+    OrderType[] orderTypes() default {};
 
 
     /**
@@ -109,7 +110,6 @@ public @interface CustomerQuery {
     String notBetweenEndVal() default "endTime";
 
 
-
     /**
      *  是否数据库字段参与查询或排序
      * @return
@@ -136,7 +136,7 @@ public @interface CustomerQuery {
      * 自动义SQL
      * @return
      */
-    String sql()  default "";
+    String sql() default "";
 
 
 }
