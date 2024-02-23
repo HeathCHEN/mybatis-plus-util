@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationContextAware;
 public class ApplicationContextUtil  {
 
 
-
     public static IService getIServiceBean(Class<?> clazz){
         String serviceName = StrUtil.lowerFirst(clazz.getSimpleName()) + "ServiceImpl";
         IService service = ApplicationContextProvider.getBean(serviceName, IService.class);

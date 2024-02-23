@@ -16,7 +16,12 @@ public class BetweenQueryTypeStrategy implements QueryTypeStrategy {
     public BetweenQueryTypeStrategy() {
         QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
     }
-
+    /**
+     * 构造查询
+     * @param queryWrapper
+     * @author HeathCHEN
+     * 2024/02/23
+     */
     @Override
     public <T> void buildQuery(CustomerQuery customerQuery, Field field, QueryWrapper<T> queryWrapper) {
 

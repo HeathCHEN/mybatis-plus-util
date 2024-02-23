@@ -24,7 +24,6 @@ public class TableUtil {
                 return columnName;
             }
         }
-
         if (field.isAnnotationPresent(TableField.class)) {
             TableField tableField = field.getAnnotation(TableField.class);
             columnName = tableField.value();
@@ -32,10 +31,7 @@ public class TableUtil {
                 return columnName;
             }
         }
-
         columnName = StrUtil.toUnderlineCase(field.getName());
-
-
         return columnName;
     }
 }

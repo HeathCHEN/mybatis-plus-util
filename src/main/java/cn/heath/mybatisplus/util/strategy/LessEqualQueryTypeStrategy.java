@@ -19,6 +19,12 @@ public class LessEqualQueryTypeStrategy implements QueryTypeStrategy{
         QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(),this);
     }
 
+    /**
+     * 构造查询
+     * @param queryWrapper
+     * @author HeathCHEN
+     * 2024/02/23
+     */
     @Override
     public <T> void buildQuery(CustomerQuery customerQuery, Field field, QueryWrapper<T> queryWrapper) {
         Object value = ParamThreadLocal.getValueFromObjectMap(field.getName());

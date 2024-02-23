@@ -23,7 +23,6 @@ public class LessThanQueryTypeStrategy implements QueryTypeStrategy {
         if (ObjectUtil.isNull(value)) {
             return;
         }
-
         //将属性转为下划线格式
         String underlineCase = TableUtil.getTableColumnName(field);
 

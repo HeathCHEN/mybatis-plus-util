@@ -16,6 +16,12 @@ import java.util.Set;
 public class AccurateMatchingStrategy {
 
 
+    /**
+     * 构造查询
+     * @param queryWrapper
+     * @author HeathCHEN
+     * 2024/02/23
+     */
     public static <T> void buildQuery(QueryWrapper<T> queryWrapper) {
         Map<String, Object> objectMap = ParamThreadLocal.getObjectMap();
         if (CollectionUtil.isNotEmpty(objectMap)) {

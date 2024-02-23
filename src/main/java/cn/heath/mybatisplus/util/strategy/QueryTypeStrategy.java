@@ -10,6 +10,14 @@ import java.util.Map;
 public interface QueryTypeStrategy {
 
 
+    /**
+     * 构造查询
+     * @param customerQuery
+     * @param field
+     * @param queryWrapper
+     * @author HeathCHEN
+     * 2024/02/23
+     */
     <T> void buildQuery(CustomerQuery customerQuery,
                         Field field,
                         QueryWrapper<T> queryWrapper);
