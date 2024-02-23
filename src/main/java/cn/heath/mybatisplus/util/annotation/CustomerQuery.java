@@ -1,6 +1,7 @@
 package cn.heath.mybatisplus.util.annotation;
 
 
+import cn.heath.mybatisplus.util.consts.MyBatisPlusUtilConst;
 import cn.heath.mybatisplus.util.enums.JoinType;
 import cn.heath.mybatisplus.util.enums.OrderType;
 import cn.heath.mybatisplus.util.enums.QueryType;
@@ -84,14 +85,14 @@ public @interface CustomerQuery {
      * @return
      */
 
-    String betweenStartVal() default "startTime";
+    String betweenStartVal() default MyBatisPlusUtilConst.START_TIME;
 
     /**
      *  用于between的字段名 小于等于
      *  默认字段为 endTime
      * @return
      */
-    String betweenEndVal() default "endTime";
+    String betweenEndVal() default MyBatisPlusUtilConst.END_TIME;
 
 
     /**
@@ -100,14 +101,14 @@ public @interface CustomerQuery {
      * @return
      */
 
-    String notBetweenStartVal() default "startTime";
+    String notBetweenStartVal() default MyBatisPlusUtilConst.START_TIME;
 
     /**
      *  用于between的字段名 不小于等于
      *  默认字段为 endTime
      * @return
      */
-    String notBetweenEndVal() default "endTime";
+    String notBetweenEndVal() default MyBatisPlusUtilConst.END_TIME;
 
 
     /**

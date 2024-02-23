@@ -2,12 +2,12 @@ package cn.heath.mybatisplus.util.strategy;
 
 import cn.heath.mybatisplus.util.annotation.CustomerQuery;
 import cn.heath.mybatisplus.util.enums.QueryType;
+import cn.heath.mybatisplus.util.utils.ParamThreadLocal;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
 
 public class SqlQueryTypeStrategy implements QueryTypeStrategy {
 
@@ -19,13 +19,13 @@ public class SqlQueryTypeStrategy implements QueryTypeStrategy {
 
 
     @Override
-    public <T> void buildQuery(CustomerQuery customerQuery, QueryWrapper<T> queryWrapper, Map<String, Object> objectMap, Object value, String[] orColumns, String underlineCase, List<String> usedProperties) {
-
+    public  <T> void buildQuery(CustomerQuery customerQuery, Field field, QueryWrapper<T> queryWrapper) {
+        Object value = ParamThreadLocal.getValueFromObjectMap(field.getName());
         if (ObjectUtil.isNull(value)|| StrUtil.isBlank(customerQuery.sql())) {
             return;
         }
 
         queryWrapper.apply(customerQuery.sql(), value);
-
+        ParamThreadLocal.removeParamFromObjectMap(field.getName());
     }
 }

@@ -2,11 +2,12 @@ package cn.heath.mybatisplus.util.strategy;
 
 import cn.heath.mybatisplus.util.annotation.CustomerQuery;
 import cn.heath.mybatisplus.util.enums.QueryType;
+import cn.heath.mybatisplus.util.utils.ParamThreadLocal;
+import cn.heath.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
 
 public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
     private static final QueryType QUERY_TYPE = QueryType.NOT_BETWEEN;
@@ -16,17 +17,21 @@ public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
     }
 
     @Override
-    public <T> void buildQuery(CustomerQuery customerQuery, QueryWrapper<T> queryWrapper, Map<String, Object> objectMap, Object value, String[] orColumns, String underlineCase, List<String> usedProperties) {
-        Object startValue = objectMap.get(customerQuery.betweenStartVal());
-        Object endValue = objectMap.get(customerQuery.betweenEndVal());
+    public <T> void buildQuery(CustomerQuery customerQuery, Field field, QueryWrapper<T> queryWrapper) {
+
+        //将属性转为下划线格式
+        String underlineCase = TableUtil.getTableColumnName(field);
+
+        Object startValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.betweenStartVal());
+        Object endValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.betweenEndVal());
 
         if (ObjectUtil.isNotNull(startValue)) {
             queryWrapper.le(underlineCase, startValue);
-            usedProperties.add(customerQuery.betweenStartVal());
+            ParamThreadLocal.removeParamFromObjectMap(customerQuery.betweenStartVal());
         }
         if (ObjectUtil.isNotNull(endValue)) {
             queryWrapper.ge(underlineCase, endValue);
-            usedProperties.add(customerQuery.betweenEndVal());
+            ParamThreadLocal.removeParamFromObjectMap(customerQuery.betweenEndVal());
         }
 
     }
