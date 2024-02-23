@@ -1,20 +1,21 @@
 package cn.heath.mybatisplus.util.enums;
 
 /**
+ * 表连接枚举类
  * @author HeathCHEN
  * @version 1.0
  * 2023/10/21
  */
 public enum JoinType {
 
-    LEFT_JOIN,
-    RIGHT_JOIN,
-    INNER_JOIN,
-    FULL_JOIN;
+    LEFT_JOIN("左连接"),
+    RIGHT_JOIN("右连接"),
+    INNER_JOIN("内连接"),
+    FULL_JOIN("全连接");
 
-
-    JoinType() {
-
+    private final String description;
+    JoinType(String description) {
+        this.description = description;
     }
 
 

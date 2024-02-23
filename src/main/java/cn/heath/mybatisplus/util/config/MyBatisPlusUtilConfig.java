@@ -15,6 +15,11 @@ public class MyBatisPlusUtilConfig {
         initStrategy();
     }
 
+    /**
+     * 初始化策略类
+     * @author HeathCHEN
+     * 2024/02/23
+     */
     public void initStrategy() {
         new BetweenQueryTypeStrategy();
         new EqQueryTypeStrategy();

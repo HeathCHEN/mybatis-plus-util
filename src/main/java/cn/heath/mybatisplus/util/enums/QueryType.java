@@ -1,7 +1,7 @@
 package cn.heath.mybatisplus.util.enums;
 
 /**
- *  查询类型 与myBatis-plus对应
+ *  查询类型枚举类 与myBatis-plus对应
  * @author HeathCHEN
  * @version 1.0
  * 2023/07/24

@@ -1,6 +1,7 @@
 package cn.heath.mybatisplus.util.enums;
 
 /**
+ * 排序枚举类
  * @author HeathCHEN
  * @version 1.0
  * 2023/10/21

@@ -17,7 +17,9 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageHelper;
 
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MyBatisPlusUtil {
+
 
     /**
      * 补全时间到当天最后时分秒毫秒
@@ -113,8 +116,14 @@ public class MyBatisPlusUtil {
                 clazz = superclass;
             }
         }
-        IService service = ApplicationContextUtil.getIServiceBean(clazz);
-        return service.list(query);
+        BaseMapper baseMapper = ApplicationContextUtil.getMapperBean(clazz);
+
+        if (ObjectUtil.isNotNull(baseMapper)) {
+            return baseMapper.selectList(query);
+        } else {
+            throw new RuntimeException("can not find Mapper");
+        }
+
     }
 
     /**
@@ -184,7 +193,7 @@ public class MyBatisPlusUtil {
                         continue;
                     }
                     //根据查询类型构建查询
-                    QueryTypeStrategyManager.getQueryTypeStrategyToManager(queryType).buildQuery(customerQuery, field, queryWrapper);
+                    QueryTypeStrategyManager.getQueryTypeStrategyToManager(queryType).buildQuery(customerQuery, clazz, field, queryWrapper);
                     //检查是否使用排序
                     checkColumnOrderOnField(customerQuery, field, orderList);
                 } catch (Exception e) {
@@ -195,7 +204,7 @@ public class MyBatisPlusUtil {
 
         //如果已匹配全部则直接返回查询,否则继续迭代
         if (CollectionUtil.isNotEmpty(ParamThreadLocal.getObjectMap())) {
-            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper,orderList);
+            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper, orderList);
         } else {
             return queryWrapper;
         }
@@ -281,7 +290,6 @@ public class MyBatisPlusUtil {
         }
 
     }
-
 
 
 }

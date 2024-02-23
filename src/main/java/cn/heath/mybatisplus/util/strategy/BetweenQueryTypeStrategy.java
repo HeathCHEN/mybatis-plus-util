@@ -23,10 +23,10 @@ public class BetweenQueryTypeStrategy implements QueryTypeStrategy {
      * 2024/02/23
      */
     @Override
-    public <T> void buildQuery(CustomerQuery customerQuery, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
 
         //将属性转为下划线格式
-        String underlineCase = TableUtil.getTableColumnName(field);
+        String underlineCase = TableUtil.getTableColumnName(clazz,field);
 
         Object startValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.betweenStartVal());
         Object endValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.betweenEndVal());

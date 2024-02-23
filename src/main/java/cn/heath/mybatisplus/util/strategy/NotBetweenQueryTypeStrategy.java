@@ -24,21 +24,21 @@ public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
      * 2024/02/23
      */
     @Override
-    public <T> void buildQuery(CustomerQuery customerQuery, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
 
         //将属性转为下划线格式
-        String underlineCase = TableUtil.getTableColumnName(field);
+        String underlineCase = TableUtil.getTableColumnName(clazz,field);
 
-        Object startValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.betweenStartVal());
-        Object endValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.betweenEndVal());
+        Object notBetweenStartValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.notBetweenStartVal());
+        Object notBetweenEndValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.notBetweenEndVal());
 
-        if (ObjectUtil.isNotNull(startValue)) {
-            queryWrapper.le(underlineCase, startValue);
-            ParamThreadLocal.removeParamFromObjectMap(customerQuery.betweenStartVal());
+        if (ObjectUtil.isNotNull(notBetweenStartValue)) {
+            queryWrapper.le(underlineCase, notBetweenStartValue);
+            ParamThreadLocal.removeParamFromObjectMap(customerQuery.notBetweenStartVal());
         }
-        if (ObjectUtil.isNotNull(endValue)) {
-            queryWrapper.ge(underlineCase, endValue);
-            ParamThreadLocal.removeParamFromObjectMap(customerQuery.betweenEndVal());
+        if (ObjectUtil.isNotNull(notBetweenEndValue)) {
+            queryWrapper.ge(underlineCase, notBetweenEndValue);
+            ParamThreadLocal.removeParamFromObjectMap(customerQuery.notBetweenEndVal());
         }
 
     }

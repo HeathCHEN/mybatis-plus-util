@@ -19,6 +19,7 @@ public interface QueryTypeStrategy {
      * 2024/02/23
      */
     <T> void buildQuery(CustomerQuery customerQuery,
+                        Class clazz,
                         Field field,
                         QueryWrapper<T> queryWrapper);
 }

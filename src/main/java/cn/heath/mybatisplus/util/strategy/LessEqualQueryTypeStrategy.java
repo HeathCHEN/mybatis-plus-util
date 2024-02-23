@@ -26,14 +26,14 @@ public class LessEqualQueryTypeStrategy implements QueryTypeStrategy{
      * 2024/02/23
      */
     @Override
-    public <T> void buildQuery(CustomerQuery customerQuery, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
         Object value = ParamThreadLocal.getValueFromObjectMap(field.getName());
         if (ObjectUtil.isNull(value)) {
             return;
         }
 
         //将属性转为下划线格式
-        String underlineCase = TableUtil.getTableColumnName(field);
+        String underlineCase = TableUtil.getTableColumnName(clazz,field);
 
 
         String[] orColumns = customerQuery.orColumn();
