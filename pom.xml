@@ -92,19 +92,22 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
+<!--                <version>3.6.3</version>-->
+<!--                <configuration>-->
+<!--                    -->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>attach-javadocs</id>-->
+<!--                        <goals>-->
+<!--                            <goal>jar</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -117,22 +120,22 @@
                             <goal>sign</goal>
                         </goals>
                         <configuration>
-                            <keyname>02C6BECC5D0E060A4A06716D331D6D70FF29C01D</keyname>
+                            <keyname>69D01AFB7BBD695D759262E498696B4955BA804E</keyname>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.3.1</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <publishingServerId>central</publishingServerId>
-                    <tokenAuth>true</tokenAuth>
-                    <autoPublish>true</autoPublish>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.sonatype.central</groupId>-->
+<!--                <artifactId>central-publishing-maven-plugin</artifactId>-->
+<!--                <version>0.2.0</version>-->
+<!--                <extensions>true</extensions>-->
+<!--                <configuration>-->
+<!--                    <publishingServerId>central</publishingServerId>-->
+<!--                    <tokenAuth>true</tokenAuth>-->
+<!--                    <autoPublish>true</autoPublish>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>
