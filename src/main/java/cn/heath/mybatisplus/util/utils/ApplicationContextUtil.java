@@ -3,6 +3,7 @@ package cn.heath.mybatisplus.util.utils;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -18,7 +19,24 @@ import org.springframework.context.ApplicationContextAware;
 public class ApplicationContextUtil {
 
 
-    public static <T> BaseMapper<T> getMapperBean(Class<T> clazz) {
+    /**
+     * 获取实体类对应的MapperBean
+     * @param clazz
+     * @return {@link BaseMapper }<{@link T }>
+     * @author HeathCHEN
+     * 2024/02/23
+     */
+    public static <T> BaseMapper<T> getMapperBean(Class<?> clazz) {
+
+        while (!clazz.isAnnotationPresent(TableName.class)) {
+            Class<?> superclass = clazz.getSuperclass();
+            if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
+                break;
+            } else {
+                clazz = superclass;
+            }
+        }
+
         BaseMapper<T> baseMapper = null;
         baseMapper = getMapperBeanByMyBatisCache(clazz);
         if (ObjectUtil.isNotNull(baseMapper)) {
@@ -38,7 +56,7 @@ public class ApplicationContextUtil {
      * @author HeathCHEN
      * 2024/02/23
      */
-    public static <T> BaseMapper<T> getMapperBeanByMyBatisCache(Class<T> clazz) {
+    public static <T> BaseMapper<T> getMapperBeanByMyBatisCache(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         //通过MyBatis解析实体获取的命名空间
         String currentNamespace = tableInfo.getCurrentNamespace();
@@ -60,7 +78,7 @@ public class ApplicationContextUtil {
      * @author HeathCHEN
      * 2024/02/23
      */
-    public static <T> BaseMapper<T> getMapperBeanByName(Class<T> clazz) {
+    public static <T> BaseMapper<T> getMapperBeanByName(Class<?> clazz) {
         String serviceName = StrUtil.lowerFirst(clazz.getSimpleName()) + "Mapper";
         return ApplicationContextProvider.getBean(serviceName, BaseMapper.class);
     }

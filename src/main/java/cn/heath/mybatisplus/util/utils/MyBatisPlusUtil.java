@@ -1,6 +1,8 @@
 package cn.heath.mybatisplus.util.utils;
 
 
+import cn.heath.mybatisplus.util.annotation.CustomerCacheTableField;
+import cn.heath.mybatisplus.util.annotation.CustomerCacheTableId;
 import cn.heath.mybatisplus.util.annotation.CustomerQuery;
 import cn.heath.mybatisplus.util.consts.PageConst;
 import cn.heath.mybatisplus.util.domain.CustomerOrder;
@@ -15,15 +17,21 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -106,18 +114,7 @@ public class MyBatisPlusUtil {
      */
     public static List queryByReflect(Object o) {
         QueryWrapper query = getQuery(o);
-        Class<?> clazz = o.getClass();
-        while (!clazz.isAnnotationPresent(TableName.class)) {
-            Class<?> superclass = clazz.getSuperclass();
-            if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
-                clazz = o.getClass();
-                break;
-            } else {
-                clazz = superclass;
-            }
-        }
-        BaseMapper baseMapper = ApplicationContextUtil.getMapperBean(clazz);
-
+        BaseMapper baseMapper = ApplicationContextUtil.getMapperBean(o.getClass());
         if (ObjectUtil.isNotNull(baseMapper)) {
             return baseMapper.selectList(query);
         } else {
@@ -290,6 +287,93 @@ public class MyBatisPlusUtil {
         }
 
     }
+    /**
+     * 利用注解标注字段更新冗余字段
+     *
+     * @param clazz
+     * @param associationKey
+     * @param newCacheFieldValue
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @author HeathCHEN
+     * 2024/02/20
+     */
+    public static void updateCacheField(Class<?> clazz, Object associationKey, Object newCacheFieldValue) {
+        try {
 
+
+            Field[] declaredFields = clazz.getDeclaredFields();
+
+            CustomerCacheTableField customerCacheTableField = null;
+            String tableField = null;
+            CustomerCacheTableId customerCacheTableId = null;
+            String tableId = null;
+
+            if (ArrayUtil.isNotEmpty(declaredFields)) {
+                for (Field field : declaredFields) {
+                    if (ObjectUtil.isNull(customerCacheTableField)) {
+                        customerCacheTableField = field.getAnnotation(CustomerCacheTableField.class);
+                        if (ObjectUtil.isNotNull(customerCacheTableField)) {
+                            tableField = field.getName();
+                            continue;
+                        }
+                    }
+                    if (ObjectUtil.isNull(customerCacheTableId)) {
+                        customerCacheTableId = field.getAnnotation(CustomerCacheTableId.class);
+                        if (ObjectUtil.isNotNull(customerCacheTableId)) {
+                            TableField tableFieldAnnotation = field.getAnnotation(TableField.class);
+                            tableId = tableFieldAnnotation.value();
+                            if (StrUtil.isBlank(tableField)) {
+                                TableId tableAnnotation = field.getAnnotation(TableId.class);
+                                tableField = tableAnnotation.value();
+                            }
+                            if (StrUtil.isBlank(tableField)) {
+                                tableField = StrUtil.toUnderlineCase(field.getName());
+                            }
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (ObjectUtil.isNull(customerCacheTableId) || ObjectUtil.isNull(customerCacheTableField)) {
+                return;
+            }
+            String serviceName = StrUtil.lowerFirst(clazz.getSimpleName()) + "ServiceImpl";
+            ServiceImpl service = ApplicationContextProvider.getBean(serviceName, ServiceImpl.class);
+
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq(tableId, associationKey);
+            Constructor<?> constructor = clazz.getConstructor();
+
+            Object o = constructor.newInstance();
+            ReflectUtil.setFieldValue(o, tableField, newCacheFieldValue);
+
+            service.update(o, queryWrapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 批量更新
+     * @param clazzArr
+     * @param associationKey
+     * @param newCacheFieldValue
+     * @author HeathCHEN
+     * 2024/02/20
+     */
+    public static void updateCacheField(Class<?>[] clazzArr, Object associationKey, Object newCacheFieldValue) {
+        if (ArrayUtil.isNotEmpty(clazzArr)) {
+            for (Class<?> clazz : clazzArr) {
+                updateCacheField(clazz, associationKey, newCacheFieldValue);
+            }
+
+        }
+
+
+    }
 
 }

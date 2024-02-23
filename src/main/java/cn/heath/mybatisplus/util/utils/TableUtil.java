@@ -4,7 +4,6 @@ import cn.heath.mybatisplus.util.annotation.CustomerQuery;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.mapping.ResultMap;
@@ -15,11 +14,6 @@ import java.util.List;
 
 public class TableUtil {
 
-    public static MybatisConfiguration mybatisConfiguration;
-
-    static {
-        mybatisConfiguration = ApplicationContextProvider.getBean(MybatisConfiguration.class);
-    }
 
     /**
      * 获取表字段命
@@ -47,7 +41,7 @@ public class TableUtil {
         try {
             TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
             String key = tableInfo.getCurrentNamespace() + ".BaseResultMap";
-            ResultMap resultMap = mybatisConfiguration.getResultMap(key);
+            ResultMap resultMap = tableInfo.getConfiguration().getResultMap(key);
             List<ResultMapping> resultMappings = resultMap.getResultMappings();
             if (CollectionUtil.isNotEmpty(resultMappings)) {
                 for (ResultMapping resultMapping : resultMappings) {
