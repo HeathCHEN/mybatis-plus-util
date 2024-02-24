@@ -8,7 +8,7 @@
     <artifactId>mybatis-plus-util</artifactId>
     <version>1.0</version>
     <name>mybatis-plus-util</name>
-    <description>二次开发myBatis-Plus通过注解简化构筑QueryWrapper</description>
+    <description>An enhanced toolkit of Mybatis-Plus to build QueryWrapper</description>
     <url>https://github.com/HeathCHEN/mybatis-plus-util</url>
 
     <properties>
@@ -25,12 +25,14 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+
     <developers>
         <developer>
             <name>HeathCHEN</name>
             <email>heath.chen@foxmail.com</email>
         </developer>
     </developers>
+
     <scm>
         <connection>scm:git:git://github.com/HeathCHEN/mybatis-plus-util.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:HeathCHEN/mybatis-plus-util.git</developerConnection>
@@ -43,31 +45,43 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>5.3.22</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-core</artifactId>
             <version>3.4.2</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-annotation</artifactId>
             <version>3.4.2</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-extension</artifactId>
             <version>3.4.2</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
             <version>5.3.2</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.12</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
     <distributionManagement>
@@ -92,22 +106,22 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-<!--                <version>3.6.3</version>-->
-<!--                <configuration>-->
-<!--                    -->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>attach-javadocs</id>-->
-<!--                        <goals>-->
-<!--                            <goal>jar</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -128,7 +142,7 @@
 <!--            <plugin>-->
 <!--                <groupId>org.sonatype.central</groupId>-->
 <!--                <artifactId>central-publishing-maven-plugin</artifactId>-->
-<!--                <version>0.2.0</version>-->
+<!--                <version>0.3.0</version>-->
 <!--                <extensions>true</extensions>-->
 <!--                <configuration>-->
 <!--                    <publishingServerId>central</publishingServerId>-->
