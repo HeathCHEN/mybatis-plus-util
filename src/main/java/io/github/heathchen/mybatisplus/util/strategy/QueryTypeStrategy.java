@@ -7,16 +7,24 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 查询策略类接口
+ * @author HeathCHEN
+ * @version 1.0
+ * @since 2024/02/26
+ */
 public interface QueryTypeStrategy {
 
 
     /**
      * 构造查询
-     * @param customerQuery
-     * @param field
-     * @param queryWrapper
+     *
+     * @param <T> 查询条件适用的实体类型
+     * @param customerQuery CustomerQuery注解
+     * @param clazz 类
+     * @param field 字段
+     * @param queryWrapper 查询queryWrapper
      * @author HeathCHEN
-     * 2024/02/23
      */
     <T> void buildQuery(CustomerQuery customerQuery,
                         Class clazz,

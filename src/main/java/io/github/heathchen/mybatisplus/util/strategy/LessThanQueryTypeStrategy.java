@@ -10,6 +10,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
 
+/**
+ * 小于查询策略类
+ * @author HeathCHEN
+ * @version 1.0
+ * @since 2024/02/26
+ */
 public class LessThanQueryTypeStrategy implements QueryTypeStrategy {
     private static final QueryType QUERY_TYPE = QueryType.LESS_THAN;
 

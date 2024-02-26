@@ -4,8 +4,14 @@ import cn.hutool.core.util.ArrayUtil;
 
 import java.util.Map;
 
+/**
+ * 线程工具类
+ * @author HeathCHEN
+ * @version 1.0
+ * 2024/02/26
+ */
 public class ParamThreadLocal {
-	//私有构造函数
+
 	private ParamThreadLocal(){
     }
 
@@ -13,30 +19,32 @@ public class ParamThreadLocal {
 
     /**
      * 设置查询参数到线程中
-     * @param data
+     * @param data 查询参数的map
      * @author HeathCHEN
-     * 2024/02/23
+     * @since 2024/02/23
      */
     public static void setObjectMap(Map<String,Object> data){
         LOCAL.set(data);
     }
 
+
     /**
      * 获取全部查询参数
-     * @return {@link Map }<{@link String },{@link Object }>
+     * @return {@link Map }
      * @author HeathCHEN
-     * 2024/02/23
+     * @since 2024/02/26
      */
     public static Map<String,Object> getObjectMap(){
         return LOCAL.get();
     }
 
+
     /**
-     * 通过key获取查询参数
-     * @param key
+     * 获取查询参数
+     * @param key 查询参数的属性名
      * @return {@link Object }
      * @author HeathCHEN
-     * 2024/02/23
+     * @since 2024/02/26
      */
     public static Object getValueFromObjectMap(String key){
         return LOCAL.get().get(key);
@@ -44,10 +52,10 @@ public class ParamThreadLocal {
 
 
     /**
-     * 剔除查询参数
-     * @param keys
+     * 移除查询参数
+     * @param keys 查询参数的属性名
      * @author HeathCHEN
-     * 2024/02/23
+     * @since 2024/02/26
      */
     public static void removeParamFromObjectMap(String... keys){
         if (ArrayUtil.isNotEmpty(keys)) {

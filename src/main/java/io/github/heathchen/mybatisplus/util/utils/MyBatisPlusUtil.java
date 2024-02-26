@@ -1,15 +1,6 @@
 package io.github.heathchen.mybatisplus.util.utils;
 
 
-import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableField;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableId;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
-import io.github.heathchen.mybatisplus.util.consts.PageConst;
-import io.github.heathchen.mybatisplus.util.domain.CustomerOrder;
-import io.github.heathchen.mybatisplus.util.enums.OrderType;
-import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingStrategy;
-import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategy;
-import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateField;
@@ -22,32 +13,43 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
+import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableField;
+import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableId;
+import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
+import io.github.heathchen.mybatisplus.util.consts.PageConst;
+import io.github.heathchen.mybatisplus.util.domain.CustomerOrder;
+import io.github.heathchen.mybatisplus.util.enums.OrderType;
+import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingQueryTypeStrategy;
+import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * MyBatisPlus工具类
+ *
+ * @author HeathCHEN
+ * @version 1.0
+ * @since 2024/02/26
+ */
 public class MyBatisPlusUtil {
 
 
     /**
      * 补全时间到当天最后时分秒毫秒
      *
-     * @param date
-     * @return {@link Date }
+     * @param date 时间
+     * @return {@link Date } 时间
      * @author HeathCHEN
-     * 2023/10/20
      */
     public static Date getNewDateTo235959999FromDate(Date date) {
         DateTime dateTime = DateUtil.dateNew(date);
@@ -61,10 +63,9 @@ public class MyBatisPlusUtil {
     /**
      * 置空时间到当天最开始时分秒毫秒
      *
-     * @param date
-     * @return {@link Date }
+     * @param date 时间
+     * @return {@link Date } 时间
      * @author HeathCHEN
-     * 2023/10/20
      */
     public static Date getNewDateTimeTo000000000FromDate(Date date) {
         DateTime dateTime = DateUtil.dateNew(date);
@@ -78,11 +79,11 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后获取Bean查询再转成对应类型
      *
-     * @param o
-     * @param clazz
-     * @return {@link List }<{@link T }>
+     * @param <T>   查询结果的返回类型
+     * @param o     查询参数
+     * @param clazz 返回类型
+     * @return {@link List } 查询结果
      * @author HeathCHEN
-     * 2024/02/20
      */
     public static <T> List<T> queryByReflect(Object o, Class<T> clazz) {
         Class<?> tClazz = o.getClass();
@@ -96,10 +97,9 @@ public class MyBatisPlusUtil {
             }
         }
         if (tClazz.equals(clazz)) {
-            List<T> list = queryByReflect(o);
-            return list;
+            return ((List<T>) queryByReflect(o));
         } else {
-            List list = queryByReflect(o);
+            List<?> list = queryByReflect(o);
             return BeanUtil.copyToList(list, clazz);
         }
     }
@@ -107,14 +107,14 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后获取Bean查询
      *
-     * @param o
-     * @return {@link List }
+     * @param t 查询参数
+     * @param <T> 查询参数dto或实体类的类型
+     * @return {@link List } 查询结果
      * @author HeathCHEN
-     * 2024/02/20
      */
-    public static List queryByReflect(Object o) {
-        QueryWrapper query = getQuery(o);
-        BaseMapper baseMapper = ApplicationContextUtil.getMapperBean(o.getClass());
+    public static <T> List<T> queryByReflect(T t) {
+        QueryWrapper query = getQuery(t);
+        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(t.getClass());
         if (ObjectUtil.isNotNull(baseMapper)) {
             return baseMapper.selectList(query);
         } else {
@@ -126,18 +126,18 @@ public class MyBatisPlusUtil {
     /**
      * 根据CustomerQuery注解构筑单表通用查询
      *
-     * @param o o
-     * @return {@link QueryWrapper }
+     * @param t 查询参数
+     * @param <T> 查询参数dto或实体类的类型
+     * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
-     * 2023/08/03
      */
-    public static QueryWrapper getQuery(Object o) {
+    public static <T> QueryWrapper<?> getQuery(T t) {
 
-        ParamThreadLocal.setObjectMap(BeanUtil.beanToMap(o, false, true));
+        ParamThreadLocal.setObjectMap(BeanUtil.beanToMap(t, false, true));
         Boolean startPage = (Boolean) ParamThreadLocal.getValueFromObjectMap(PageConst.START_PAGE);
         ParamThreadLocal.removeParamFromObjectMap(PageConst.START_PAGE);
-        Class<?> clazz = o.getClass();
-        QueryWrapper queryWrapper = new QueryWrapper();
+        Class<?> clazz = t.getClass();
+        QueryWrapper<T> queryWrapper = new QueryWrapper<T>();
         //创建排序的集合
         List<CustomerOrder> orderList = new ArrayList<>();
         //从类上注解获取排序字段(不参与筛选,但参与排序的字段)
@@ -145,7 +145,7 @@ public class MyBatisPlusUtil {
         //遍历map然后从子级逐级反射获得注解判断比较类型
         queryWrapper = buildQueryByReflect(clazz, queryWrapper, orderList);
         //获取不到注解的,默认做精确匹配
-        AccurateMatchingStrategy.buildQuery(queryWrapper);
+        AccurateMatchingQueryTypeStrategy.buildQuery(queryWrapper);
         //构筑排序
         buildQueryOrder(queryWrapper, startPage, orderList);
 
@@ -156,14 +156,14 @@ public class MyBatisPlusUtil {
     /**
      * 递归反射获取注解构建单表查询
      *
+     * @param <T> 查询参数dto或实体类的类型
      * @param clazz        clazz
      * @param queryWrapper 查询包装
      * @param orderList    订单列表
-     * @return {@link QueryWrapper }
+     * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
-     * 2023/08/03
      */
-    public static <T> QueryWrapper buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper, List<CustomerOrder> orderList) {
+    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper, List<CustomerOrder> orderList) {
 
         //如果父类为空,则不再递归
         if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
@@ -171,7 +171,7 @@ public class MyBatisPlusUtil {
         }
 
         //创建用于剔除已被使用的字段的集合
-        List<String> usedProperties = new ArrayList<>();
+
         Field[] clazzDeclaredFields = clazz.getDeclaredFields();
         if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
             for (Field clazzDeclaredField : clazzDeclaredFields) {
@@ -186,7 +186,7 @@ public class MyBatisPlusUtil {
                     String queryType = customerQuery.value().getCompareType();
                     //剔除不参与的参数
                     if (!customerQuery.exist()) {
-                        usedProperties.add(field.getName());
+                        ParamThreadLocal.removeParamFromObjectMap(field.getName());
                         continue;
                     }
                     //根据查询类型构建查询
@@ -211,11 +211,12 @@ public class MyBatisPlusUtil {
     /**
      * 检查是否使用排序
      *
-     * @param customerQuery
-     * @param field
-     * @param orderList
+     * @param customerQuery 注解CustomerQuery
+     * @param field         字段
+     * @param orderList     排序List
+     * @author HeathCHEN
      */
-    private static <T> void checkColumnOrderOnField(CustomerQuery customerQuery, Field field, List<CustomerOrder> orderList) {
+    private static void checkColumnOrderOnField(CustomerQuery customerQuery, Field field, List<CustomerOrder> orderList) {
         //检测是否启用排序
         if (customerQuery.orderColumn()) {
             CustomerOrder customerOrder = new CustomerOrder();
@@ -229,12 +230,13 @@ public class MyBatisPlusUtil {
 
 
     /**
-     * 构筑排序
+     * 检查是否排序
      *
-     * @param clazz
-     * @param orderList
+     * @param clazz     类
+     * @param orderList 排序List
+     * @author HeathCHEN
      */
-    private static <T> void checkColumnOrderOnClass(Class<?> clazz, List<CustomerOrder> orderList) {
+    private static void checkColumnOrderOnClass(Class<?> clazz, List<CustomerOrder> orderList) {
         CustomerQuery customerQuery = clazz.getDeclaredAnnotation(CustomerQuery.class);
         if (ObjectUtil.isNotNull(customerQuery)) {
             String[] columns = customerQuery.orderColumns();
@@ -263,11 +265,12 @@ public class MyBatisPlusUtil {
     /**
      * 构筑排序
      *
-     * @param queryWrapper
-     * @param startPage
-     * @param orderList
+     * @param queryWrapper 查询queryWrapper
+     * @param startPage    是否开启分页
+     * @param orderList    排序List
+     * @author HeathCHEN
      */
-    private static <T> void buildQueryOrder(QueryWrapper<T> queryWrapper, Boolean startPage, List<CustomerOrder> orderList) {
+    private static void buildQueryOrder(QueryWrapper<?> queryWrapper, Boolean startPage, List<CustomerOrder> orderList) {
         if (ObjectUtil.isNull(startPage)) {
             startPage = true;
         }
@@ -287,20 +290,16 @@ public class MyBatisPlusUtil {
         }
 
     }
+
     /**
      * 利用注解标注字段更新冗余字段
      *
-     * @param clazz
-     * @param associationKey
-     * @param newCacheFieldValue
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @param clazz              类
+     * @param associationKey     关联键
+     * @param newCacheFieldValue 新的冗余值
      * @author HeathCHEN
-     * 2024/02/20
      */
-    public static void updateCacheField(Class<?> clazz, Object associationKey, Object newCacheFieldValue) {
+    public static <T> void updateCacheField(Class<T> clazz, Object associationKey, Object newCacheFieldValue) {
         try {
 
 
@@ -340,8 +339,9 @@ public class MyBatisPlusUtil {
             if (ObjectUtil.isNull(customerCacheTableId) || ObjectUtil.isNull(customerCacheTableField)) {
                 return;
             }
-            String serviceName = StrUtil.lowerFirst(clazz.getSimpleName()) + "ServiceImpl";
-            ServiceImpl service = ApplicationContextProvider.getBean(serviceName, ServiceImpl.class);
+
+
+            BaseMapper mapperBean = ApplicationContextUtil.getMapperBean(clazz);
 
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.eq(tableId, associationKey);
@@ -350,7 +350,7 @@ public class MyBatisPlusUtil {
             Object o = constructor.newInstance();
             ReflectUtil.setFieldValue(o, tableField, newCacheFieldValue);
 
-            service.update(o, queryWrapper);
+            mapperBean.update(o, queryWrapper);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -359,11 +359,11 @@ public class MyBatisPlusUtil {
 
     /**
      * 批量更新
+     *
      * @param clazzArr
      * @param associationKey
      * @param newCacheFieldValue
      * @author HeathCHEN
-     * 2024/02/20
      */
     public static void updateCacheField(Class<?>[] clazzArr, Object associationKey, Object newCacheFieldValue) {
         if (ArrayUtil.isNotEmpty(clazzArr)) {

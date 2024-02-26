@@ -10,6 +10,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
 
+/**
+ * 小于等于查询策略类
+ * @author HeathCHEN
+ * @version 1.0
+ * @since 2024/02/26
+ */
 public class LessEqualQueryTypeStrategy implements QueryTypeStrategy{
 
     private static final QueryType QUERY_TYPE = QueryType.LESS_EQUAL;
@@ -21,9 +27,11 @@ public class LessEqualQueryTypeStrategy implements QueryTypeStrategy{
 
     /**
      * 构造查询
-     * @param queryWrapper
+     * @param customerQuery CustomerQuery注解
+     * @param clazz 类
+     * @param field 字段
+     * @param queryWrapper 查询queryWrapper
      * @author HeathCHEN
-     * 2024/02/23
      */
     @Override
     public <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {

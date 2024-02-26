@@ -6,7 +6,7 @@ import io.github.heathchen.mybatisplus.util.strategy.*;
  *  MyBatisPlusUtil配置类
  *
  * @author Administrator
- * @date 2024/02/22
+ * @since 2024/02/22
  */
 public class MyBatisPlusUtilConfig {
 
@@ -18,7 +18,6 @@ public class MyBatisPlusUtilConfig {
     /**
      * 初始化策略类
      * @author HeathCHEN
-     * 2024/02/23
      */
     public void initStrategy() {
         new BetweenQueryTypeStrategy();

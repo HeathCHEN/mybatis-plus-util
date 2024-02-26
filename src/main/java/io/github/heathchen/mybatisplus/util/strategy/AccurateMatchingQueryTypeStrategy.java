@@ -1,26 +1,28 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
-import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.ParamThreadLocal;
-import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.github.heathchen.mybatisplus.util.utils.ParamThreadLocal;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 
-public class AccurateMatchingStrategy {
+/**
+ * 精确匹配策略类
+ * @author HeathCHEN
+ * @version 1.0
+ * @since 2024/02/26
+ */
+public class AccurateMatchingQueryTypeStrategy {
 
 
     /**
      * 构造查询
-     * @param queryWrapper
+     *
+     * @param <T> 查询条件适用的实体类型
+     * @param queryWrapper 查询queryWrapper
      * @author HeathCHEN
-     * 2024/02/23
      */
     public static <T> void buildQuery(QueryWrapper<T> queryWrapper) {
         Map<String, Object> objectMap = ParamThreadLocal.getObjectMap();

@@ -12,14 +12,22 @@ import org.apache.ibatis.mapping.ResultMapping;
 import java.lang.reflect.Field;
 import java.util.List;
 
+/**
+ * 表工具类
+ * @author HeathCHEN
+ * @version 1.0
+ * 2024/02/26
+ */
 public class TableUtil {
 
 
     /**
-     * 获取表字段命
-     *
-     * @param field
-     * @return {@link String}
+     * 获取实体属性对应表字段名
+     * @param clazz 类
+     * @param field 字段
+     * @return {@link String } 表字段名
+     * @author HeathCHEN
+     * 2024/02/26
      */
     public static String getTableColumnName(Class<?> clazz, Field field) {
 

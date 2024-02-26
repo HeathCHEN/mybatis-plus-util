@@ -1,32 +1,29 @@
 package io.github.heathchen.mybatisplus.util.utils;
 
-import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanInitializationException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 
+/**
+ * 上下文工具类
+ * @author HeathCHEN
+ * @version 1.0
+ * @since 2024/02/26
+ */
 public class ApplicationContextUtil {
 
 
     /**
      * 获取实体类对应的MapperBean
-     * @param clazz
-     * @return {@link BaseMapper }<{@link T }>
+     * @param clazz 类
+     * @return {@link BaseMapper } 实体类对应BaseMapper的Bean
      * @author HeathCHEN
-     * 2024/02/23
      */
-    public static <T> BaseMapper<T> getMapperBean(Class<?> clazz) {
+    public static  BaseMapper getMapperBean(Class<?> clazz) {
 
         while (!clazz.isAnnotationPresent(TableName.class)) {
             Class<?> superclass = clazz.getSuperclass();
@@ -37,7 +34,7 @@ public class ApplicationContextUtil {
             }
         }
 
-        BaseMapper<T> baseMapper = null;
+        BaseMapper baseMapper = null;
         baseMapper = getMapperBeanByMyBatisCache(clazz);
         if (ObjectUtil.isNotNull(baseMapper)) {
             return baseMapper;
@@ -51,12 +48,13 @@ public class ApplicationContextUtil {
 
     /**
      * 通过MyBatis解析获取Mapper
-     * @param clazz
-     * @return {@link BaseMapper }<{@link T }>
+     *
+     * @param <T> 实体类的实体类型
+     * @param clazz 类
+     * @return {@link BaseMapper } 实体类对应BaseMapper的Bean
      * @author HeathCHEN
-     * 2024/02/23
      */
-    public static <T> BaseMapper<T> getMapperBeanByMyBatisCache(Class<?> clazz) {
+    public static <T> BaseMapper<T> getMapperBeanByMyBatisCache(Class<T> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         //通过MyBatis解析实体获取的命名空间
         String currentNamespace = tableInfo.getCurrentNamespace();
@@ -73,10 +71,11 @@ public class ApplicationContextUtil {
 
     /**
      * 通过名字拼接获取Mapper
-     * @param clazz
-     * @return {@link BaseMapper }<{@link T }>
+     *
+     * @param <T> 实体类的实体类型
+     * @param clazz 实体类
+     * @return {@link BaseMapper } 实体类对应BaseMapper的Bean
      * @author HeathCHEN
-     * 2024/02/23
      */
     public static <T> BaseMapper<T> getMapperBeanByName(Class<?> clazz) {
         String serviceName = StrUtil.lowerFirst(clazz.getSimpleName()) + "Mapper";

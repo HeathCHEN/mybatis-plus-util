@@ -9,6 +9,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
 
+/**
+ * 自定义SQL查询策略类
+ * @author HeathCHEN
+ * @version 1.0
+ * @since 2024/02/26
+ */
 public class SqlQueryTypeStrategy implements QueryTypeStrategy {
 
     private static final QueryType QUERY_TYPE = QueryType.SQL;
@@ -17,7 +23,14 @@ public class SqlQueryTypeStrategy implements QueryTypeStrategy {
         QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
     }
 
-
+    /**
+     * 构造查询
+     * @param customerQuery CustomerQuery注解
+     * @param clazz 类
+     * @param field 字段
+     * @param queryWrapper 查询queryWrapper
+     * @author HeathCHEN
+     */
     @Override
     public  <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
         Object value = ParamThreadLocal.getValueFromObjectMap(field.getName());

@@ -7,7 +7,7 @@ import java.util.Map;
  * 查询策略类管理器
  * @author HeathCHEN
  * @version 1.0
- * 2024/02/23
+ * @since 2024/02/23
  */
 public class QueryTypeStrategyManager {
 
@@ -15,10 +15,9 @@ public class QueryTypeStrategyManager {
 
     /**
      * 设置策略
-     * @param queryType
-     * @param queryTypeStrategy
+     * @param queryType 查询类型名称
+     * @param queryTypeStrategy 查询策略类
      * @author HeathCHEN
-     * 2024/02/23
      */
     public static void putQueryTypeStrategyToManager(String queryType, QueryTypeStrategy queryTypeStrategy) {
         QUERY_TYPE_STRATEGY_MAP.put(queryType, queryTypeStrategy);
@@ -26,10 +25,9 @@ public class QueryTypeStrategyManager {
 
     /**
      * 获取策略
-     * @param queryType
-     * @return {@link QueryTypeStrategy }
+     * @param queryType 查询类型名称
+     * @return {@link QueryTypeStrategy } 查询策略类
      * @author HeathCHEN
-     * 2024/02/23
      */
     public static QueryTypeStrategy getQueryTypeStrategyToManager(String queryType) {
         return QUERY_TYPE_STRATEGY_MAP.get(queryType);
