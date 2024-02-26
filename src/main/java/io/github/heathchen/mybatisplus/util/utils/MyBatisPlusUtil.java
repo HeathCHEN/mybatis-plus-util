@@ -10,17 +10,14 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
 import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableField;
 import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableId;
 import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
 import io.github.heathchen.mybatisplus.util.consts.PageConst;
+import io.github.heathchen.mybatisplus.util.domain.CustomerCacheGroup;
 import io.github.heathchen.mybatisplus.util.domain.CustomerOrder;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingQueryTypeStrategy;
@@ -28,10 +25,7 @@ import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -107,7 +101,7 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后获取Bean查询
      *
-     * @param t 查询参数
+     * @param t   查询参数
      * @param <T> 查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
@@ -126,12 +120,12 @@ public class MyBatisPlusUtil {
     /**
      * 根据CustomerQuery注解构筑单表通用查询
      *
-     * @param t 查询参数
+     * @param t   查询参数
      * @param <T> 查询参数dto或实体类的类型
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <T> QueryWrapper<?> getQuery(T t) {
+    public static <T> QueryWrapper<T> getQuery(T t) {
 
         ParamThreadLocal.setObjectMap(BeanUtil.beanToMap(t, false, true));
         Boolean startPage = (Boolean) ParamThreadLocal.getValueFromObjectMap(PageConst.START_PAGE);
@@ -141,7 +135,7 @@ public class MyBatisPlusUtil {
         //创建排序的集合
         List<CustomerOrder> orderList = new ArrayList<>();
         //从类上注解获取排序字段(不参与筛选,但参与排序的字段)
-        checkColumnOrderOnClass(clazz, orderList);
+        PageHelperUtil.checkColumnOrderOnClass(clazz, orderList);
         //遍历map然后从子级逐级反射获得注解判断比较类型
         queryWrapper = buildQueryByReflect(clazz, queryWrapper, orderList);
         //获取不到注解的,默认做精确匹配
@@ -156,7 +150,7 @@ public class MyBatisPlusUtil {
     /**
      * 递归反射获取注解构建单表查询
      *
-     * @param <T> 查询参数dto或实体类的类型
+     * @param <T>          查询参数dto或实体类的类型
      * @param clazz        clazz
      * @param queryWrapper 查询包装
      * @param orderList    订单列表
@@ -192,7 +186,7 @@ public class MyBatisPlusUtil {
                     //根据查询类型构建查询
                     QueryTypeStrategyManager.getQueryTypeStrategyToManager(queryType).buildQuery(customerQuery, clazz, field, queryWrapper);
                     //检查是否使用排序
-                    checkColumnOrderOnField(customerQuery, field, orderList);
+                    PageHelperUtil.checkColumnOrderOnField(customerQuery, field, orderList);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -205,60 +199,6 @@ public class MyBatisPlusUtil {
         } else {
             return queryWrapper;
         }
-    }
-
-
-    /**
-     * 检查是否使用排序
-     *
-     * @param customerQuery 注解CustomerQuery
-     * @param field         字段
-     * @param orderList     排序List
-     * @author HeathCHEN
-     */
-    private static void checkColumnOrderOnField(CustomerQuery customerQuery, Field field, List<CustomerOrder> orderList) {
-        //检测是否启用排序
-        if (customerQuery.orderColumn()) {
-            CustomerOrder customerOrder = new CustomerOrder();
-            customerOrder.setOrderColumn(field.getName());
-            customerOrder.setOrderPriority(customerQuery.orderPriority());
-            customerOrder.setOrderType(customerQuery.orderType());
-            orderList.add(customerOrder);
-
-        }
-    }
-
-
-    /**
-     * 检查是否排序
-     *
-     * @param clazz     类
-     * @param orderList 排序List
-     * @author HeathCHEN
-     */
-    private static void checkColumnOrderOnClass(Class<?> clazz, List<CustomerOrder> orderList) {
-        CustomerQuery customerQuery = clazz.getDeclaredAnnotation(CustomerQuery.class);
-        if (ObjectUtil.isNotNull(customerQuery)) {
-            String[] columns = customerQuery.orderColumns();
-            OrderType[] orderTypes = customerQuery.orderTypes();
-
-            if (ArrayUtil.isNotEmpty(columns)) {
-                for (int i = 0; i < columns.length; i++) {
-                    CustomerOrder customerOrder = new CustomerOrder();
-                    customerOrder.setOrderColumn(columns[i]);
-                    customerOrder.setOrderType(orderTypes[i]);
-                    customerOrder.setOrderPriority(i + 1);
-                    orderList.add(customerOrder);
-                }
-
-                //清除分页插件的排序参数 使用该注解分页
-                com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
-                PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
-
-            }
-        }
-
-
     }
 
 
@@ -276,7 +216,6 @@ public class MyBatisPlusUtil {
         }
         //对查询进行排序
         if (startPage && CollectionUtil.isNotEmpty(orderList)) {
-
             List<CustomerOrder> customerOrders = orderList.stream().sorted(Comparator.comparingInt(CustomerOrder::getOrderPriority)).collect(Collectors.toList());
             for (CustomerOrder customerOrder : customerOrders) {
                 String underlineCase = StrUtil.toUnderlineCase(customerOrder.getOrderColumn());
@@ -295,62 +234,31 @@ public class MyBatisPlusUtil {
      * 利用注解标注字段更新冗余字段
      *
      * @param clazz              类
-     * @param associationKey     关联键
+     * @param associationKeyValue 关联键值
      * @param newCacheFieldValue 新的冗余值
      * @author HeathCHEN
      */
-    public static <T> void updateCacheField(Class<T> clazz, Object associationKey, Object newCacheFieldValue) {
+    public static <T> void updateCacheField(Class<T> clazz, Object associationKeyValue, Object newCacheFieldValue) {
         try {
 
+            List<CustomerCacheGroup> customerCacheGroups = new ArrayList<>();
+            constructCacheGroup(clazz, customerCacheGroups);
 
-            Field[] declaredFields = clazz.getDeclaredFields();
+            if (CollectionUtil.isNotEmpty(customerCacheGroups)) {
+                for (CustomerCacheGroup customerCacheGroup : customerCacheGroups) {
+                    customerCacheGroup.checkGroupConfig();
+                    BaseMapper mapperBean = ApplicationContextUtil.getMapperBean(clazz);
+                    QueryWrapper<?> queryWrapper = new QueryWrapper();
+                    queryWrapper.eq(customerCacheGroup.getTableId(), associationKeyValue);
 
-            CustomerCacheTableField customerCacheTableField = null;
-            String tableField = null;
-            CustomerCacheTableId customerCacheTableId = null;
-            String tableId = null;
+                    Constructor<?> constructor = clazz.getConstructor();
+                    Object o = constructor.newInstance();
+                    ReflectUtil.setFieldValue(o, customerCacheGroup.getTableFields().get(0), newCacheFieldValue);
 
-            if (ArrayUtil.isNotEmpty(declaredFields)) {
-                for (Field field : declaredFields) {
-                    if (ObjectUtil.isNull(customerCacheTableField)) {
-                        customerCacheTableField = field.getAnnotation(CustomerCacheTableField.class);
-                        if (ObjectUtil.isNotNull(customerCacheTableField)) {
-                            tableField = field.getName();
-                            continue;
-                        }
-                    }
-                    if (ObjectUtil.isNull(customerCacheTableId)) {
-                        customerCacheTableId = field.getAnnotation(CustomerCacheTableId.class);
-                        if (ObjectUtil.isNotNull(customerCacheTableId)) {
-                            TableField tableFieldAnnotation = field.getAnnotation(TableField.class);
-                            tableId = tableFieldAnnotation.value();
-                            if (StrUtil.isBlank(tableField)) {
-                                TableId tableAnnotation = field.getAnnotation(TableId.class);
-                                tableField = tableAnnotation.value();
-                            }
-                            if (StrUtil.isBlank(tableField)) {
-                                tableField = StrUtil.toUnderlineCase(field.getName());
-                            }
-                            continue;
-                        }
-                    }
+                    mapperBean.update(o, queryWrapper);
+
                 }
             }
-            if (ObjectUtil.isNull(customerCacheTableId) || ObjectUtil.isNull(customerCacheTableField)) {
-                return;
-            }
-
-
-            BaseMapper mapperBean = ApplicationContextUtil.getMapperBean(clazz);
-
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq(tableId, associationKey);
-            Constructor<?> constructor = clazz.getConstructor();
-
-            Object o = constructor.newInstance();
-            ReflectUtil.setFieldValue(o, tableField, newCacheFieldValue);
-
-            mapperBean.update(o, queryWrapper);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -358,14 +266,67 @@ public class MyBatisPlusUtil {
 
 
     /**
-     * 批量更新
-     *
-     * @param clazzArr
-     * @param associationKey
-     * @param newCacheFieldValue
+     * 构建冗余组对象List
+     * @param clazz 类
+     * @param customerCacheGroups 冗余组对象List
      * @author HeathCHEN
      */
-    public static void updateCacheField(Class<?>[] clazzArr, Object associationKey, Object newCacheFieldValue) {
+    public static <T> void constructCacheGroup(Class<T> clazz, List<CustomerCacheGroup> customerCacheGroups) {
+        Map<String, CustomerCacheGroup> cacheGroupHashMap = new HashMap<>();
+        Field[] declaredFields = clazz.getDeclaredFields();
+
+        if (ArrayUtil.isNotEmpty(declaredFields)) {
+            for (Field field : declaredFields) {
+                if (field.isAnnotationPresent(CustomerCacheTableField.class)) {
+                    CustomerCacheTableField customerCacheTableField = field.getAnnotation(CustomerCacheTableField.class);
+                    String groupId = customerCacheTableField.value();
+                    CustomerCacheGroup customerCacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
+                    customerCacheGroup.addCustomerCacheTableFields(customerCacheTableField);
+                    customerCacheGroup.addTableFields(TableUtil.getTableColumnName(clazz,field));
+                }
+                if (field.isAnnotationPresent(CustomerCacheTableId.class)) {
+                    CustomerCacheTableId customerCacheTableId = field.getAnnotation(CustomerCacheTableId.class);
+                    String groupId = customerCacheTableId.value();
+                    CustomerCacheGroup customerCacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
+                    customerCacheGroup.setCustomerCacheTableId(customerCacheTableId);
+                    customerCacheGroup.setTableId(TableUtil.getTableColumnName(clazz,field));
+                }
+
+            }
+
+        }
+        cacheGroupHashMap.forEach((key, value) -> customerCacheGroups.add(value));
+
+    }
+
+    /**
+     * 从Map中获取自定义冗余组对象
+     * @param groupId 组id
+     * @param cacheGroupHashMap 缓存map
+     * @return {@link CustomerCacheGroup } 冗余组对象List
+     * @author HeathCHEN
+     */
+    public static CustomerCacheGroup getCustomerCacheGroupFromMap(String groupId, Map<String, CustomerCacheGroup> cacheGroupHashMap) {
+        CustomerCacheGroup customerCacheGroup = cacheGroupHashMap.get(groupId);
+
+        if (ObjectUtil.isNull(customerCacheGroup)) {
+            customerCacheGroup = new CustomerCacheGroup();
+            customerCacheGroup.setGroupId(customerCacheGroup.getGroupId());
+            cacheGroupHashMap.put(groupId, customerCacheGroup);
+
+        }
+        return customerCacheGroup;
+    }
+
+    /**
+     * 批量更新
+     *
+     * @param clazzArr 类Array
+     * @param associationKey 关联键
+     * @param newCacheFieldValue 新的冗余值
+     * @author HeathCHEN
+     */
+    public static void updateCacheField(Object associationKey, Object newCacheFieldValue, Class<?>... clazzArr) {
         if (ArrayUtil.isNotEmpty(clazzArr)) {
             for (Class<?> clazz : clazzArr) {
                 updateCacheField(clazz, associationKey, newCacheFieldValue);

@@ -15,6 +15,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD,ElementType.TYPE})
 public @interface CustomerCacheTableField {
-
+    /**
+     * 分组id
+     * @return int
+     * @author HeathCHEN
+     */
+    String value() default "default";
 
 }

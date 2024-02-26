@@ -16,5 +16,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD,ElementType.TYPE})
 public @interface CustomerCacheTableId {
 
+    /**
+     * 分组id
+     * @return int
+     * @author HeathCHEN
+     */
+    String value() default "default";
 
 }
