@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * @since 2024/02/28
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD,ElementType.TYPE})
+@Target({ElementType.FIELD})
 public @interface CustomerCacheTableId {
 
     /**
