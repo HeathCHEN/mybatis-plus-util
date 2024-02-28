@@ -21,7 +21,7 @@ MyBatis-Plus-Util is an enhanced toolkit of MyBatis-Plus for simplify developmen
       ```  
 - Modify Entity file marks @CustomerQuery annotation
 
-         ```java  
+  ```java  
         @TableName(value ="pdt_spec")  
         public class PdtSpec  {  
           
