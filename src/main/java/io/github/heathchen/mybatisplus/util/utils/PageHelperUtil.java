@@ -31,14 +31,12 @@ public class PageHelperUtil {
         OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.PAGE_SIZE, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.PAGE_SIZE));
         OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.PAGE_NUM, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.PAGE_NUM));
         OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.ORDER_BY_COLUMN, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.ORDER_BY_COLUMN));
-        OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.ORDER_COLUMN, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.ORDER_COLUMN));
         OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.REASONABLE, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.REASONABLE));
         QueryParamThreadLocal.removeParamFromObjectMap(PageAndOrderConst.START_PAGE,
                 PageAndOrderConst.IS_ASC,
                 PageAndOrderConst.PAGE_SIZE,
                 PageAndOrderConst.PAGE_NUM,
                 PageAndOrderConst.ORDER_BY_COLUMN,
-                PageAndOrderConst.ORDER_COLUMN,
                 PageAndOrderConst.REASONABLE);
     }
 
@@ -57,7 +55,7 @@ public class PageHelperUtil {
             com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
             if (ObjectUtil.isNotNull(localPage)) {
                 PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
-            }else {
+            } else {
                 Integer pageSize = (Integer) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.PAGE_SIZE);
                 Integer pageNum = (Integer) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.PAGE_NUM);
                 if (ObjectUtil.isNotNull(pageSize) && ObjectUtil.isNotNull(pageNum)) {
@@ -72,6 +70,9 @@ public class PageHelperUtil {
         String[] columns = customerOrder.orderColumnNames();
         OrderType[] orderTypes = customerOrder.orderTypes();
         boolean orderColumn = customerOrder.orderColumn();
+
+        OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+
         if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
             for (int i = 0; i < columns.length; i++) {
                 CustomerOrderDto customerOrderDto = new CustomerOrderDto();
@@ -124,7 +125,7 @@ public class PageHelperUtil {
 
         Boolean orderColumn = (Boolean) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.ORDER_COLUMN);
 
-        if (!orderColumn) {
+        if (ObjectUtil.isNotNull(orderColumn) && !orderColumn) {
             return;
         }
 

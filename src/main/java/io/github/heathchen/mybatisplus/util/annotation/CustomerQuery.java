@@ -118,7 +118,7 @@ public @interface CustomerQuery {
 
     /**
      * 表连接实体类
-     * @return {@link Class }<{@link ? }>
+     * @return {@link Class }
      * @author HeathCHEN
      */
     Class<?> joinEntityClass() default Object.class;
