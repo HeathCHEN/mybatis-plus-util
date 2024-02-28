@@ -8,31 +8,31 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * 自定义查询注解
+ * 自定义分页排序注解
+ * 此注解的排序优先级比分页插件高,当此排序生效时会替换分页插件的排序,但分页插件的分页仍会生效
+ * 放在requestDto类上或者实体类上
  * @author HeathCHEN
  * @version 1.0
- * 2023/07/24
+ * @since 2024/02/28
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface CustomerOrder {
 
     /**
-     * 用于放在requestDto类上直接对结果做排序 排序字段
-     * 此注解的排序优先级比分页插件高,当此排序生效时会替换分页插件的排序,但分页插件的分页仍会生效
+     * 排序字段
      * @return {@link String[] }
      * @author HeathCHEN
-     * 2024/02/26
      */
     String[] orderColumnNames() default {};
 
 
     /**
-     * 用于放在requestDto类上直接对结果做排序 排序顺序
+     * 排序类型和优先级
      * @return {@link OrderType[] }
      * @author HeathCHEN
-     * 2024/02/26
      */
     OrderType[] orderTypes() default {};
 
@@ -41,7 +41,6 @@ public @interface CustomerOrder {
      * 是否参与排序 默认不参与
      * @return boolean
      * @author HeathCHEN
-     * 2024/02/26
      */
     boolean orderColumn() default true;
 
