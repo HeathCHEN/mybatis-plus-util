@@ -12,7 +12,7 @@
 
 
 ## 1. What is Mybatis Plus Util?
-MyBatis-Plus-Util is an enhanced toolkit of MyBatis-Plus for simplify development. Mainly using annotations to annotate entity classes to build QueryWrapper for quick query construction, improving development efficiency.
+MyBatis Plus Util is an enhanced toolkit of MyBatis-Plus for simplify development. Mainly using annotations to annotate entity classes to build QueryWrapper for quick query construction, improving development efficiency.
 
 ## 2. Links
 - [中文文档](https://github.com/HeathCHEN/mybatis-plus-util/blob/master/README-zh.md)
