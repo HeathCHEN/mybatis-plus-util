@@ -15,9 +15,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableField;
 import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableId;
 import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
-import io.github.heathchen.mybatisplus.util.consts.PageConst;
 import io.github.heathchen.mybatisplus.util.domain.CustomerCacheGroup;
-import io.github.heathchen.mybatisplus.util.domain.CustomerOrderDto;
 import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingQueryTypeStrategy;
 import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
@@ -348,7 +346,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static void cleanData(){
-        OrderParamThreadLocal.cleanData();
+        OrderAndPageParamThreadLocal.cleanData();
         QueryParamThreadLocal.cleanData();
     }
 

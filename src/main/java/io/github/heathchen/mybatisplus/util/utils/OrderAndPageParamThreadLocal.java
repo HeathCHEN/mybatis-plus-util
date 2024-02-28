@@ -2,8 +2,7 @@ package io.github.heathchen.mybatisplus.util.utils;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.extension.api.R;
-import io.github.heathchen.mybatisplus.util.consts.PageConst;
+import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
 import io.github.heathchen.mybatisplus.util.domain.CustomerOrderDto;
 
 import java.util.Comparator;
@@ -13,15 +12,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 存放排序参数线程工具类
+ * 存放排序和分页参数线程工具类
  *
  * @author HeathCHEN
  * @version 1.0
  * 2024/02/26
  */
-public class OrderParamThreadLocal {
+public class OrderAndPageParamThreadLocal {
 
-    private OrderParamThreadLocal() {
+    private OrderAndPageParamThreadLocal() {
     }
 
     private static final ThreadLocal<Map<String, Object>> LOCAL = new ThreadLocal<>();
@@ -88,10 +87,10 @@ public class OrderParamThreadLocal {
     }
 
     public static Map<String, CustomerOrderDto> getOrderMap() {
-        Map<String, CustomerOrderDto> map = (Map<String, CustomerOrderDto>) getValueFromObjectMap(PageConst.ORDER_MAP);
+        Map<String, CustomerOrderDto> map = (Map<String, CustomerOrderDto>) getValueFromObjectMap(PageAndOrderConst.ORDER_MAP);
         if (CollectionUtil.isEmpty(map)) {
             Map<String, CustomerOrderDto> newMap = new HashMap<>();
-            setValueToObjectMap(PageConst.ORDER_MAP, newMap);
+            setValueToObjectMap(PageAndOrderConst.ORDER_MAP, newMap);
             map = newMap;
         }
         return map;
@@ -112,11 +111,11 @@ public class OrderParamThreadLocal {
     }
 
     public static void setStartPage(Boolean startPage) {
-        setValueToObjectMap(PageConst.START_PAGE, startPage);
+        setValueToObjectMap(PageAndOrderConst.START_PAGE, startPage);
     }
 
     public static Boolean getStartPage() {
-        Boolean startPage = (Boolean) getValueFromObjectMap(PageConst.START_PAGE);
+        Boolean startPage = (Boolean) getValueFromObjectMap(PageAndOrderConst.START_PAGE);
         if (ObjectUtil.isNull(startPage)) {
             startPage = Boolean.TRUE;
             setStartPage(startPage);

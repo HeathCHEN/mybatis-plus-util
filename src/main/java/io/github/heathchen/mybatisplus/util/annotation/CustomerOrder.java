@@ -46,14 +46,6 @@ public @interface CustomerOrder {
     boolean orderColumn() default true;
 
 
-    /**
-     * 排序顺序 默认自然排序
-     * @return {@link OrderType }
-     * @author HeathCHEN
-     * 2024/02/26
-     */
-    OrderType orderType() default OrderType.ASC;
-
 
 
 

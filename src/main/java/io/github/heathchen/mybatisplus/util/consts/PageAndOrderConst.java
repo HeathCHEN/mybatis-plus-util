@@ -6,7 +6,7 @@ package io.github.heathchen.mybatisplus.util.consts;
  * @version 1.0
  * @since 2024/02/26
  */
-public class PageConst {
+public class PageAndOrderConst {
 
    /**
     * 开启分页
@@ -35,8 +35,13 @@ public class PageConst {
     * 排序字段
     */
    public static final String ORDER_BY_COLUMN = "orderByColumn";
+
+   /**
+    * 开启排序
+    */
+   public static final String ORDER_COLUMN = "orderColumn";
    /**
     * 分页合理化
     */
-   public static final String reasonable = "reasonable";
+   public static final String REASONABLE = "reasonable";
 }
