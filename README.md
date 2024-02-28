@@ -34,7 +34,7 @@ MyBatis-Plus-Util is an enhanced toolkit of MyBatis-Plus for simplify developmen
 
 - Use it
   
-        ```java
+  ```java
         @PostMapping("pdtSpec-list")  public TableDataInfo list(@RequestBody PdtSpec search) {    
         return getDataTable(queryByReflect(search));  }  
         ```  
