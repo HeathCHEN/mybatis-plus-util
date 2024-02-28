@@ -33,7 +33,7 @@ public class PageHelperUtil {
         OrderParamThreadLocal.setValueToObjectMap(PageConst.PAGE_SIZE, QueryParamThreadLocal.getValueFromObjectMap(PageConst.PAGE_SIZE));
         OrderParamThreadLocal.setValueToObjectMap(PageConst.PAGE_NUM, QueryParamThreadLocal.getValueFromObjectMap(PageConst.PAGE_NUM));
         OrderParamThreadLocal.setValueToObjectMap(PageConst.ORDER_BY_COLUMN, QueryParamThreadLocal.getValueFromObjectMap(PageConst.ORDER_BY_COLUMN));
-        QueryParamThreadLocal.removeParamFromObjectMap(PageConst.START_PAGE,PageConst.IS_ASC,PageConst.PAGE_SIZE,PageConst.PAGE_NUM,PageConst.ORDER_BY_COLUMN);
+        QueryParamThreadLocal.removeParamFromObjectMap(PageConst.START_PAGE, PageConst.IS_ASC, PageConst.PAGE_SIZE, PageConst.PAGE_NUM, PageConst.ORDER_BY_COLUMN);
     }
 
 
@@ -71,6 +71,7 @@ public class PageHelperUtil {
         }
     }
 
+
     /**
      * 检查是否使用排序
      *
@@ -101,6 +102,23 @@ public class PageHelperUtil {
      * @author HeathCHEN
      */
     public static void buildQueryOrder(QueryWrapper<?> queryWrapper) {
+
+        String orderByColumn = (String) OrderParamThreadLocal.getValueFromObjectMap(PageConst.ORDER_BY_COLUMN);
+        String isAsc = (String) OrderParamThreadLocal.getValueFromObjectMap(PageConst.IS_ASC);
+
+        if (StrUtil.isNotBlank(orderByColumn) && StrUtil.isNotBlank(isAsc)) {
+            CustomerOrderDto customerOrderDto = new CustomerOrderDto();
+            if (isAsc.equals(Boolean.TRUE.toString())) {
+                customerOrderDto.setOrderType(OrderType.ASC);
+            } else {
+                customerOrderDto.setOrderType(OrderType.DESC);
+            }
+            customerOrderDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn));
+            customerOrderDto.setOrderPriority(-1);
+            OrderParamThreadLocal.putCustomerOrderDtoIntoOrderList(customerOrderDto);
+        }
+
+
         Boolean startPage = OrderParamThreadLocal.getStartPage();
         List<CustomerOrderDto> orderList = OrderParamThreadLocal.getOrderList();
 
