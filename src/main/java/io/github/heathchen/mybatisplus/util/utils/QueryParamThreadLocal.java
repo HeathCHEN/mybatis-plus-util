@@ -19,6 +19,15 @@ public class QueryParamThreadLocal {
 
 	private static final ThreadLocal<Map<String,Object>> LOCAL = new ThreadLocal<>();
 
+
+    /**
+     * 清空数据,防止内存溢出
+     * @author HeathCHEN
+     */
+    public static void cleanData(){
+        LOCAL.set(null);
+    }
+
     /**
      * 设置查询参数到线程中
      * @param data 查询参数的map

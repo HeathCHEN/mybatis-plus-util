@@ -26,6 +26,14 @@ public class OrderParamThreadLocal {
 
     private static final ThreadLocal<Map<String, Object>> LOCAL = new ThreadLocal<>();
 
+    /**
+     * 清空数据,防止内存溢出
+     * @author HeathCHEN
+     */
+    public static void cleanData(){
+        LOCAL.set(null);
+    }
+
 
     /**
      * 设置排序参数到线程中
@@ -100,11 +108,7 @@ public class OrderParamThreadLocal {
 
     public static void putCustomerOrderDtoIntoOrderList(CustomerOrderDto customerOrderDto) {
         Map<String, CustomerOrderDto> orderMap = getOrderMap();
-        if (orderMap.containsKey(customerOrderDto.getTableColumnName())) {
-            return;
-        } else {
-            orderMap.put(customerOrderDto.getTableColumnName(), customerOrderDto);
-        }
+        orderMap.put(customerOrderDto.getTableColumnName(), customerOrderDto);
     }
 
     public static void setStartPage(Boolean startPage) {

@@ -1,7 +1,9 @@
 package io.github.heathchen.mybatisplus.util.utils;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,6 +17,7 @@ import io.github.heathchen.mybatisplus.util.enums.OrderType;
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +47,21 @@ public class PageHelperUtil {
      * @author HeathCHEN
      */
     public static void checkColumnOrderOnClass(Class<?> clazz) {
+        //清除分页插件的排序参数 使用该注解分页
+        Boolean startPage = OrderParamThreadLocal.getStartPage();
+        PageHelper.clearPage();
+        if (startPage) {
+            com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
+            if (ObjectUtil.isNotNull(localPage)) {
+                PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
+            }else {
+                Integer pageSize = (Integer) OrderParamThreadLocal.getValueFromObjectMap(PageConst.PAGE_SIZE);
+                Integer pageNum = (Integer) OrderParamThreadLocal.getValueFromObjectMap(PageConst.PAGE_NUM);
+                if (ObjectUtil.isNotNull(pageSize) && ObjectUtil.isNotNull(pageNum)) {
+                    PageHelper.startPage(pageNum, pageSize);
+                }
+            }
+        }
         if (!clazz.isAnnotationPresent(CustomerOrder.class)) {
             return;
         }
@@ -65,14 +83,7 @@ public class PageHelperUtil {
                 customerOrderDto.setOrderPriority(i + 1);
                 OrderParamThreadLocal.putCustomerOrderDtoIntoOrderList(customerOrderDto);
             }
-            //清除分页插件的排序参数 使用该注解分页
-            Boolean startPage = OrderParamThreadLocal.getStartPage();
-            PageHelper.clearPage();
-            if (startPage) {
-                com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
-                PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
 
-            }
         }
     }
 

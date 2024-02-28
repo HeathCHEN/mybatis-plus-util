@@ -35,4 +35,8 @@ public class PageConst {
     * 排序字段
     */
    public static final String ORDER_BY_COLUMN = "orderByColumn";
+   /**
+    * 分页合理化
+    */
+   public static final String reasonable = "reasonable";
 }

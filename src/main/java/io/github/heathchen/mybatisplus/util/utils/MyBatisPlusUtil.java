@@ -155,11 +155,12 @@ public class MyBatisPlusUtil {
      */
     public static <E> QueryWrapper<E> getQuery(E e, String... ignoreParams) {
         QueryParamThreadLocal.setObjectMap(BeanUtil.beanToMap(e, false, true));
-        PageHelperUtil.getPageParamFromQueryParam();
         QueryParamThreadLocal.removeParamFromObjectMap(ignoreParams);
         Class<?> clazz = e.getClass();
         QueryWrapper<E> queryWrapper = new QueryWrapper<E>();
-        //从类上注解获取排序字段(不参与筛选,但参与排序的字段)
+        //剔除查询参数中的分页参数
+        PageHelperUtil.getPageParamFromQueryParam();
+        //从类上注解获取排序字段
         PageHelperUtil.checkColumnOrderOnClass(clazz);
         //遍历map然后从子级逐级反射获得注解判断比较类型
         queryWrapper = buildQueryByReflect(clazz, queryWrapper);
@@ -167,6 +168,8 @@ public class MyBatisPlusUtil {
         AccurateMatchingQueryTypeStrategy.buildQuery(queryWrapper);
         //构筑排序
         PageHelperUtil.buildQueryOrder(queryWrapper);
+        //清除查询数据
+        cleanData();
         return queryWrapper;
     }
 
@@ -193,14 +196,10 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper) {
-
         //如果父类为空,则不再递归
         if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
             return queryWrapper;
         }
-
-        //创建用于剔除已被使用的字段的集合
-
         Field[] clazzDeclaredFields = clazz.getDeclaredFields();
         if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
             for (Field clazzDeclaredField : clazzDeclaredFields) {
@@ -212,15 +211,15 @@ public class MyBatisPlusUtil {
                     }
                     //获取属性上的注解
                     CustomerQuery customerQuery = field.getAnnotation(CustomerQuery.class);
-                    String queryType = customerQuery.value().getCompareType();
                     //剔除不参与的参数
                     if (!customerQuery.exist()) {
                         QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
                         continue;
                     }
                     //根据查询类型构建查询
-                    QueryTypeStrategyManager.getQueryTypeStrategyToManager(queryType).buildQuery(customerQuery, clazz, field, queryWrapper);
-
+                    QueryTypeStrategyManager.
+                            getQueryTypeStrategyToManager(customerQuery.value().getCompareType())
+                            .buildQuery(customerQuery, clazz, field, queryWrapper);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -342,6 +341,15 @@ public class MyBatisPlusUtil {
             }
 
         }
+    }
+
+    /**
+     * 清除查询和分页数据,防止内存溢出
+     * @author HeathCHEN
+     */
+    public static void cleanData(){
+        OrderParamThreadLocal.cleanData();
+        QueryParamThreadLocal.cleanData();
     }
 
 }
