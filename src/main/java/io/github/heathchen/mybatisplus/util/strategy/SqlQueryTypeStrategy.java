@@ -2,10 +2,12 @@ package io.github.heathchen.mybatisplus.util.strategy;
 
 import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.ParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
+import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
 import java.lang.reflect.Field;
 
@@ -33,12 +35,15 @@ public class SqlQueryTypeStrategy implements QueryTypeStrategy {
      */
     @Override
     public  <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
-        Object value = ParamThreadLocal.getValueFromObjectMap(field.getName());
-        if (ObjectUtil.isNull(value)|| StrUtil.isBlank(customerQuery.sql())) {
-            return;
+        Object value = QueryParamThreadLocal.getValueFromObjectMap(field.getName());
+        if (ObjectUtil.isNotNull(value)|| StrUtil.isNotBlank(customerQuery.sql())) {
+            queryWrapper.apply(customerQuery.sql(), value);
         }
 
-        queryWrapper.apply(customerQuery.sql(), value);
-        ParamThreadLocal.removeParamFromObjectMap(field.getName());
+        QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
+        //查询属性名对应字段名
+        String tableColumnName = TableUtil.getTableColumnName(clazz, field);
+        //检查是否使用排序
+        PageHelperUtil.checkColumnOrderOnField(customerQuery, clazz, field, tableColumnName);
     }
 }

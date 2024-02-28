@@ -2,7 +2,8 @@ package io.github.heathchen.mybatisplus.util.strategy;
 
 import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.ParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
+import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -35,19 +36,20 @@ public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
     public <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
 
         //将属性转为下划线格式
-        String underlineCase = TableUtil.getTableColumnName(clazz,field);
+        String tableColumnName = TableUtil.getTableColumnName(clazz,field);
 
-        Object notBetweenStartValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.notBetweenStartVal());
-        Object notBetweenEndValue = ParamThreadLocal.getValueFromObjectMap(customerQuery.notBetweenEndVal());
+        Object notBetweenStartValue = QueryParamThreadLocal.getValueFromObjectMap(customerQuery.notBetweenStartVal());
+        Object notBetweenEndValue = QueryParamThreadLocal.getValueFromObjectMap(customerQuery.notBetweenEndVal());
 
         if (ObjectUtil.isNotNull(notBetweenStartValue)) {
-            queryWrapper.le(underlineCase, notBetweenStartValue);
-            ParamThreadLocal.removeParamFromObjectMap(customerQuery.notBetweenStartVal());
+            queryWrapper.le(tableColumnName, notBetweenStartValue);
+            QueryParamThreadLocal.removeParamFromObjectMap(customerQuery.notBetweenStartVal());
         }
         if (ObjectUtil.isNotNull(notBetweenEndValue)) {
-            queryWrapper.ge(underlineCase, notBetweenEndValue);
-            ParamThreadLocal.removeParamFromObjectMap(customerQuery.notBetweenEndVal());
+            queryWrapper.ge(tableColumnName, notBetweenEndValue);
+            QueryParamThreadLocal.removeParamFromObjectMap(customerQuery.notBetweenEndVal());
         }
-
+        //检查是否使用排序
+        PageHelperUtil.checkColumnOrderOnField(customerQuery, clazz, field, tableColumnName);
     }
 }

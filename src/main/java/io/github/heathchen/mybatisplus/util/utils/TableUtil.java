@@ -68,4 +68,14 @@ public class TableUtil {
 
         return columnName;
     }
+
+
+    public static String checkOrColumnName(String orColumn){
+        if (orColumn.contains("_")) {
+            return orColumn;
+        }else {
+            return StrUtil.toUnderlineCase(orColumn);
+        }
+
+    }
 }

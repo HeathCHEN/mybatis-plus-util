@@ -5,14 +5,14 @@ import cn.hutool.core.util.ArrayUtil;
 import java.util.Map;
 
 /**
- * 线程工具类
+ * 存放查询参数线程工具类
  * @author HeathCHEN
  * @version 1.0
  * 2024/02/26
  */
-public class ParamThreadLocal {
+public class QueryParamThreadLocal {
 
-	private ParamThreadLocal(){
+	private QueryParamThreadLocal(){
     }
 
 	private static final ThreadLocal<Map<String,Object>> LOCAL = new ThreadLocal<>();

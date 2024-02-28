@@ -3,7 +3,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.utils.ParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class AccurateMatchingQueryTypeStrategy {
      * @author HeathCHEN
      */
     public static <T> void buildQuery(QueryWrapper<T> queryWrapper) {
-        Map<String, Object> objectMap = ParamThreadLocal.getObjectMap();
+        Map<String, Object> objectMap = QueryParamThreadLocal.getObjectMap();
         if (CollectionUtil.isNotEmpty(objectMap)) {
             Set<Map.Entry<String, Object>> entries = objectMap.entrySet();
             for (Map.Entry<String, Object> entry : entries) {

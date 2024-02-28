@@ -2,6 +2,8 @@ package io.github.heathchen.mybatisplus.util.domain;
 
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 
+import java.lang.reflect.Field;
+
 /**
  * 自定义排序
  *
@@ -9,7 +11,7 @@ import io.github.heathchen.mybatisplus.util.enums.OrderType;
  * @version 1.0
  * 2023/07/24
  */
-public class CustomerOrder {
+public class CustomerOrderDto {
 
     /**
      * 排序优先级
@@ -21,13 +23,26 @@ public class CustomerOrder {
      * 排序字段
      */
 
-    private String orderColumn;
+    private String tableColumnName;
 
     /**
      * 排序类型
      */
 
     private OrderType orderType;
+
+    /**
+     * 类名
+     */
+
+    private Class clazz;
+
+    /**
+     * 字段名
+     */
+    private Field field;
+
+
 
 
     public Integer getOrderPriority() {
@@ -38,12 +53,12 @@ public class CustomerOrder {
         this.orderPriority = orderPriority;
     }
 
-    public String getOrderColumn() {
-        return orderColumn;
+    public String getTableColumnName() {
+        return tableColumnName;
     }
 
-    public void setOrderColumn(String orderColumn) {
-        this.orderColumn = orderColumn;
+    public void setTableColumnName(String tableColumnName) {
+        this.tableColumnName = tableColumnName;
     }
 
     public OrderType getOrderType() {
@@ -52,5 +67,21 @@ public class CustomerOrder {
 
     public void setOrderType(OrderType orderType) {
         this.orderType = orderType;
+    }
+
+    public Class getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(Class clazz) {
+        this.clazz = clazz;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
     }
 }

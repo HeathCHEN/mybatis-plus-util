@@ -2,7 +2,8 @@ package io.github.heathchen.mybatisplus.util.strategy;
 
 import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.ParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
+import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -12,11 +13,12 @@ import java.lang.reflect.Field;
 
 /**
  * LIKE '值%' 查询策略类
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/26
  */
-public class LikeRightQueryTypeStrategy implements QueryTypeStrategy{
+public class LikeRightQueryTypeStrategy implements QueryTypeStrategy {
     private static final QueryType QUERY_TYPE = QueryType.LIKE_RIGHT;
 
     public LikeRightQueryTypeStrategy() {
@@ -25,37 +27,38 @@ public class LikeRightQueryTypeStrategy implements QueryTypeStrategy{
 
     /**
      * 构造查询
+     *
      * @param customerQuery CustomerQuery注解
-     * @param clazz 类
-     * @param field 字段
-     * @param queryWrapper 查询queryWrapper
+     * @param clazz         类
+     * @param field         字段
+     * @param queryWrapper  查询queryWrapper
      * @author HeathCHEN
      */
     @Override
     public <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
-        Object value = ParamThreadLocal.getValueFromObjectMap(field.getName());
+        Object value = QueryParamThreadLocal.getValueFromObjectMap(field.getName());
         if (ObjectUtil.isNull(value)) {
             return;
         }
         //将属性转为下划线格式
-        String underlineCase = TableUtil.getTableColumnName(clazz,field);
-
-        String[] orColumns = customerQuery.orColumn();
-        if (ArrayUtil.isNotEmpty(orColumns)) {
-            String tempUnderlineCase = underlineCase;
-            queryWrapper.and(tQueryWrapper -> {
-                        tQueryWrapper.likeRight(tempUnderlineCase, value);
-                        for (String orColumn : orColumns) {
-                            tQueryWrapper.or();
-                            tQueryWrapper.likeRight(orColumn, value);
+        String tableColumnName = TableUtil.getTableColumnName(clazz, field);
+        String[] orColumns = customerQuery.orColumns();
+        if (ObjectUtil.isNotNull(value)) {
+            if (ArrayUtil.isNotEmpty(orColumns)) {
+                queryWrapper.and(tQueryWrapper -> {
+                            tQueryWrapper.likeRight(tableColumnName, value);
+                            for (String orColumn : orColumns) {
+                                tQueryWrapper.or();
+                                tQueryWrapper.likeRight(TableUtil.checkOrColumnName(orColumn), value);
+                            }
                         }
-                    }
-            );
-        } else {
-            if (ObjectUtil.isNotNull(value)) {
-                queryWrapper.likeRight(underlineCase, value);
+                );
+            } else {
+                queryWrapper.likeRight(tableColumnName, value);
             }
         }
-        ParamThreadLocal.removeParamFromObjectMap(field.getName());
+        QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
+        //检查是否使用排序
+        PageHelperUtil.checkColumnOrderOnField(customerQuery, clazz, field, tableColumnName);
     }
 }
