@@ -19,7 +19,7 @@ MyBatis-Plus-Util是MyBatis-Plus的增强工具类,主要通过注解标注实�
 
 - Modify Entity file marks @CustomerQuery annotation  
   
-	```java  
+  ```java  
 	@TableName(value ="pdt_spec")  
 	public class PdtSpec  {    
 		/**  
@@ -40,7 +40,6 @@ MyBatis-Plus-Util是MyBatis-Plus的增强工具类,主要通过注解标注实�
 		@CustomerQuery(orderType = OrderType.ASC)   
 		@TableField(value = "create_time")   
 		private Date createTime;  
-	
 	}    
     
 	```    
@@ -49,7 +48,8 @@ MyBatis-Plus-Util是MyBatis-Plus的增强工具类,主要通过注解标注实�
   ```java    
   @PostMapping("pdtSpec-list")  
   public TableDataInfo list(@RequestBody PdtSpec search) {    
-  	return getDataTable(queryByReflect(search));  }  
+  	return getDataTable(queryByReflect(search)); 
+  }  
   ```    
 
   - 示例 1:    

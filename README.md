@@ -25,9 +25,16 @@ MyBatis-Plus-Util is an enhanced toolkit of MyBatis-Plus for simplify developmen
         @TableName(value ="pdt_spec")  
         public class PdtSpec  {  
           
-           @TableId(value = "spec_id")   private Long specId;  
-           @CustomerQuery(value = QueryType.LIKE)   @TableField(value = "spec_name")   private Long specName;  
-           @CustomerQuery(orderType = OrderType.ASC)   @TableField(value = "create_time")   private Date createTime;  
+            @TableId(value = "spec_id")   
+            private Long specId;  
+  
+            @CustomerQuery(value = QueryType.LIKE)   
+            @TableField(value = "spec_name")   
+            private Long specName;  
+  
+            @CustomerQuery(orderType = OrderType.ASC)   
+            @TableField(value = "create_time")   
+            private Date createTime;  
         }  
           
         ```  
@@ -35,8 +42,10 @@ MyBatis-Plus-Util is an enhanced toolkit of MyBatis-Plus for simplify developmen
 - Use it
   
   ```java
-        @PostMapping("pdtSpec-list")  public TableDataInfo list(@RequestBody PdtSpec search) {    
-        return getDataTable(queryByReflect(search));  }  
+        @PostMapping("pdtSpec-list")  
+        public TableDataInfo list(@RequestBody PdtSpec search) {    
+           return getDataTable(queryByReflect(search));  
+        }  
         ```  
 
 
