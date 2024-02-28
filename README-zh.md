@@ -1,7 +1,10 @@
 
 # Mybatis Plus Util
 
-[![Maven central](https://central.sonatype.com/artifact/io.github.heathchen/mybatis-plus-util)](https://central.sonatype.com/artifact/io.github.heathchen/mybatis-plus-util)
+![mybatis](https://img2.imgtp.com/2024/02/28/MWHYA6aK.png)
+
+[![Maven central](https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis/badge.svg)](https://central.sonatype.com/artifact/io.github.heathchen/mybatis-plus-util)
+[![License](https://img.shields.io/:license-apache-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## 1. 什么是Mybatis Plus Util?
 MyBatis-Plus-Util是MyBatis-Plus的增强工具类，主要通过注解标注实体类快速构筑单表QueryWrapper的简单查询，提高开发效率。
