@@ -1,8 +1,13 @@
 
-# mybatis-plus-util
+# Mybatis Plus Util
 
-## 1. 什么是MyBatis-Plus?
+[![Maven central](https://central.sonatype.com/artifact/io.github.heathchen/mybatis-plus-util](https://central.sonatype.com/artifact/io.github.heathchen/mybatis-plus-util)
+
+## 1. 什么是Mybatis Plus Util?
 MyBatis-Plus-Util是MyBatis-Plus的增强工具类，主要通过注解标注实体类快速构筑单表QueryWrapper的简单查询，提高开发效率。
+
+## 2. Links
+- [EngLishDocument](https://github.com/HeathCHEN/mybatis-plus-util/blob/master/README.md)
 
 ## 2. 开始
 - 增加 MyBatis-Plus-Util 依赖
@@ -17,38 +22,38 @@ MyBatis-Plus-Util是MyBatis-Plus的增强工具类，主要通过注解标注实
       </dependency>    
     ```  
 
-- 修改实体类，标记@CustomerQuery
+    - 修改实体类，标记@CustomerQuery
   
-  ```java  
-	@TableName(value ="pdt_spec")  
-	public class PdtSpec  {    
-		/**  
-		 * id 
-		 * 
-		 * */    
-		@TableId(value = "spec_id")   
-		private Long specId;    
-		/**  
-		 * 规格名  
-		 */
-		@CustomerQuery(value = QueryType.LIKE)   
-		@TableField(value = "spec_name")   
-		private Long specName;    
-		/**  
-		 * 创建时间 
-		 */
-		@CustomerQuery(orderType = OrderType.ASC)   
-		@TableField(value = "create_time")   
-		private Date createTime;  
-	}    
+      ```java  
+         @TableName(value ="pdt_spec")  
+         public class PdtSpec {    
+            /**  
+             * id 
+             * 
+             * */    
+            @TableId(value = "spec_id")   
+            private Long specId;    
+            /**  
+             * 规格名  
+             */
+            @CustomerQuery(value = QueryType.LIKE)   
+            @TableField(value = "spec_name")   
+            private Long specName;    
+            /**  
+             * 创建时间 
+             */
+            @CustomerQuery(orderType = OrderType.ASC)   
+            @TableField(value = "create_time")   
+            private Date createTime;  
+        }    
     
-	```    
+        ```    
 - 使用  
   
   ```java    
   @PostMapping("pdtSpec-list")  
   public TableDataInfo list(@RequestBody PdtSpec search) {    
-  	return getDataTable(queryByReflect(search)); 
+      return getDataTable(MyBatisPlusUtil.queryByReflect(search)); 
   }  
   ```    
 
@@ -71,9 +76,9 @@ MyBatis-Plus-Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     }    
     ```
     MyBatis-Plus 会执行以下SQL
-	``` sql  
+    ``` sql  
     SELECT * FROM pdt_spec  WHERE (spec_name LIKE '%小%')  ORDER BY create_time ASC    
-	```    
+    ```    
   - 示例 3:    
 
     请求体
@@ -138,7 +143,7 @@ MyBatis-Plus-Util是MyBatis-Plus的增强工具类，主要通过注解标注实
 - 或查询，查询时匹配多个字段。
   例如在在查询规格表时，需要同时用一个参数模糊查询规格名和重量码。
 
-- 示例
+- 示例:
   实体类
     ```java
     @TableName(value ="pdt_spec")  

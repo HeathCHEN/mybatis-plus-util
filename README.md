@@ -1,11 +1,11 @@
 
-# mybatis-plus-util
+# Mybatis Plus Util
 
-## 1. What is MyBatis-Plus-Util?
+## 1. What is Mybatis Plus Util?
 MyBatis-Plus-Util is an enhanced toolkit of MyBatis-Plus for simplify development. Mainly using annotations to annotate entity classes to build QueryWrapper for quick query construction, improving development efficiency.
 
 ## 2. Links
-- [中文文档](https://github.com/HeathCHEN/mybatis-plus-util/blob/dev/README-zh.md)
+- [中文文档](https://github.com/HeathCHEN/mybatis-plus-util/blob/master/README-zh.md)
 
 # Getting started
 - Add MyBatis-Plus-Util dependency
@@ -44,7 +44,7 @@ MyBatis-Plus-Util is an enhanced toolkit of MyBatis-Plus for simplify developmen
   ```java
         @PostMapping("pdtSpec-list")  
         public TableDataInfo list(@RequestBody PdtSpec search) {    
-           return getDataTable(queryByReflect(search));  
+           return getDataTable(MyBatisPlusUtil.queryByReflect(search));  
         }  
         ```  
 
