@@ -46,7 +46,7 @@ public @interface CustomerQuery {
      * @author HeathCHEN
      * 2024/02/26
      */
-    String columnName();
+    String columnName() default "";
 
     /**
      * 排序顺序 默认自然排序
@@ -54,7 +54,7 @@ public @interface CustomerQuery {
      * @author HeathCHEN
      * 2024/02/26
      */
-    OrderType orderType();
+    OrderType orderType() default OrderType.NONE;
 
 
     /**
@@ -130,7 +130,7 @@ public @interface CustomerQuery {
      * @author HeathCHEN
      * 2024/02/26
      */
-    Class<?> joinEntityClass();
+    Class<?> joinEntityClass() default Object.class;
 
 
     /**

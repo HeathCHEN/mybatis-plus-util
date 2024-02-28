@@ -9,7 +9,8 @@ package io.github.heathchen.mybatisplus.util.enums;
 public enum OrderType {
 
     ASC("正序"),
-    DESC("倒序");
+    DESC("倒序"),
+    NONE("不参与排序");
     /**
      * 描述
      */
