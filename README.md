@@ -2,7 +2,10 @@
 
 # Mybatis Plus Util
 
-![mybatis](https://img2.imgtp.com/2024/02/28/MWHYA6aK.png)
+<p align="center">
+   <img alt="Mybatis-Plus-Logo" src="https://img2.imgtp.com/2024/02/28/MWHYA6aK.png">
+</p>
+
 
 [![Maven central](https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis/badge.svg)](https://central.sonatype.com/artifact/io.github.heathchen/mybatis-plus-util)
 [![License](https://img.shields.io/:license-apache-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
