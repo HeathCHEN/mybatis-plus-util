@@ -1,7 +1,9 @@
 package io.github.heathchen.mybatisplus.util.utils;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,6 +26,9 @@ public class QueryParamThreadLocal {
      * @since 2024/02/23
      */
     public static void setObjectMap(Map<String,Object> data){
+        if (ObjectUtil.isNull(LOCAL.get())) {
+            LOCAL.set(new HashMap<>());
+        }
         LOCAL.set(data);
     }
 
@@ -35,6 +40,9 @@ public class QueryParamThreadLocal {
      * @since 2024/02/26
      */
     public static Map<String,Object> getObjectMap(){
+        if (ObjectUtil.isNull(LOCAL.get())) {
+            LOCAL.set(new HashMap<>());
+        }
         return LOCAL.get();
     }
 

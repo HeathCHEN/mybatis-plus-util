@@ -2,12 +2,15 @@ package io.github.heathchen.mybatisplus.util.utils;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.extension.api.R;
 import io.github.heathchen.mybatisplus.util.consts.PageConst;
 import io.github.heathchen.mybatisplus.util.domain.CustomerOrderDto;
 
-import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 存放排序参数线程工具类
@@ -44,6 +47,9 @@ public class OrderParamThreadLocal {
      * @since 2024/02/26
      */
     public static Object getValueFromObjectMap(String key) {
+        if (ObjectUtil.isNull(LOCAL.get())) {
+            LOCAL.set(new HashMap<>());
+        }
         return LOCAL.get().get(key);
     }
 
@@ -52,12 +58,14 @@ public class OrderParamThreadLocal {
      *
      * @param key  查询参数的属性名
      * @param data 查询参数
-     * @return {@link Object }
      * @author HeathCHEN
      * @since 2024/02/26
      */
-    public static Object setValueToObjectMap(String key, Object data) {
-        return LOCAL.get().put(key, data);
+    public static void setValueToObjectMap(String key, Object data) {
+        if (ObjectUtil.isNull(LOCAL.get())) {
+            LOCAL.set(new HashMap<>());
+        }
+        LOCAL.get().put(key, data);
     }
 
     /**
@@ -71,19 +79,32 @@ public class OrderParamThreadLocal {
         return LOCAL.get();
     }
 
-    public static List<CustomerOrderDto> getOrderList() {
-        List<CustomerOrderDto> list = (List<CustomerOrderDto>) getValueFromObjectMap(PageConst.ORDER_LIST);
-        if (CollectionUtil.isEmpty(list)) {
-            List<CustomerOrderDto> newList = new ArrayList<>();
-            setValueToObjectMap(PageConst.ORDER_LIST, newList);
-            list = newList;
+    public static Map<String, CustomerOrderDto> getOrderMap() {
+        Map<String, CustomerOrderDto> map = (Map<String, CustomerOrderDto>) getValueFromObjectMap(PageConst.ORDER_MAP);
+        if (CollectionUtil.isEmpty(map)) {
+            Map<String, CustomerOrderDto> newMap = new HashMap<>();
+            setValueToObjectMap(PageConst.ORDER_MAP, newMap);
+            map = newMap;
         }
-        return list;
+        return map;
+    }
+
+    public static List<CustomerOrderDto> getOrderList() {
+
+        return getOrderMap().
+                values().
+                stream().
+                sorted(Comparator.comparingInt(CustomerOrderDto::getOrderPriority)).
+                collect(Collectors.toList());
     }
 
     public static void putCustomerOrderDtoIntoOrderList(CustomerOrderDto customerOrderDto) {
-        List<CustomerOrderDto> orderList = getOrderList();
-        orderList.add(customerOrderDto);
+        Map<String, CustomerOrderDto> orderMap = getOrderMap();
+        if (orderMap.containsKey(customerOrderDto.getTableColumnName())) {
+            return;
+        } else {
+            orderMap.put(customerOrderDto.getTableColumnName(), customerOrderDto);
+        }
     }
 
     public static void setStartPage(Boolean startPage) {

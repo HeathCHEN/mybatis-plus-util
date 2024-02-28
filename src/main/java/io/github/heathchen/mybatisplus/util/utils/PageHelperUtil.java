@@ -66,8 +66,13 @@ public class PageHelperUtil {
                 OrderParamThreadLocal.putCustomerOrderDtoIntoOrderList(customerOrderDto);
             }
             //清除分页插件的排序参数 使用该注解分页
-            com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
-            PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
+            Boolean startPage = OrderParamThreadLocal.getStartPage();
+            PageHelper.clearPage();
+            if (startPage) {
+                com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
+                PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
+
+            }
         }
     }
 
@@ -81,7 +86,7 @@ public class PageHelperUtil {
      */
     public static void checkColumnOrderOnField(CustomerQuery customerQuery, Class<?> clazz, Field field, String tableColumnName) {
 
-        if (ObjectUtil.isNull(customerQuery.orderType())) {
+        if (customerQuery.orderType().equals(OrderType.NONE)) {
             return;
         }
         CustomerOrderDto customerOrderDto = new CustomerOrderDto();
@@ -118,19 +123,17 @@ public class PageHelperUtil {
             OrderParamThreadLocal.putCustomerOrderDtoIntoOrderList(customerOrderDto);
         }
 
-
-        Boolean startPage = OrderParamThreadLocal.getStartPage();
         List<CustomerOrderDto> orderList = OrderParamThreadLocal.getOrderList();
 
         //对查询进行排序
-        if (startPage && CollectionUtil.isNotEmpty(orderList)) {
-            List<CustomerOrderDto> customerOrderDtos = orderList.stream().sorted(Comparator.comparingInt(CustomerOrderDto::getOrderPriority)).collect(Collectors.toList());
-            for (CustomerOrderDto customerOrderDto : customerOrderDtos) {
+        if (CollectionUtil.isNotEmpty(orderList)) {
+            for (CustomerOrderDto customerOrderDto : orderList) {
                 String tableColumnName = customerOrderDto.getTableColumnName();
-                if (ObjectUtil.isNotNull(customerOrderDto.getOrderType()) && customerOrderDto.getOrderType().equals(OrderType.ASC)) {
+                OrderType orderType = customerOrderDto.getOrderType();
+                if (ObjectUtil.isNotNull(orderType) && orderType.equals(OrderType.ASC)) {
                     queryWrapper.orderByAsc(tableColumnName);
                 }
-                if (ObjectUtil.isNotNull(customerOrderDto.getOrderType()) && customerOrderDto.getOrderType().equals(OrderType.DESC)) {
+                if (ObjectUtil.isNotNull(orderType) && orderType.equals(OrderType.DESC)) {
                     queryWrapper.orderByDesc(tableColumnName);
                 }
             }

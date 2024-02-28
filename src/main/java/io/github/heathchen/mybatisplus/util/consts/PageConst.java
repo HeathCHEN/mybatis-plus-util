@@ -15,7 +15,7 @@ public class PageConst {
    /**
     * 排序列表名
     */
-   public static final String ORDER_LIST = "orderList";
+   public static final String ORDER_MAP = "orderMap";
    /**
     * 是否升序(自然排序)
     */
