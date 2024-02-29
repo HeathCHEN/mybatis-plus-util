@@ -4,6 +4,7 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -46,7 +47,7 @@ public class LikeQueryTypeStrategy implements QueryTypeStrategy {
         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
 
         String[] orColumns = queryField.orColumns();
-        if (ObjectUtil.isNotNull(value)) {
+        if (QueryUtil.checkValue(value)) {
             if (ArrayUtil.isNotEmpty(orColumns)) {
                 queryWrapper.and(tQueryWrapper -> {
                             tQueryWrapper.like(tableColumnName, value);

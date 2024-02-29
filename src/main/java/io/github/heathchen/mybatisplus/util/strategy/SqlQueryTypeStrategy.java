@@ -7,6 +7,7 @@ import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
 import java.lang.reflect.Field;
@@ -36,7 +37,7 @@ public class SqlQueryTypeStrategy implements QueryTypeStrategy {
     @Override
     public  <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
         Object value = QueryParamThreadLocal.getValueFromObjectMap(field.getName());
-        if (ObjectUtil.isNotNull(value)|| StrUtil.isNotBlank(queryField.sql())) {
+        if (QueryUtil.checkValue(value)|| StrUtil.isNotBlank(queryField.sql())) {
             queryWrapper.apply(queryField.sql(), value);
         }
 

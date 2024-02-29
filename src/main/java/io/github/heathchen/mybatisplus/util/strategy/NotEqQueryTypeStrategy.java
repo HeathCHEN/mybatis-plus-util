@@ -4,6 +4,7 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -44,7 +45,7 @@ public class NotEqQueryTypeStrategy implements QueryTypeStrategy {
         String[] orColumns = queryField.orColumns();
         //将属性转为下划线格式
         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
-        if (ObjectUtil.isNotNull(value)) {
+        if (QueryUtil.checkValue(value)) {
             if (ArrayUtil.isNotEmpty(orColumns)) {
                 queryWrapper.and(tQueryWrapper -> {
                             tQueryWrapper.ne(tableColumnName, value);

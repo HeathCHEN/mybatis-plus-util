@@ -10,6 +10,7 @@ import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.utils.ApplicationContextProvider;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -133,7 +134,7 @@ public class AccurateMatchingQueryTypeStrategy {
             Set<Map.Entry<String, Object>> entries = objectMap.entrySet();
             for (Map.Entry<String, Object> entry : entries) {
                 Object value = entry.getValue();
-                if (ObjectUtil.isNull(value)) {
+                if (!QueryUtil.checkValue(value)) {
                     continue;
                 }
                 if (value instanceof String

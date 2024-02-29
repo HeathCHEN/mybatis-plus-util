@@ -4,6 +4,7 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -41,11 +42,11 @@ public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
         Object notBetweenStartValue = QueryParamThreadLocal.getValueFromObjectMap(queryField.notBetweenStartVal());
         Object notBetweenEndValue = QueryParamThreadLocal.getValueFromObjectMap(queryField.notBetweenEndVal());
 
-        if (ObjectUtil.isNotNull(notBetweenStartValue)) {
+        if (QueryUtil.checkValue(notBetweenStartValue)) {
             queryWrapper.le(tableColumnName, notBetweenStartValue);
             QueryParamThreadLocal.removeParamFromObjectMap(queryField.notBetweenStartVal());
         }
-        if (ObjectUtil.isNotNull(notBetweenEndValue)) {
+        if (QueryUtil.checkValue(notBetweenEndValue)) {
             queryWrapper.ge(tableColumnName, notBetweenEndValue);
             QueryParamThreadLocal.removeParamFromObjectMap(queryField.notBetweenEndVal());
         }

@@ -4,6 +4,7 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
@@ -42,7 +43,7 @@ public class NotInQueryTypeStrategy implements QueryTypeStrategy {
         //将属性转为下划线格式
         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
 
-        if (ObjectUtil.isNotNull(value)) {
+        if (QueryUtil.checkValue(value)) {
             if (value instanceof Collection) {
                 Collection<?> values = (Collection<?>) value;
                 if (CollectionUtil.isNotEmpty(values)) {
@@ -50,7 +51,7 @@ public class NotInQueryTypeStrategy implements QueryTypeStrategy {
                 }
             }
 
-            if (value instanceof Object[]) {
+            if (value.getClass().isArray()) {
                 Object[] values = (Object[]) value;
                 if (ArrayUtil.isNotEmpty(values)) {
                     queryWrapper.notIn(tableColumnName, values);
