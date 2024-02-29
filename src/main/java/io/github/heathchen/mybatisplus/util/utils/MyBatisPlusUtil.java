@@ -85,6 +85,9 @@ public class MyBatisPlusUtil {
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, MatchMode matchMode, String... ignoreParams) {
         Class<?> tClazz = e.getClass();
+        if (ObjectUtil.isNull(clazz)) {
+            return ((List<T>) queryByReflect(e, matchMode, ignoreParams));
+        }
         while (!clazz.isAnnotationPresent(TableName.class)) {
             Class<?> superclass = clazz.getSuperclass();
             if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
@@ -142,12 +145,7 @@ public class MyBatisPlusUtil {
     public static <E> List<E> queryByReflect(E e, MatchMode matchMode, String... ignoreParams) {
         QueryWrapper query = getQuery(e, matchMode, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        if (ObjectUtil.isNotNull(baseMapper)) {
-            return baseMapper.selectList(query);
-        } else {
-            throw new RuntimeException("can not find Mapper");
-        }
-
+        return baseMapper.selectList(query);
     }
 
     /**
@@ -162,12 +160,7 @@ public class MyBatisPlusUtil {
     public static <E> List<E> queryByReflect(E e, String... ignoreParams) {
         QueryWrapper query = getQuery(e, null, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        if (ObjectUtil.isNotNull(baseMapper)) {
-            return baseMapper.selectList(query);
-        } else {
-            throw new RuntimeException("can not find Mapper");
-        }
-
+        return baseMapper.selectList(query);
     }
 
     /**
@@ -180,13 +173,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, MatchMode matchMode) {
-        QueryWrapper query = getQuery(e, matchMode);
-        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        if (ObjectUtil.isNotNull(baseMapper)) {
-            return baseMapper.selectList(query);
-        } else {
-            throw new RuntimeException("can not find Mapper");
-        }
+        return queryByReflect(e, null, matchMode, ArrayUtil.newArray(String.class, 0));
 
     }
 
@@ -304,9 +291,7 @@ public class MyBatisPlusUtil {
                         continue;
                     }
                     //根据查询类型构建查询
-                    QueryTypeStrategyManager.
-                            getQueryTypeStrategyToManager(queryField.value().getCompareType())
-                            .buildQuery(queryField, clazz, field, queryWrapper);
+                    QueryTypeStrategyManager.invokeQueryTypeStrategy(queryField, clazz, field, queryWrapper);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
