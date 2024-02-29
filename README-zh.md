@@ -116,35 +116,35 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     private String specName;
     ```
 
-#### 3.1.2. QueryType.EQ
+##### 3.1.1.1. QueryType.EQ
 - 等于查询，与 MyBatis-Plus 的 eq 对应
-#### 3.1.3. QueryType.NOT_EQUAL
+##### 3.1.1.2. QueryType.NOT_EQUAL
 - 不等于，与 MyBatis-Plus 的 ne 对应
-#### 3.1.4. QueryType.LIKE
+##### 3.1.1.3. QueryType.LIKE
 - LIKE '%值%'，与 MyBatis-Plus 的 like 对应
-#### 3.1.5. QueryType.NOT_LIKE
+##### 3.1.1.4. QueryType.NOT_LIKE
 - NOT LIKE '%值%'，与 MyBatis-Plus 的 notLike 对应
-#### 3.1.6. QueryType.LIKE_LEFT
+##### 3.1.1.5. QueryType.LIKE_LEFT
 - LIKE '%值'，与 MyBatis-Plus 的 likeLeft 对应
-#### 3.1.7. QueryType.LIKE_RIGHT
+##### 3.1.1.6. QueryType.LIKE_RIGHT
 - LIKE '值%'，与 MyBatis-Plus 的 likeRight 对应
-#### 3.1.8. QueryType.BETWEEN
+##### 3.1.1.7. QueryType.BETWEEN
 - BETWEEN 值1 AND 值2，与 MyBatis-Plus 的 between 对应
-#### 3.1.9. QueryType.NOT_BETWEEN
+##### 3.1.1.8. QueryType.NOT_BETWEEN
 - NOT BETWEEN 值1 AND 值2，与 MyBatis-Plus 的 notBetween 对应
-#### 3.1.10. QueryType.LESS_THAN
+##### 3.1.1.9. QueryType.LESS_THAN
 - 小于 <，与 MyBatis-Plus 的 lt 对应
-#### 3.1.11. QueryType.LESS_EQUAL
+##### 3.1.1.10. QueryType.LESS_EQUAL
 - 小于等于 <=，与 MyBatis-Plus 的 le 对应
-#### 3.1.12. QueryType.GREATER_THAN
+##### 3.1.1.11. QueryType.GREATER_THAN
 - 大于 >，与 MyBatis-Plus 的 gt 对应
-#### 3.1.13. QueryType.GREATER_EQUAL
+##### 3.1.1.12. QueryType.GREATER_EQUAL
 - 大于等于 >=，与 MyBatis-Plus 的 ge 对应
-#### 3.1.14. QueryType.IN
+##### 3.1.1.13. QueryType.IN
 - 字段 IN (v0， v1， ...)，与 MyBatis-Plus 的 in 对应
-#### 3.1.15. QueryType.NOT_IN
+##### 3.1.1.14. QueryType.NOT_IN
 - 字段 NOT IN (value.get(0)， value.get(1)， ...)，与 MyBatis-Plus 的 notIn 对应
-#### 3.1.16. QueryType.SQL
+##### 3.1.1.15. QueryType.SQL
 - SQL 语句，与 MyBatis-Plus 的 sql 对应
 
 #### 3.1.2. orColumns
