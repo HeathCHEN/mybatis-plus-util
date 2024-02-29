@@ -527,4 +527,4 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
 
 # License
 
-MyBatis-Plus is under the Apache 2.0 license. See the Apache License 2.0 file for details.
+MyBatis Plus Util is under the Apache 2.0 license. See the Apache License 2.0 file for details.

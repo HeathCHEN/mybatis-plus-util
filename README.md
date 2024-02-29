@@ -98,4 +98,4 @@ MyBatis Plus Util is an enhanced toolkit of MyBatis-Plus for simplify developmen
 
 # License
 
-MyBatis-Plus is under the Apache 2.0 license. See the Apache License 2.0 file for details.
+MyBatis Plus Util is under the Apache 2.0 license. See the Apache License 2.0 file for details.
