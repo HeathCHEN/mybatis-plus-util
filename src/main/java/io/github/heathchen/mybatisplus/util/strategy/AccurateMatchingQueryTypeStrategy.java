@@ -28,7 +28,7 @@ public class AccurateMatchingQueryTypeStrategy {
 
     /**
      * 按匹配模式构造查询
-     * 获取匹配模式优先级 方法参数>注解上配置>全局设定
+     * 获取匹配模式优先级 方法参数 大于 注解上配置 大于 全局设定
      *
      * @param clazz        查询参数类
      * @param queryWrapper 查询queryWrapper
