@@ -2,6 +2,8 @@ package io.github.heathchen.mybatisplus.util.utils;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.log.GlobalLogFactory;
+import cn.hutool.log.Log;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -16,6 +18,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
  */
 public class ApplicationContextUtil {
 
+    private static final Log log = GlobalLogFactory.get().getLog(ApplicationContextUtil.class);
 
     /**
      * 获取实体类对应的MapperBean
@@ -43,6 +46,12 @@ public class ApplicationContextUtil {
         if (ObjectUtil.isNotNull(baseMapper)) {
             return baseMapper;
         }
+
+        if (ObjectUtil.isNull(baseMapper)) {
+            log.error("找不到执行SQL的baseMapper,查询参数对象需要继承实体类或用@TableName(value=\"表名\")");
+            throw new RuntimeException("找不到执行SQL的baseMapper");
+        }
+
         return baseMapper;
     }
 

@@ -9,6 +9,10 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
+
+import cn.hutool.log.GlobalLogFactory;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -33,6 +37,7 @@ import java.util.*;
  */
 public class MyBatisPlusUtil {
 
+    private static final Log log = GlobalLogFactory.get().getLog(MyBatisPlusUtil.class);
 
     /**
      * 补全时间到当天最后时分秒毫秒
@@ -96,6 +101,7 @@ public class MyBatisPlusUtil {
             return BeanUtil.copyToList(list, clazz);
         }
     }
+
     /**
      * 反射构筑Query后获取Bean查询再转成对应类型
      *
@@ -112,10 +118,10 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后获取Bean查询再转成对应类型
      *
-     * @param <T>   查询结果的返回类型
-     * @param matchMode    匹配模式
-     * @param e     查询参数
-     * @param clazz 返回类型
+     * @param <T>       查询结果的返回类型
+     * @param matchMode 匹配模式
+     * @param e         查询参数
+     * @param clazz     返回类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
@@ -167,9 +173,9 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后获取Bean查询
      *
-     * @param e            查询参数
-     * @param matchMode    匹配模式
-     * @param <E>          查询参数dto或实体类的类型
+     * @param e         查询参数
+     * @param matchMode 匹配模式
+     * @param <E>       查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
@@ -354,8 +360,8 @@ public class MyBatisPlusUtil {
     /**
      * 构建冗余组对象List
      *
-     * @param <T>                 类型
-     * @param clazz               类
+     * @param <T>         类型
+     * @param clazz       类
      * @param cacheGroups 冗余组对象List
      * @author HeathCHEN
      */

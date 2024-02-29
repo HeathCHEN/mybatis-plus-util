@@ -63,6 +63,14 @@ public class PageHelperUtil {
                 }
             }
         }
+        while (!clazz.isAnnotationPresent(QueryConfig.class)) {
+            Class<?> superclass = clazz.getSuperclass();
+            if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
+                break;
+            } else {
+                clazz = superclass;
+            }
+        }
         if (!clazz.isAnnotationPresent(QueryConfig.class)) {
             return;
         }
@@ -79,10 +87,11 @@ public class PageHelperUtil {
                 if (StrUtil.isBlank(columns[i])) {
                     continue;
                 }
-                OrderDto.setTableColumnName(columns[i]);
+                OrderDto.setTableColumnName(columns[i].toUpperCase());
                 if (ObjectUtil.isNull(orderTypes[i])) {
                     continue;
                 }
+
                 OrderDto.setOrderType(orderTypes[i]);
                 OrderDto.setOrderPriority(i + 1);
                 OrderAndPageParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
@@ -105,12 +114,12 @@ public class PageHelperUtil {
             return;
         }
         OrderDto OrderDto = new OrderDto();
-        OrderDto.setTableColumnName(tableColumnName);
+        OrderDto.setTableColumnName(tableColumnName.toUpperCase());
         OrderDto.setOrderPriority(queryField.orderPriority());
         OrderDto.setOrderType(queryField.orderType());
         OrderDto.setField(field);
         OrderDto.setClazz(clazz);
-        OrderAndPageParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
+        OrderAndPageParamThreadLocal.putIntoOrderListIfOrderDtoAbsent(OrderDto);
 
 
     }
@@ -139,7 +148,7 @@ public class PageHelperUtil {
             } else {
                 OrderDto.setOrderType(OrderType.DESC);
             }
-            OrderDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn));
+            OrderDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn).toUpperCase());
             OrderDto.setOrderPriority(-1);
             OrderAndPageParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
         }

@@ -1,6 +1,10 @@
 package io.github.heathchen.mybatisplus.util.config;
 
+import cn.hutool.log.GlobalLogFactory;
+import cn.hutool.log.dialect.slf4j.Slf4jLogFactory;
 import io.github.heathchen.mybatisplus.util.strategy.*;
+import io.github.heathchen.mybatisplus.util.utils.MyBatisPlusUtil;
+import org.mybatis.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -17,6 +21,7 @@ public class MyBatisPlusUtilConfig {
 
     public MyBatisPlusUtilConfig() {
         initStrategy();
+        GlobalLogFactory.set(Slf4jLogFactory.class);
     }
 
     /**

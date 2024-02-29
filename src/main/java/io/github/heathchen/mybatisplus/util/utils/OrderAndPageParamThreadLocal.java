@@ -105,9 +105,27 @@ public class OrderAndPageParamThreadLocal {
                 collect(Collectors.toList());
     }
 
-    public static void putOrderDtoIntoOrderList(OrderDto OrderDto) {
+    /**
+     * 放入排序列表
+     * @param orderDto
+     * @author HeathCHEN
+     */
+    public static void putOrderDtoIntoOrderList(OrderDto orderDto) {
         Map<String, OrderDto> orderMap = getOrderMap();
-        orderMap.put(OrderDto.getTableColumnName(), OrderDto);
+        orderMap.putIfAbsent(orderDto.getTableColumnName(), orderDto);
+    }
+
+    /**
+     * 如果不存在则放入排序列表
+     * @param orderDto 排序对象
+     * @author HeathCHEN
+     */
+    public static void putIntoOrderListIfOrderDtoAbsent(OrderDto orderDto) {
+        Map<String, OrderDto> orderMap = getOrderMap();
+        if (orderMap.containsKey(orderDto.getTableColumnName())) {
+            return;
+        }
+        orderMap.putIfAbsent(orderDto.getTableColumnName(), orderDto);
     }
 
     public static void setStartPage(Boolean startPage) {
