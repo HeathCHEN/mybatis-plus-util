@@ -4,7 +4,7 @@ package io.github.heathchen.mybatisplus.util.enums;
  *  查询类型枚举类 与myBatis-plus对应
  * @author HeathCHEN
  * @version 1.0
- * 2023/07/24
+ * @since 2023/07/24
  */
 public enum QueryType {
 

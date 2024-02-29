@@ -1,6 +1,7 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
@@ -57,6 +58,13 @@ public class NotEqQueryTypeStrategy implements QueryTypeStrategy {
                 );
             } else {
                 queryWrapper.ne(tableColumnName, value);
+            }
+        }else {
+            if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NULL)) {
+                queryWrapper.isNull(tableColumnName);
+            }
+            if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NOT_NULL)) {
+                queryWrapper.isNotNull(tableColumnName);
             }
         }
         QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());

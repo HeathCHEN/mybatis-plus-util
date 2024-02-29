@@ -2,6 +2,7 @@ package io.github.heathchen.mybatisplus.util.annotation;
 
 
 import io.github.heathchen.mybatisplus.util.consts.MyBatisPlusUtilConst;
+import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.JoinType;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
@@ -106,6 +107,14 @@ public @interface QueryField {
      * @author HeathCHEN
      */
     boolean exist() default true;
+
+
+    /**
+     * 字段值类型 默认查询参数为空时不作过滤
+     * @return {@link ConditionType}
+     * @author HeathCHEN
+     */
+    ConditionType conditionType() default ConditionType.IGNORE_NULL_VALUE;
 
 
     /**

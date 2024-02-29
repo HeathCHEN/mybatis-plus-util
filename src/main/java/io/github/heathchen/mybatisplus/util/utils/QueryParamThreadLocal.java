@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * 存放查询参数线程工具类
  * @author HeathCHEN
  * @version 1.0
- * 2024/02/26
+ * @since 2024/02/26
  */
 public class QueryParamThreadLocal {
 

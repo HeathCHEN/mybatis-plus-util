@@ -9,6 +9,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ *  查询工具类
+ *
+ * @author HeathCHEN
+ * @since 2024/02/29
+ */
 public class QueryUtil {
 
 
