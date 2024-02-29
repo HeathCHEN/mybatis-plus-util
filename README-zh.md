@@ -393,15 +393,35 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
 #### 3.2.1. orderColumnNames
 - 排序的字段名，最好直接填入表字段名。
 #### 3.2.2. orderTypes
-- 排序类型
+- 排序类型。
 #### 3.2.3. orderColumn
 - 开启排序，默认开启。
 
+#### 3.2.4. matchMode
+- 匹配模式，有两种全部匹配模式和精确匹配模式。
+- 全部匹配模式: 就算实体列字段中没有QueryField注解,但只要查询参数中存在就做全等匹配。
+- 精确匹配模式: 只对实体类中标记了QueryField注解的字段做对应类型的匹配。
+- 优先级: 调用方法传入的匹配模式 > 注解上配置的匹配模式 > 全局设定的匹配模式
+- @QueryConfig注解上matchMode默认值为USING_GLOBAL_MODE,即引用全局设定的匹配模式
+- yaml配置文件全局设定示例
+
+  ```yaml
+     myBatisPlusUtil:
+         globalMatchMode: allMatchMode #全部匹配
+  ```
+  
+  或是  
+
+  ```yaml
+     myBatisPlusUtil:
+         globalMatchMode: accurateMatchMode #精确匹配
+  ```
+
 ### 3.3. @CachedTableId
-- 自定义冗余字段关联键，配合@CachedTableField 用于快速更新数据库表中对其他表的冗余字段
+- 自定义冗余字段关联键，配合@CachedTableField 用于快速更新数据库表中对其他表的冗余字段。
 
 #### 3.3.1. value
-- 分组 id，用于区分其他分组的@CachedTableId 和@CachedTableField
+- 分组 id，用于区分其他分组的@CachedTableId 和@CachedTableField。
 
 ### 3.4. @CachedTableField
 - 自定义冗余字段关联字段
