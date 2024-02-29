@@ -3,7 +3,7 @@ package io.github.heathchen.mybatisplus.util.utils;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
-import io.github.heathchen.mybatisplus.util.domain.QueryConfigDto;
+import io.github.heathchen.mybatisplus.util.domain.OrderDto;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -86,28 +86,28 @@ public class OrderAndPageParamThreadLocal {
         return LOCAL.get();
     }
 
-    public static Map<String, QueryConfigDto> getOrderMap() {
-        Map<String, QueryConfigDto> map = (Map<String, QueryConfigDto>) getValueFromObjectMap(PageAndOrderConst.ORDER_MAP);
+    public static Map<String, OrderDto> getOrderMap() {
+        Map<String, OrderDto> map = (Map<String, OrderDto>) getValueFromObjectMap(PageAndOrderConst.ORDER_MAP);
         if (CollectionUtil.isEmpty(map)) {
-            Map<String, QueryConfigDto> newMap = new HashMap<>();
+            Map<String, OrderDto> newMap = new HashMap<>();
             setValueToObjectMap(PageAndOrderConst.ORDER_MAP, newMap);
             map = newMap;
         }
         return map;
     }
 
-    public static List<QueryConfigDto> getOrderList() {
+    public static List<OrderDto> getOrderList() {
 
         return getOrderMap().
                 values().
                 stream().
-                sorted(Comparator.comparingInt(QueryConfigDto::getOrderPriority)).
+                sorted(Comparator.comparingInt(OrderDto::getOrderPriority)).
                 collect(Collectors.toList());
     }
 
-    public static void putQueryConfigDtoIntoOrderList(QueryConfigDto QueryConfigDto) {
-        Map<String, QueryConfigDto> orderMap = getOrderMap();
-        orderMap.put(QueryConfigDto.getTableColumnName(), QueryConfigDto);
+    public static void putOrderDtoIntoOrderList(OrderDto OrderDto) {
+        Map<String, OrderDto> orderMap = getOrderMap();
+        orderMap.put(OrderDto.getTableColumnName(), OrderDto);
     }
 
     public static void setStartPage(Boolean startPage) {

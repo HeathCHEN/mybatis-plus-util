@@ -15,7 +15,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableField;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
-import io.github.heathchen.mybatisplus.util.domain.CustomerCacheGroup;
+import io.github.heathchen.mybatisplus.util.domain.CacheGroup;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingQueryTypeStrategy;
 import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
@@ -315,19 +315,19 @@ public class MyBatisPlusUtil {
     public static <T> void updateCacheField(Class<T> clazz, Object associationKeyValue, Object newCacheFieldValue) {
         try {
 
-            List<CustomerCacheGroup> customerCacheGroups = new ArrayList<>();
-            constructCacheGroup(clazz, customerCacheGroups);
+            List<CacheGroup> cacheGroups = new ArrayList<>();
+            constructCacheGroup(clazz, cacheGroups);
 
-            if (CollectionUtil.isNotEmpty(customerCacheGroups)) {
-                for (CustomerCacheGroup customerCacheGroup : customerCacheGroups) {
-                    customerCacheGroup.checkGroupConfig();
+            if (CollectionUtil.isNotEmpty(cacheGroups)) {
+                for (CacheGroup cacheGroup : cacheGroups) {
+                    cacheGroup.checkGroupConfig();
                     BaseMapper mapperBean = ApplicationContextUtil.getMapperBean(clazz);
                     QueryWrapper<?> queryWrapper = new QueryWrapper();
-                    queryWrapper.eq(customerCacheGroup.getTableId(), associationKeyValue);
+                    queryWrapper.eq(cacheGroup.getTableId(), associationKeyValue);
 
                     Constructor<?> constructor = clazz.getConstructor();
                     Object o = constructor.newInstance();
-                    ReflectUtil.setFieldValue(o, customerCacheGroup.getTableFields().get(0), newCacheFieldValue);
+                    ReflectUtil.setFieldValue(o, cacheGroup.getTableFields().get(0), newCacheFieldValue);
 
                     mapperBean.update(o, queryWrapper);
 
@@ -344,11 +344,11 @@ public class MyBatisPlusUtil {
      *
      * @param <T>                 类型
      * @param clazz               类
-     * @param customerCacheGroups 冗余组对象List
+     * @param cacheGroups 冗余组对象List
      * @author HeathCHEN
      */
-    public static <T> void constructCacheGroup(Class<T> clazz, List<CustomerCacheGroup> customerCacheGroups) {
-        Map<String, CustomerCacheGroup> cacheGroupHashMap = new HashMap<>();
+    public static <T> void constructCacheGroup(Class<T> clazz, List<CacheGroup> cacheGroups) {
+        Map<String, CacheGroup> cacheGroupHashMap = new HashMap<>();
         Field[] declaredFields = clazz.getDeclaredFields();
 
         if (ArrayUtil.isNotEmpty(declaredFields)) {
@@ -356,22 +356,22 @@ public class MyBatisPlusUtil {
                 if (field.isAnnotationPresent(CachedTableField.class)) {
                     CachedTableField CachedTableField = field.getAnnotation(CachedTableField.class);
                     String groupId = CachedTableField.value();
-                    CustomerCacheGroup customerCacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
-                    customerCacheGroup.addCachedTableFields(CachedTableField);
-                    customerCacheGroup.addTableFields(TableUtil.getTableColumnName(clazz, field));
+                    CacheGroup cacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
+                    cacheGroup.addCachedTableFields(CachedTableField);
+                    cacheGroup.addTableFields(TableUtil.getTableColumnName(clazz, field));
                 }
                 if (field.isAnnotationPresent(CachedTableId.class)) {
                     CachedTableId CachedTableId = field.getAnnotation(CachedTableId.class);
                     String groupId = CachedTableId.value();
-                    CustomerCacheGroup customerCacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
-                    customerCacheGroup.setCachedTableId(CachedTableId);
-                    customerCacheGroup.setTableId(TableUtil.getTableColumnName(clazz, field));
+                    CacheGroup cacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
+                    cacheGroup.setCachedTableId(CachedTableId);
+                    cacheGroup.setTableId(TableUtil.getTableColumnName(clazz, field));
                 }
 
             }
 
         }
-        cacheGroupHashMap.forEach((key, value) -> customerCacheGroups.add(value));
+        cacheGroupHashMap.forEach((key, value) -> cacheGroups.add(value));
 
     }
 
@@ -380,19 +380,19 @@ public class MyBatisPlusUtil {
      *
      * @param groupId           组id
      * @param cacheGroupHashMap 缓存map
-     * @return {@link CustomerCacheGroup } 冗余组对象List
+     * @return {@link CacheGroup } 冗余组对象List
      * @author HeathCHEN
      */
-    public static CustomerCacheGroup getCustomerCacheGroupFromMap(String groupId, Map<String, CustomerCacheGroup> cacheGroupHashMap) {
-        CustomerCacheGroup customerCacheGroup = cacheGroupHashMap.get(groupId);
+    public static CacheGroup getCustomerCacheGroupFromMap(String groupId, Map<String, CacheGroup> cacheGroupHashMap) {
+        CacheGroup cacheGroup = cacheGroupHashMap.get(groupId);
 
-        if (ObjectUtil.isNull(customerCacheGroup)) {
-            customerCacheGroup = new CustomerCacheGroup();
-            customerCacheGroup.setGroupId(customerCacheGroup.getGroupId());
-            cacheGroupHashMap.put(groupId, customerCacheGroup);
+        if (ObjectUtil.isNull(cacheGroup)) {
+            cacheGroup = new CacheGroup();
+            cacheGroup.setGroupId(cacheGroup.getGroupId());
+            cacheGroupHashMap.put(groupId, cacheGroup);
 
         }
-        return customerCacheGroup;
+        return cacheGroup;
     }
 
     /**

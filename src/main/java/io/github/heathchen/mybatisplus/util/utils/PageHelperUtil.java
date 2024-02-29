@@ -9,7 +9,7 @@ import com.github.pagehelper.PageHelper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
-import io.github.heathchen.mybatisplus.util.domain.QueryConfigDto;
+import io.github.heathchen.mybatisplus.util.domain.OrderDto;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 
 import java.lang.reflect.Field;
@@ -75,17 +75,17 @@ public class PageHelperUtil {
 
         if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
             for (int i = 0; i < columns.length; i++) {
-                QueryConfigDto QueryConfigDto = new QueryConfigDto();
+                OrderDto OrderDto = new OrderDto();
                 if (StrUtil.isBlank(columns[i])) {
                     continue;
                 }
-                QueryConfigDto.setTableColumnName(columns[i]);
+                OrderDto.setTableColumnName(columns[i]);
                 if (ObjectUtil.isNull(orderTypes[i])) {
                     continue;
                 }
-                QueryConfigDto.setOrderType(orderTypes[i]);
-                QueryConfigDto.setOrderPriority(i + 1);
-                OrderAndPageParamThreadLocal.putQueryConfigDtoIntoOrderList(QueryConfigDto);
+                OrderDto.setOrderType(orderTypes[i]);
+                OrderDto.setOrderPriority(i + 1);
+                OrderAndPageParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
             }
 
         }
@@ -104,13 +104,13 @@ public class PageHelperUtil {
         if (queryField.orderType().equals(OrderType.NONE)) {
             return;
         }
-        QueryConfigDto QueryConfigDto = new QueryConfigDto();
-        QueryConfigDto.setTableColumnName(tableColumnName);
-        QueryConfigDto.setOrderPriority(queryField.orderPriority());
-        QueryConfigDto.setOrderType(queryField.orderType());
-        QueryConfigDto.setField(field);
-        QueryConfigDto.setClazz(clazz);
-        OrderAndPageParamThreadLocal.putQueryConfigDtoIntoOrderList(QueryConfigDto);
+        OrderDto OrderDto = new OrderDto();
+        OrderDto.setTableColumnName(tableColumnName);
+        OrderDto.setOrderPriority(queryField.orderPriority());
+        OrderDto.setOrderType(queryField.orderType());
+        OrderDto.setField(field);
+        OrderDto.setClazz(clazz);
+        OrderAndPageParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
 
 
     }
@@ -133,24 +133,24 @@ public class PageHelperUtil {
         String isAsc = (String) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.IS_ASC);
 
         if (StrUtil.isNotBlank(orderByColumn) && StrUtil.isNotBlank(isAsc)) {
-            QueryConfigDto QueryConfigDto = new QueryConfigDto();
+            OrderDto OrderDto = new OrderDto();
             if (isAsc.equals(Boolean.TRUE.toString())) {
-                QueryConfigDto.setOrderType(OrderType.ASC);
+                OrderDto.setOrderType(OrderType.ASC);
             } else {
-                QueryConfigDto.setOrderType(OrderType.DESC);
+                OrderDto.setOrderType(OrderType.DESC);
             }
-            QueryConfigDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn));
-            QueryConfigDto.setOrderPriority(-1);
-            OrderAndPageParamThreadLocal.putQueryConfigDtoIntoOrderList(QueryConfigDto);
+            OrderDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn));
+            OrderDto.setOrderPriority(-1);
+            OrderAndPageParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
         }
 
-        List<QueryConfigDto> orderList = OrderAndPageParamThreadLocal.getOrderList();
+        List<OrderDto> orderList = OrderAndPageParamThreadLocal.getOrderList();
 
         //对查询进行排序
         if (CollectionUtil.isNotEmpty(orderList)) {
-            for (QueryConfigDto QueryConfigDto : orderList) {
-                String tableColumnName = QueryConfigDto.getTableColumnName();
-                OrderType orderType = QueryConfigDto.getOrderType();
+            for (OrderDto OrderDto : orderList) {
+                String tableColumnName = OrderDto.getTableColumnName();
+                OrderType orderType = OrderDto.getOrderType();
                 if (ObjectUtil.isNotNull(orderType) && orderType.equals(OrderType.ASC)) {
                     queryWrapper.orderByAsc(tableColumnName);
                 }

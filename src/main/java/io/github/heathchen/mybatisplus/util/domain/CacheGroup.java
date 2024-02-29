@@ -14,7 +14,7 @@ import java.util.List;
  * @version 1.0
  * @since 2024/02/26
  */
-public class CustomerCacheGroup {
+public class CacheGroup {
 
 
     /**
