@@ -1,6 +1,7 @@
 package io.github.heathchen.mybatisplus.util.annotation;
 
 
+import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 
 import java.lang.annotation.ElementType;
@@ -43,6 +44,15 @@ public @interface QueryConfig {
      * @author HeathCHEN
      */
     boolean orderColumn() default true;
+
+
+    /**
+     * 匹配模式 默认使用全局设定(全部匹配)
+     * @return {@link MatchMode }
+     * @author HeathCHEN
+     */
+    MatchMode matchMode() default MatchMode.USING_GLOBAL_MODE;
+
 
 
 

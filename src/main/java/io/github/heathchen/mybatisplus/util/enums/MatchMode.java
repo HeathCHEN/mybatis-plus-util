@@ -12,23 +12,36 @@ public enum MatchMode {
      * 则按字段上的标注的查询类型做数据过滤
      *
      */
-    ALL_MATCH_MODE("全部匹配模式"),
+    ALL_MATCH_MODE("allMatchMode","全部匹配模式"),
     /**
      *  只对标记了@QueryField的字段做数据过滤
      */
-    ACCURATE_MATCH_MODE("精确匹配模式");
+    ACCURATE_MATCH_MODE("accurateMatchMode","精确匹配模式"),
+    /**
+     *  按照全局配置的匹配模式做匹配,默认是ALL_MATCH_MODE
+     */
+    USING_GLOBAL_MODE("usingGlobalMode","全局配置的模式");
 
 
     /**
      * 描述
      */
     private final String description;
+    /**
+     * 名词
+     */
+    private final String name;
 
-    MatchMode(String description) {
+    MatchMode(String name,String description) {
+        this.name = name;
         this.description = description;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public String getName() {
+        return name;
     }
 }

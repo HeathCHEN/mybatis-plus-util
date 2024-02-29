@@ -1,6 +1,7 @@
 package io.github.heathchen.mybatisplus.util.config;
 
 import io.github.heathchen.mybatisplus.util.strategy.*;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *  MyBatisPlusUtil配置类
@@ -9,6 +10,9 @@ import io.github.heathchen.mybatisplus.util.strategy.*;
  * @since 2024/02/22
  */
 public class MyBatisPlusUtilConfig {
+
+    @Value("${myBatisPlusUtil.globalMatchMode:allMatchMode}")
+    public String globalMatchMode;
 
 
     public MyBatisPlusUtilConfig() {
@@ -35,5 +39,13 @@ public class MyBatisPlusUtilConfig {
         new NotInQueryTypeStrategy();
         new NotLikeQueryTypeStrategy();
         new SqlQueryTypeStrategy();
+    }
+
+    public String getGlobalMatchMode() {
+        return globalMatchMode;
+    }
+
+    public void setGlobalMatchMode(String globalMatchMode) {
+        this.globalMatchMode = globalMatchMode;
     }
 }
