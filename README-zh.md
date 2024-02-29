@@ -147,7 +147,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
 #### 3.1.16. QueryType.SQL
 - SQL 语句，与 MyBatis-Plus 的 sql 对应
 
-#### 3.1.17. orColumns
+#### 3.1.2. orColumns
 - 或查询，查询时匹配多个字段。
   例如在在查询规格表时，需要同时用一个参数模糊查询规格名和重量码。
 
@@ -203,7 +203,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
      WHERE (spec_name LIKE '%11%' OR weight_code LIKE '%11%');
     ```
 
-#### 3.1.18. columnName
+#### 3.1.3. columnName
 - 字段名，用于指定对应属性在数据库表字段名，默认为空，优先级高于 @TableField 中 value。非必填，默认会从 mybatis 的缓存中取出属性值对应数据库表字段名。
 - 示例
   实体类
@@ -219,7 +219,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
      WHERE (spec_name LIKE '%小%') 
     ```
 
-#### 3.1.19. @orderType
+#### 3.1.4. @orderType
 - 该字段用于排序，默认为 OrderType.NONE，不进行排序。
 - 示例
   实体类
@@ -267,10 +267,10 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
      ORDER BY create_time ASC， status DESC;
     ```
 
-#### 3.1.20. orderPriority
+#### 3.1.5. orderPriority
 - 用于设置排序优先级，默认为 0。
 
-#### 3.1.21. betweenStartVal
+#### 3.1.6. betweenStartVal
 - 当查询类型是 BETWEEN 类型时， BETWEEN 值1 AND 值2，betweenStartVal 表示值1 的属性名，默认为 startTime。
 - 示例
   查询 DTO
@@ -333,24 +333,24 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     ```
     
     
-#### 3.1.22. betweenEndVal
+#### 3.1.7. betweenEndVal
 - 当查询类型是 BETWEEN 类型时， BETWEEN 值1 AND 值2，betweenEndVal 表示值 2 的属性名，默认为 endTime。
 
-#### 3.1.23. notBetweenStartVal
+#### 3.1.8. notBetweenStartVal
 - 当查询类型是 NOT_BETWEEN 类型时， BETWEEN 值1 AND 值2，notBetweenStartVal 表示值1 的属性名，默认为 startTime。
-#### 3.1.24. notBetweenEndVal
+#### 3.1.9. notBetweenEndVal
 - 当查询类型是 NOT_BETWEEN 类型时， BETWEEN 值1 AND 值2，notBetweenEndVal 表示值 2 的属性名，默认为 endTime。
 
-#### 3.1.25. exist
+#### 3.1.10. exist
 - 当不希望字段参与查询时，将该值设置为 true 即可过滤。
 
-#### 3.1.26. joinType
+#### 3.1.11. joinType
 - 表连接(未实现)。
 
-#### 3.1.27. joinEntityClass
+#### 3.1.12. joinEntityClass
 - 表连接实体类(未实现)。
 
-#### 3.1.28. sql
+#### 3.1.13. sql
 - 当查询类型是 SQL 类型时， 会将该参数拼接到 SQL 中，默认为空值。
 
 ### 3.2. @QueryConfig

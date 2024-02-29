@@ -96,7 +96,18 @@ public class MyBatisPlusUtil {
             return BeanUtil.copyToList(list, clazz);
         }
     }
-
+    /**
+     * 反射构筑Query后获取Bean查询再转成对应类型
+     *
+     * @param <T>   查询结果的返回类型
+     * @param e     查询参数
+     * @param clazz 返回类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <T, E> List<T> queryByReflect(E e, Class<T> clazz) {
+        return queryByReflect(e, clazz, null, ArrayUtil.newArray(String.class, 0));
+    }
 
     /**
      * 反射构筑Query后获取Bean查询再转成对应类型
@@ -157,6 +168,7 @@ public class MyBatisPlusUtil {
      * 反射构筑Query后获取Bean查询
      *
      * @param e            查询参数
+     * @param matchMode    匹配模式
      * @param <E>          查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
