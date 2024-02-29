@@ -6,7 +6,6 @@ import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
@@ -39,16 +38,16 @@ public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
         //将属性转为下划线格式
         String tableColumnName = TableUtil.getTableColumnName(clazz,field);
 
-        Object notBetweenStartValue = QueryParamThreadLocal.getValueFromObjectMap(queryField.notBetweenStartVal());
-        Object notBetweenEndValue = QueryParamThreadLocal.getValueFromObjectMap(queryField.notBetweenEndVal());
+        Object notBetweenStartValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.notBetweenStartVal());
+        Object notBetweenEndValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.notBetweenEndVal());
 
         if (QueryUtil.checkValue(notBetweenStartValue)) {
             queryWrapper.le(tableColumnName, notBetweenStartValue);
-            QueryParamThreadLocal.removeParamFromObjectMap(queryField.notBetweenStartVal());
+            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
         }
         if (QueryUtil.checkValue(notBetweenEndValue)) {
             queryWrapper.ge(tableColumnName, notBetweenEndValue);
-            QueryParamThreadLocal.removeParamFromObjectMap(queryField.notBetweenEndVal());
+            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
         }
         //检查是否使用排序
         PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);

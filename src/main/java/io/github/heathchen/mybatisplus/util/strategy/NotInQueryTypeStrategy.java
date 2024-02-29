@@ -8,7 +8,6 @@ import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
@@ -39,7 +38,7 @@ public class NotInQueryTypeStrategy implements QueryTypeStrategy {
      */
     @Override
     public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
-        Object value = QueryParamThreadLocal.getValueFromObjectMap(field.getName());
+        Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
         //将属性转为下划线格式
         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
 
@@ -58,7 +57,7 @@ public class NotInQueryTypeStrategy implements QueryTypeStrategy {
                 }
             }
         }
-        QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
         //检查是否使用排序
         PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);
     }

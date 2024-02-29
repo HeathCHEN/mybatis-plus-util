@@ -12,7 +12,6 @@ import cn.hutool.core.util.ReflectUtil;
 
 import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -104,6 +103,48 @@ public class MyBatisPlusUtil {
             return BeanUtil.copyToList(list, clazz);
         }
     }
+
+
+    /**
+     * 反射构筑CountQuery后获取Bean查询再转成对应类型
+     *
+     * @param e             查询参数
+     * @param matchMode     匹配模式
+     * @param ignoreParams  忽略参数名
+     * @return {@link Integer}
+     */
+    public static < E> Integer countByReflect(E e,MatchMode matchMode, String... ignoreParams) {
+        QueryWrapper query = getQuery(e, matchMode, ignoreParams);
+        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
+        return baseMapper.selectCount(query);
+    }
+
+    /**
+     * 反射构筑CountQuery后获取Bean查询再转成对应类型
+     *
+     * @param e             查询参数
+     * @param matchMode     匹配模式
+     * @return {@link Integer}
+     */
+    public static < E> Integer countByReflect(E e,MatchMode matchMode) {
+        QueryWrapper query = getQuery(e, matchMode, ArrayUtil.newArray(String.class, 0));
+        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
+        return baseMapper.selectCount(query);
+    }
+
+    /**
+     * 反射构筑CountQuery后获取Bean查询再转成对应类型
+     *
+     * @param e             查询参数
+     * @param ignoreParams  忽略参数名
+     * @return {@link Integer}
+     */
+    public static < E> Integer countByReflect(E e, String... ignoreParams) {
+        QueryWrapper query = getQuery(e, null, ArrayUtil.newArray(String.class, 0));
+        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
+        return baseMapper.selectCount(query);
+    }
+
 
     /**
      * 反射构筑Query后获取Bean查询再转成对应类型
@@ -201,8 +242,8 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> QueryWrapper<E> getQuery(E e, MatchMode matchMode, String... ignoreParams) {
-        QueryParamThreadLocal.setObjectMap(BeanUtil.beanToMap(e, false, true));
-        QueryParamThreadLocal.removeParamFromObjectMap(ignoreParams);
+        QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
+        QueryParamThreadLocal.removeParamFromQueryParamMap(ignoreParams);
         Class<?> clazz = e.getClass();
         QueryWrapper<E> queryWrapper = new QueryWrapper<E>();
         //剔除查询参数中的分页参数
@@ -287,7 +328,7 @@ public class MyBatisPlusUtil {
                     QueryField queryField = field.getAnnotation(QueryField.class);
                     //剔除不参与的参数
                     if (!queryField.exist()) {
-                        QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
+                        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
                         continue;
                     }
                     //根据查询类型构建查询
@@ -299,7 +340,7 @@ public class MyBatisPlusUtil {
         }
 
         //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(QueryParamThreadLocal.getObjectMap())) {
+        if (CollectionUtil.isNotEmpty(QueryParamThreadLocal.getQueryParamMap())) {
             return buildQueryByReflect(clazz.getSuperclass(), queryWrapper);
         } else {
             return queryWrapper;
@@ -421,7 +462,6 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static void cleanData() {
-        OrderAndPageParamThreadLocal.cleanData();
         QueryParamThreadLocal.cleanData();
     }
 

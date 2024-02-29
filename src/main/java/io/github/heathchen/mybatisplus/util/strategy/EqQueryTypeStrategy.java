@@ -7,7 +7,6 @@ import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
@@ -38,7 +37,7 @@ public class EqQueryTypeStrategy implements QueryTypeStrategy {
      */
     @Override
     public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
-        Object value = QueryParamThreadLocal.getValueFromObjectMap(field.getName());
+        Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
 
         String[] orColumns = queryField.orColumns();
         //查询属性名对应字段名
@@ -57,7 +56,7 @@ public class EqQueryTypeStrategy implements QueryTypeStrategy {
                 queryWrapper.eq(tableColumnName, value);
             }
         }
-        QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
         //检查是否使用排序
         PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);
 

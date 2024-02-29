@@ -4,7 +4,6 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
@@ -36,12 +35,12 @@ public class SqlQueryTypeStrategy implements QueryTypeStrategy {
      */
     @Override
     public  <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
-        Object value = QueryParamThreadLocal.getValueFromObjectMap(field.getName());
+        Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
         if (QueryUtil.checkValue(value)|| StrUtil.isNotBlank(queryField.sql())) {
             queryWrapper.apply(queryField.sql(), value);
         }
 
-        QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
         //查询属性名对应字段名
         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
         //检查是否使用排序

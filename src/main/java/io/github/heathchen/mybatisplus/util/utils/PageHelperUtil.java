@@ -26,13 +26,13 @@ public class PageHelperUtil {
 
 
     public static void getPageParamFromQueryParam() {
-        OrderAndPageParamThreadLocal.setStartPage((Boolean) QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.START_PAGE));
-        OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.IS_ASC, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.IS_ASC));
-        OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.PAGE_SIZE, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.PAGE_SIZE));
-        OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.PAGE_NUM, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.PAGE_NUM));
-        OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.ORDER_BY_COLUMN, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.ORDER_BY_COLUMN));
-        OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.REASONABLE, QueryParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.REASONABLE));
-        QueryParamThreadLocal.removeParamFromObjectMap(PageAndOrderConst.START_PAGE,
+        QueryParamThreadLocal.setStartPage((Boolean) QueryParamThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.START_PAGE));
+        QueryParamThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.IS_ASC, QueryParamThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.IS_ASC));
+        QueryParamThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.PAGE_SIZE, QueryParamThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.PAGE_SIZE));
+        QueryParamThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.PAGE_NUM, QueryParamThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.PAGE_NUM));
+        QueryParamThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_BY_COLUMN, QueryParamThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.ORDER_BY_COLUMN));
+        QueryParamThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.REASONABLE, QueryParamThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.REASONABLE));
+        QueryParamThreadLocal.removeParamFromQueryParamMap(PageAndOrderConst.START_PAGE,
                 PageAndOrderConst.IS_ASC,
                 PageAndOrderConst.PAGE_SIZE,
                 PageAndOrderConst.PAGE_NUM,
@@ -49,15 +49,15 @@ public class PageHelperUtil {
      */
     public static void checkColumnOrderOnClass(Class<?> clazz) {
         //清除分页插件的排序参数 使用该注解分页
-        Boolean startPage = OrderAndPageParamThreadLocal.getStartPage();
+        Boolean startPage = QueryParamThreadLocal.getStartPage();
         PageHelper.clearPage();
         if (startPage) {
             com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
             if (ObjectUtil.isNotNull(localPage)) {
                 PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
             } else {
-                Integer pageSize = (Integer) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.PAGE_SIZE);
-                Integer pageNum = (Integer) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.PAGE_NUM);
+                Integer pageSize = (Integer) QueryParamThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.PAGE_SIZE);
+                Integer pageNum = (Integer) QueryParamThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.PAGE_NUM);
                 if (ObjectUtil.isNotNull(pageSize) && ObjectUtil.isNotNull(pageNum)) {
                     PageHelper.startPage(pageNum, pageSize);
                 }
@@ -79,7 +79,7 @@ public class PageHelperUtil {
         OrderType[] orderTypes = QueryConfig.orderTypes();
         boolean orderColumn = QueryConfig.orderColumn();
 
-        OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+        QueryParamThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
 
         if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
             for (int i = 0; i < columns.length; i++) {
@@ -94,7 +94,7 @@ public class PageHelperUtil {
 
                 OrderDto.setOrderType(orderTypes[i]);
                 OrderDto.setOrderPriority(i + 1);
-                OrderAndPageParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
+                QueryParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
             }
 
         }
@@ -119,7 +119,7 @@ public class PageHelperUtil {
         OrderDto.setOrderType(queryField.orderType());
         OrderDto.setField(field);
         OrderDto.setClazz(clazz);
-        OrderAndPageParamThreadLocal.putIntoOrderListIfOrderDtoAbsent(OrderDto);
+        QueryParamThreadLocal.putIntoOrderListIfOrderDtoAbsent(OrderDto);
 
 
     }
@@ -132,14 +132,14 @@ public class PageHelperUtil {
      */
     public static void buildQueryOrder(QueryWrapper<?> queryWrapper) {
 
-        Boolean orderColumn = (Boolean) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.ORDER_COLUMN);
+        Boolean orderColumn = (Boolean) QueryParamThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN);
 
         if (ObjectUtil.isNotNull(orderColumn) && !orderColumn) {
             return;
         }
 
-        String orderByColumn = (String) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.ORDER_BY_COLUMN);
-        String isAsc = (String) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.IS_ASC);
+        String orderByColumn = (String) QueryParamThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_BY_COLUMN);
+        String isAsc = (String) QueryParamThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.IS_ASC);
 
         if (StrUtil.isNotBlank(orderByColumn) && StrUtil.isNotBlank(isAsc)) {
             OrderDto OrderDto = new OrderDto();
@@ -150,10 +150,10 @@ public class PageHelperUtil {
             }
             OrderDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn).toUpperCase());
             OrderDto.setOrderPriority(-1);
-            OrderAndPageParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
+            QueryParamThreadLocal.putOrderDtoIntoOrderList(OrderDto);
         }
 
-        List<OrderDto> orderList = OrderAndPageParamThreadLocal.getOrderList();
+        List<OrderDto> orderList = QueryParamThreadLocal.getOrderList();
 
         //对查询进行排序
         if (CollectionUtil.isNotEmpty(orderList)) {

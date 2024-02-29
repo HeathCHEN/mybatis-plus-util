@@ -38,7 +38,7 @@ public class LikeQueryTypeStrategy implements QueryTypeStrategy {
      */
     @Override
     public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
-        Object value = QueryParamThreadLocal.getValueFromObjectMap(field.getName());
+        Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
         if (ObjectUtil.isNull(value)) {
             return;
         }
@@ -61,7 +61,7 @@ public class LikeQueryTypeStrategy implements QueryTypeStrategy {
                 queryWrapper.like(tableColumnName, value);
             }
         }
-        QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
         //检查是否使用排序
         PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);
     }

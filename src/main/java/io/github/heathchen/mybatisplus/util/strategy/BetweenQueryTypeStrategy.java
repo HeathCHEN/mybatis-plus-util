@@ -6,7 +6,6 @@ import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
@@ -39,16 +38,16 @@ public class BetweenQueryTypeStrategy implements QueryTypeStrategy {
         //查询属性名对应字段名
         String tableColumnName = TableUtil.getTableColumnName(clazz,field);
 
-        Object startValue = QueryParamThreadLocal.getValueFromObjectMap(queryField.betweenStartVal());
-        Object endValue = QueryParamThreadLocal.getValueFromObjectMap(queryField.betweenEndVal());
+        Object startValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.betweenStartVal());
+        Object endValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.betweenEndVal());
         
         if (QueryUtil.checkValue(startValue)) {
             queryWrapper.ge(tableColumnName, startValue);
-            QueryParamThreadLocal.removeParamFromObjectMap(queryField.betweenStartVal());
+            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
         }
         if (QueryUtil.checkValue(endValue)) {
             queryWrapper.le(tableColumnName, endValue);
-            QueryParamThreadLocal.removeParamFromObjectMap(queryField.betweenEndVal());
+            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
         }
         //检查是否使用排序
         PageHelperUtil.checkColumnOrderOnField(queryField,clazz, field,tableColumnName);

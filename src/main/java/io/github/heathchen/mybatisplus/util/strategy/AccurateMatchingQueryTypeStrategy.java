@@ -129,7 +129,7 @@ public class AccurateMatchingQueryTypeStrategy {
      * @author HeathCHEN
      */
     public static <T> void buildQuery(QueryWrapper<T> queryWrapper) {
-        Map<String, Object> objectMap = QueryParamThreadLocal.getObjectMap();
+        Map<String, Object> objectMap = QueryParamThreadLocal.getQueryParamMap();
         if (CollectionUtil.isNotEmpty(objectMap)) {
             Set<Map.Entry<String, Object>> entries = objectMap.entrySet();
             for (Map.Entry<String, Object> entry : entries) {
