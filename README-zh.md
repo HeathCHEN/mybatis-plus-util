@@ -317,11 +317,13 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
       	}    
     ```
     
-    查询参数
+    查询参数1:
     
     ```json
       {
-        "specName": "11"
+            "specName": "大",
+            "startTime": "2023-07-06 11:12:01",
+             "endTime": "2024-07-06 13:14:00"
       }
     ```
     
@@ -329,9 +331,23 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     
     ```sql
       SELECT * FROM pdt_spec
-       ORDER BY create_time ASC， status DESC;
+      WHERE (spec_name LIKE '%大%' AND create_time >= '2023-07-06 11:12:01.0' AND create_time <= '2024-07-06 13:14:00.0') ORDER BY create_time ASC;
     ```
-    
+    查询参数2:
+
+    ```json
+      {
+            "specName": "大",
+            "startTime": "2023-07-06 11:12:01"
+      }
+    ```
+
+  执行 SQL
+
+  ```sql
+     SELECT * FROM pdt_spec
+     WHERE (spec_name LIKE '%大%' AND create_time >= '2023-07-06 11:12:01.0')  ORDER BY create_time ASC;
+     ```
     
 #### 3.1.7. betweenEndVal
 - 当查询类型是 BETWEEN 类型时， BETWEEN 值1 AND 值2，betweenEndVal 表示值 2 的属性名，默认为 endTime。
