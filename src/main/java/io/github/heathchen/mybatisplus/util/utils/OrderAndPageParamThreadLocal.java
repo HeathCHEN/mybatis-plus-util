@@ -3,7 +3,7 @@ package io.github.heathchen.mybatisplus.util.utils;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
-import io.github.heathchen.mybatisplus.util.domain.CustomerOrderDto;
+import io.github.heathchen.mybatisplus.util.domain.QueryConfigDto;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -86,28 +86,28 @@ public class OrderAndPageParamThreadLocal {
         return LOCAL.get();
     }
 
-    public static Map<String, CustomerOrderDto> getOrderMap() {
-        Map<String, CustomerOrderDto> map = (Map<String, CustomerOrderDto>) getValueFromObjectMap(PageAndOrderConst.ORDER_MAP);
+    public static Map<String, QueryConfigDto> getOrderMap() {
+        Map<String, QueryConfigDto> map = (Map<String, QueryConfigDto>) getValueFromObjectMap(PageAndOrderConst.ORDER_MAP);
         if (CollectionUtil.isEmpty(map)) {
-            Map<String, CustomerOrderDto> newMap = new HashMap<>();
+            Map<String, QueryConfigDto> newMap = new HashMap<>();
             setValueToObjectMap(PageAndOrderConst.ORDER_MAP, newMap);
             map = newMap;
         }
         return map;
     }
 
-    public static List<CustomerOrderDto> getOrderList() {
+    public static List<QueryConfigDto> getOrderList() {
 
         return getOrderMap().
                 values().
                 stream().
-                sorted(Comparator.comparingInt(CustomerOrderDto::getOrderPriority)).
+                sorted(Comparator.comparingInt(QueryConfigDto::getOrderPriority)).
                 collect(Collectors.toList());
     }
 
-    public static void putCustomerOrderDtoIntoOrderList(CustomerOrderDto customerOrderDto) {
-        Map<String, CustomerOrderDto> orderMap = getOrderMap();
-        orderMap.put(customerOrderDto.getTableColumnName(), customerOrderDto);
+    public static void putQueryConfigDtoIntoOrderList(QueryConfigDto QueryConfigDto) {
+        Map<String, QueryConfigDto> orderMap = getOrderMap();
+        orderMap.put(QueryConfigDto.getTableColumnName(), QueryConfigDto);
     }
 
     public static void setStartPage(Boolean startPage) {

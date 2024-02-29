@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
  * @version 1.0
  * 2023/07/24
  */
-public class CustomerOrderDto {
+public class QueryConfigDto {
 
     /**
      * 排序优先级

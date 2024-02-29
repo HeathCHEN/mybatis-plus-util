@@ -20,5 +20,7 @@ public enum OrderType {
         this.description = description;
     }
 
-
+    public String getDescription() {
+        return description;
+    }
 }

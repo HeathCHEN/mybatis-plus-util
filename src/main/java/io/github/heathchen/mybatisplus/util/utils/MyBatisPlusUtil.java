@@ -12,9 +12,9 @@ import cn.hutool.core.util.ReflectUtil;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableField;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableId;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
+import io.github.heathchen.mybatisplus.util.annotation.CachedTableField;
+import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.domain.CustomerCacheGroup;
 import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingQueryTypeStrategy;
 import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
@@ -31,6 +31,7 @@ import java.util.*;
  * @since 2024/02/26
  */
 public class MyBatisPlusUtil {
+
 
 
     /**
@@ -204,20 +205,20 @@ public class MyBatisPlusUtil {
                 Field field = clazzDeclaredField;
                 try {
                     //如果没有注解就暂且跳过,留到父类看看能否匹配,如果都没有匹配,最后做eq匹配
-                    if (!field.isAnnotationPresent(CustomerQuery.class)) {
+                    if (!field.isAnnotationPresent(QueryField.class)) {
                         continue;
                     }
                     //获取属性上的注解
-                    CustomerQuery customerQuery = field.getAnnotation(CustomerQuery.class);
+                    QueryField queryField = field.getAnnotation(QueryField.class);
                     //剔除不参与的参数
-                    if (!customerQuery.exist()) {
+                    if (!queryField.exist()) {
                         QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
                         continue;
                     }
                     //根据查询类型构建查询
                     QueryTypeStrategyManager.
-                            getQueryTypeStrategyToManager(customerQuery.value().getCompareType())
-                            .buildQuery(customerQuery, clazz, field, queryWrapper);
+                            getQueryTypeStrategyToManager(queryField.value().getCompareType())
+                            .buildQuery(queryField, clazz, field, queryWrapper);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -282,18 +283,18 @@ public class MyBatisPlusUtil {
 
         if (ArrayUtil.isNotEmpty(declaredFields)) {
             for (Field field : declaredFields) {
-                if (field.isAnnotationPresent(CustomerCacheTableField.class)) {
-                    CustomerCacheTableField customerCacheTableField = field.getAnnotation(CustomerCacheTableField.class);
-                    String groupId = customerCacheTableField.value();
+                if (field.isAnnotationPresent(CachedTableField.class)) {
+                    CachedTableField CachedTableField = field.getAnnotation(CachedTableField.class);
+                    String groupId = CachedTableField.value();
                     CustomerCacheGroup customerCacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
-                    customerCacheGroup.addCustomerCacheTableFields(customerCacheTableField);
+                    customerCacheGroup.addCachedTableFields(CachedTableField);
                     customerCacheGroup.addTableFields(TableUtil.getTableColumnName(clazz, field));
                 }
-                if (field.isAnnotationPresent(CustomerCacheTableId.class)) {
-                    CustomerCacheTableId customerCacheTableId = field.getAnnotation(CustomerCacheTableId.class);
-                    String groupId = customerCacheTableId.value();
+                if (field.isAnnotationPresent(CachedTableId.class)) {
+                    CachedTableId CachedTableId = field.getAnnotation(CachedTableId.class);
+                    String groupId = CachedTableId.value();
                     CustomerCacheGroup customerCacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
-                    customerCacheGroup.setCustomerCacheTableId(customerCacheTableId);
+                    customerCacheGroup.setCachedTableId(CachedTableId);
                     customerCacheGroup.setTableId(TableUtil.getTableColumnName(clazz, field));
                 }
 

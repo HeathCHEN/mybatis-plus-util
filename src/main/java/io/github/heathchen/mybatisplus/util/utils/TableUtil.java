@@ -1,6 +1,6 @@
 package io.github.heathchen.mybatisplus.util.utils;
 
-import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -32,9 +32,9 @@ public class TableUtil {
     public static String getTableColumnName(Class<?> clazz, Field field) {
 
         String columnName = "";
-        if (field.isAnnotationPresent(CustomerQuery.class)) {
-            CustomerQuery customerQuery = field.getAnnotation(CustomerQuery.class);
-            columnName = customerQuery.columnName();
+        if (field.isAnnotationPresent(QueryField.class)) {
+            QueryField queryField = field.getAnnotation(QueryField.class);
+            columnName = queryField.columnName();
             if (StrUtil.isNotBlank(columnName)) {
                 return columnName;
             }

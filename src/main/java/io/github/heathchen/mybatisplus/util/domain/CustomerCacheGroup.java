@@ -2,8 +2,8 @@ package io.github.heathchen.mybatisplus.util.domain;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.github.pagehelper.util.StringUtil;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableField;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerCacheTableId;
+import io.github.heathchen.mybatisplus.util.annotation.CachedTableField;
+import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +20,13 @@ public class CustomerCacheGroup {
     /**
      * 自定义冗余字段关联键
      */
-    CustomerCacheTableId customerCacheTableId;
+    CachedTableId CachedTableId;
 
 
     /**
      * 自定义冗余字段注解List
      */
-    List<CustomerCacheTableField> customerCacheTableFields ;
+    List<CachedTableField> CachedTableFields ;
 
 
     /**
@@ -46,26 +46,26 @@ public class CustomerCacheGroup {
     String groupId;
 
 
-    public CustomerCacheTableId getCustomerCacheTableId() {
-        return customerCacheTableId;
+    public CachedTableId getCachedTableId() {
+        return CachedTableId;
     }
 
-    public void setCustomerCacheTableId(CustomerCacheTableId customerCacheTableId) {
-        this.customerCacheTableId = customerCacheTableId;
+    public void setCachedTableId(CachedTableId CachedTableId) {
+        this.CachedTableId = CachedTableId;
     }
 
-    public List<CustomerCacheTableField> getCustomerCacheTableFields() {
-        if (CollectionUtil.isEmpty(customerCacheTableFields)) {
-            customerCacheTableFields = new ArrayList<>();
+    public List<CachedTableField> getCachedTableFields() {
+        if (CollectionUtil.isEmpty(CachedTableFields)) {
+            CachedTableFields = new ArrayList<>();
         }
-        return customerCacheTableFields;
+        return CachedTableFields;
     }
 
 
 
-    public void addCustomerCacheTableFields(CustomerCacheTableField customerCacheTableField) {
+    public void addCachedTableFields(CachedTableField CachedTableField) {
 
-        customerCacheTableFields.add(customerCacheTableField);
+        CachedTableFields.add(CachedTableField);
     }
 
     public String getTableId() {
@@ -83,8 +83,8 @@ public class CustomerCacheGroup {
         return tableFields;
     }
 
-    public void setCustomerCacheTableFields(List<CustomerCacheTableField> customerCacheTableFields) {
-        this.customerCacheTableFields = customerCacheTableFields;
+    public void setCachedTableFields(List<CachedTableField> CachedTableFields) {
+        this.CachedTableFields = CachedTableFields;
     }
 
     public void setTableFields(List<String> tableFields) {

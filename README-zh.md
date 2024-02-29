@@ -30,7 +30,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
       </dependency>    
     ```  
 
-    - 修改实体类，标记@CustomerQuery
+    - 修改实体类，标记@QueryField
   
       ```java  
          @TableName(value ="pdt_spec")  
@@ -44,13 +44,13 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
             /**  
              * 规格名  
              */
-            @CustomerQuery(value = QueryType.LIKE)   
+            @QueryField(value = QueryType.LIKE)   
             @TableField(value = "spec_name")   
             private Long specName;    
             /**  
              * 创建时间 
              */
-            @CustomerQuery(orderType = OrderType.ASC)   
+            @QueryField(orderType = OrderType.ASC)   
             @TableField(value = "create_time")   
             private Date createTime;  
         }    
@@ -103,7 +103,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
   
 ## 3. 注解介绍
 
-### 3.1. @CustomerQuery
+### 3.1. @QueryField
 
 - 该注解用在实体类的属性上，用于标记对应字段的查询类型或排序。
 
@@ -112,7 +112,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
   - 示例:
     ```java
     @TableField(value = "spec_name")  
-    @CustomerQuery(QueryType.LIKE)  
+    @QueryField(QueryType.LIKE)  
     private String specName;
     ```
 
@@ -168,7 +168,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     	 * 规格名  
     	 */
     	@TableField(value = "spec_name")  
-    	@CustomerQuery(QueryType.LIKE，，orColumns = {"weight_code"})  
+    	@QueryField(QueryType.LIKE，，orColumns = {"weight_code"})  
     	@Excel(name = "规格名")  
     	private String specName;
     
@@ -176,7 +176,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     	 * 重量码  
     	 */  
     	@TableField(value = "weight_code")  
-    	@CustomerQuery(QueryType.LIKE)  
+    	@QueryField(QueryType.LIKE)  
     	@Excel(name = "重量码")  
     	private String weightCode;
     
@@ -209,7 +209,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
   实体类
     ```java
     @TableField(value = "spec_name_temp")
-    @CustomerQuery(value = QueryType.LIKE，columnName = "spec_name")
+    @QueryField(value = QueryType.LIKE，columnName = "spec_name")
     private String specName;
     ```
 
@@ -235,20 +235,20 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     		/**  
     		 * 规格名  
     		 */
-    		@CustomerQuery(value = QueryType.LIKE)   
+    		@QueryField(value = QueryType.LIKE)   
     		@TableField(value = "spec_name")   
     		private Long specName;    
     		/**  
     		 * 创建时间 
     		 */
-    		@CustomerQuery(orderType = OrderType.ASC)   
+    		@QueryField(orderType = OrderType.ASC)   
     		@TableField(value = "create_time"，orderPriority = 100)   
     		private Date createTime;  
     		/**  
     		 * 商品状态（0正常 1停用 2 淘汰）  
     		 */  
     		@TableField(value = "status")  
-    		@CustomerQuery(orderType = OrderType.DESC，orderPriority = 111)
+    		@QueryField(orderType = OrderType.DESC，orderPriority = 111)
     		private Integer status;	
     	}    
     ```
@@ -304,13 +304,13 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
       		/**  
       		 * 规格名  
       		 */
-      		@CustomerQuery(value = QueryType.LIKE)   
+      		@QueryField(value = QueryType.LIKE)   
       		@TableField(value = "spec_name")   
       		private Long specName;    
       		/**  
       		 * 创建时间 
       		 */
-      		@CustomerQuery(orderType = OrderType.ASC)   
+      		@QueryField(orderType = OrderType.ASC)   
       		@TableField(value = QueryType.BETWEEN，value = "create_time")   
       		private Date createTime;  
       
@@ -353,8 +353,8 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
 #### 3.1.28. sql
 - 当查询类型是 SQL 类型时， 会将该参数拼接到 SQL 中，默认为空值。
 
-### 3.2. @CustomerOrder
-- 该注解用于实体类上，用于设置排序。不会与@CustomerQuery 中设置的排序冲突。
+### 3.2. @QueryConfig
+- 该注解用于实体类上，用于设置排序。不会与@QueryField 中设置的排序冲突。
 - 如果有字段重复排序，只会取最后识别的。
 
 - 示例
@@ -371,19 +371,19 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     		/**  
     		 * 规格名  
     		 */
-    		@CustomerQuery(value = QueryType.LIKE)   
+    		@QueryField(value = QueryType.LIKE)   
     		@TableField(value = "spec_name")   
     		private Long specName;    
     		/**  
     		 * 商品状态（0正常 1停用 2 淘汰）  
     		 */  
     		@TableField(value = "status")  
-    		@CustomerQuery(orderType = OrderType.DESC，orderPriority = 1111)  
+    		@QueryField(orderType = OrderType.DESC，orderPriority = 1111)  
     		private Integer status;
     		/**  
     		 * 创建时间 
     		 */
-    		@CustomerQuery(orderType = OrderType.ASC)   
+    		@QueryField(orderType = OrderType.ASC)   
     		@TableField(value = QueryType.BETWEEN，value = "create_time")   
     		private Date createTime;  
     
@@ -397,13 +397,13 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
 #### 3.2.3. orderColumn
 - 开启排序，默认开启。
 
-### 3.3. @CustomerCacheTableId
-- 自定义冗余字段关联键，配合@CustomerCacheTableField 用于快速更新数据库表中对其他表的冗余字段
+### 3.3. @CachedTableId
+- 自定义冗余字段关联键，配合@CachedTableField 用于快速更新数据库表中对其他表的冗余字段
 
 #### 3.3.1. value
-- 分组 id，用于区分其他分组的@CustomerCacheTableId 和@CustomerCacheTableField
+- 分组 id，用于区分其他分组的@CachedTableId 和@CachedTableField
 
-### 3.4. @CustomerCacheTableField
+### 3.4. @CachedTableField
 - 自定义冗余字段关联字段
 - 示例
 
@@ -447,13 +447,13 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
          * 部门负责人名称  
          */  
         @TableField(value = "leader_name")  
-        @CustomerCacheTableField  
+        @CachedTableField  
         private String leaderName;  
         /**  
          * 部门负责人id  
          */    
          @TableField(value = "leader_id")  
-        @CustomerCacheTableId  
+        @CachedTableId  
         private Long leaderId;
     }
   
@@ -487,7 +487,7 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     ```
 
 #### 3.4.1. value
-- 分组 id，用于区分其他分组的@CustomerCacheTableId 和@CustomerCacheTableField
+- 分组 id，用于区分其他分组的@CachedTableId 和@CachedTableField
 
 # License
 

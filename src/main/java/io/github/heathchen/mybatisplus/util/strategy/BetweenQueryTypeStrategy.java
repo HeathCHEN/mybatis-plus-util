@@ -1,6 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
@@ -26,30 +26,30 @@ public class BetweenQueryTypeStrategy implements QueryTypeStrategy {
 
     /**
      * 构造查询
-     * @param customerQuery CustomerQuery注解
+     * @param queryField CustomerQuery注解
      * @param clazz 类
      * @param field 字段
      * @param queryWrapper 查询queryWrapper
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
 
         //查询属性名对应字段名
         String tableColumnName = TableUtil.getTableColumnName(clazz,field);
 
-        Object startValue = QueryParamThreadLocal.getValueFromObjectMap(customerQuery.betweenStartVal());
-        Object endValue = QueryParamThreadLocal.getValueFromObjectMap(customerQuery.betweenEndVal());
+        Object startValue = QueryParamThreadLocal.getValueFromObjectMap(queryField.betweenStartVal());
+        Object endValue = QueryParamThreadLocal.getValueFromObjectMap(queryField.betweenEndVal());
         
         if (ObjectUtil.isNotNull(startValue)) {
             queryWrapper.ge(tableColumnName, startValue);
-            QueryParamThreadLocal.removeParamFromObjectMap(customerQuery.betweenStartVal());
+            QueryParamThreadLocal.removeParamFromObjectMap(queryField.betweenStartVal());
         }
         if (ObjectUtil.isNotNull(endValue)) {
             queryWrapper.le(tableColumnName, endValue);
-            QueryParamThreadLocal.removeParamFromObjectMap(customerQuery.betweenEndVal());
+            QueryParamThreadLocal.removeParamFromObjectMap(queryField.betweenEndVal());
         }
         //检查是否使用排序
-        PageHelperUtil.checkColumnOrderOnField(customerQuery,clazz, field,tableColumnName);
+        PageHelperUtil.checkColumnOrderOnField(queryField,clazz, field,tableColumnName);
     }
 }

@@ -1,6 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
@@ -28,21 +28,21 @@ public class LikeRightQueryTypeStrategy implements QueryTypeStrategy {
     /**
      * 构造查询
      *
-     * @param customerQuery CustomerQuery注解
+     * @param queryField CustomerQuery注解
      * @param clazz         类
      * @param field         字段
      * @param queryWrapper  查询queryWrapper
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQuery(CustomerQuery customerQuery, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
         Object value = QueryParamThreadLocal.getValueFromObjectMap(field.getName());
         if (ObjectUtil.isNull(value)) {
             return;
         }
         //将属性转为下划线格式
         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
-        String[] orColumns = customerQuery.orColumns();
+        String[] orColumns = queryField.orColumns();
         if (ObjectUtil.isNotNull(value)) {
             if (ArrayUtil.isNotEmpty(orColumns)) {
                 queryWrapper.and(tQueryWrapper -> {
@@ -59,6 +59,6 @@ public class LikeRightQueryTypeStrategy implements QueryTypeStrategy {
         }
         QueryParamThreadLocal.removeParamFromObjectMap(field.getName());
         //检查是否使用排序
-        PageHelperUtil.checkColumnOrderOnField(customerQuery, clazz, field, tableColumnName);
+        PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);
     }
 }

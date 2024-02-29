@@ -29,7 +29,7 @@ MyBatis Plus Util is an enhanced toolkit of MyBatis-Plus for simplify developmen
         <version>Latest Version</version>    
       </dependency>  
       ```  
-- Modify Entity file marks @CustomerQuery annotation
+- Modify Entity file marks @QueryField annotation
 
   ```java  
         @TableName(value ="pdt_spec")  
@@ -38,11 +38,11 @@ MyBatis Plus Util is an enhanced toolkit of MyBatis-Plus for simplify developmen
             @TableId(value = "spec_id")   
             private Long specId;  
   
-            @CustomerQuery(value = QueryType.LIKE)   
+            @QueryField(value = QueryType.LIKE)   
             @TableField(value = "spec_name")   
             private Long specName;  
   
-            @CustomerQuery(orderType = OrderType.ASC)   
+            @QueryField(orderType = OrderType.ASC)   
             @TableField(value = "create_time")   
             private Date createTime;  
         }  

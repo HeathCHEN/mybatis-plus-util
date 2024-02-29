@@ -6,10 +6,10 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerOrder;
-import io.github.heathchen.mybatisplus.util.annotation.CustomerQuery;
+import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
-import io.github.heathchen.mybatisplus.util.domain.CustomerOrderDto;
+import io.github.heathchen.mybatisplus.util.domain.QueryConfigDto;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 
 import java.lang.reflect.Field;
@@ -63,29 +63,29 @@ public class PageHelperUtil {
                 }
             }
         }
-        if (!clazz.isAnnotationPresent(CustomerOrder.class)) {
+        if (!clazz.isAnnotationPresent(QueryConfig.class)) {
             return;
         }
-        CustomerOrder customerOrder = clazz.getDeclaredAnnotation(CustomerOrder.class);
-        String[] columns = customerOrder.orderColumnNames();
-        OrderType[] orderTypes = customerOrder.orderTypes();
-        boolean orderColumn = customerOrder.orderColumn();
+        QueryConfig QueryConfig = clazz.getDeclaredAnnotation(QueryConfig.class);
+        String[] columns = QueryConfig.orderColumnNames();
+        OrderType[] orderTypes = QueryConfig.orderTypes();
+        boolean orderColumn = QueryConfig.orderColumn();
 
         OrderAndPageParamThreadLocal.setValueToObjectMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
 
         if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
             for (int i = 0; i < columns.length; i++) {
-                CustomerOrderDto customerOrderDto = new CustomerOrderDto();
+                QueryConfigDto QueryConfigDto = new QueryConfigDto();
                 if (StrUtil.isBlank(columns[i])) {
                     continue;
                 }
-                customerOrderDto.setTableColumnName(columns[i]);
+                QueryConfigDto.setTableColumnName(columns[i]);
                 if (ObjectUtil.isNull(orderTypes[i])) {
                     continue;
                 }
-                customerOrderDto.setOrderType(orderTypes[i]);
-                customerOrderDto.setOrderPriority(i + 1);
-                OrderAndPageParamThreadLocal.putCustomerOrderDtoIntoOrderList(customerOrderDto);
+                QueryConfigDto.setOrderType(orderTypes[i]);
+                QueryConfigDto.setOrderPriority(i + 1);
+                OrderAndPageParamThreadLocal.putQueryConfigDtoIntoOrderList(QueryConfigDto);
             }
 
         }
@@ -95,22 +95,22 @@ public class PageHelperUtil {
     /**
      * 检查是否使用排序
      *
-     * @param customerQuery 注解CustomerQuery
+     * @param queryField 注解CustomerQuery
      * @param field         字段
      * @author HeathCHEN
      */
-    public static void checkColumnOrderOnField(CustomerQuery customerQuery, Class<?> clazz, Field field, String tableColumnName) {
+    public static void checkColumnOrderOnField(QueryField queryField, Class<?> clazz, Field field, String tableColumnName) {
 
-        if (customerQuery.orderType().equals(OrderType.NONE)) {
+        if (queryField.orderType().equals(OrderType.NONE)) {
             return;
         }
-        CustomerOrderDto customerOrderDto = new CustomerOrderDto();
-        customerOrderDto.setTableColumnName(tableColumnName);
-        customerOrderDto.setOrderPriority(customerQuery.orderPriority());
-        customerOrderDto.setOrderType(customerQuery.orderType());
-        customerOrderDto.setField(field);
-        customerOrderDto.setClazz(clazz);
-        OrderAndPageParamThreadLocal.putCustomerOrderDtoIntoOrderList(customerOrderDto);
+        QueryConfigDto QueryConfigDto = new QueryConfigDto();
+        QueryConfigDto.setTableColumnName(tableColumnName);
+        QueryConfigDto.setOrderPriority(queryField.orderPriority());
+        QueryConfigDto.setOrderType(queryField.orderType());
+        QueryConfigDto.setField(field);
+        QueryConfigDto.setClazz(clazz);
+        OrderAndPageParamThreadLocal.putQueryConfigDtoIntoOrderList(QueryConfigDto);
 
 
     }
@@ -133,24 +133,24 @@ public class PageHelperUtil {
         String isAsc = (String) OrderAndPageParamThreadLocal.getValueFromObjectMap(PageAndOrderConst.IS_ASC);
 
         if (StrUtil.isNotBlank(orderByColumn) && StrUtil.isNotBlank(isAsc)) {
-            CustomerOrderDto customerOrderDto = new CustomerOrderDto();
+            QueryConfigDto QueryConfigDto = new QueryConfigDto();
             if (isAsc.equals(Boolean.TRUE.toString())) {
-                customerOrderDto.setOrderType(OrderType.ASC);
+                QueryConfigDto.setOrderType(OrderType.ASC);
             } else {
-                customerOrderDto.setOrderType(OrderType.DESC);
+                QueryConfigDto.setOrderType(OrderType.DESC);
             }
-            customerOrderDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn));
-            customerOrderDto.setOrderPriority(-1);
-            OrderAndPageParamThreadLocal.putCustomerOrderDtoIntoOrderList(customerOrderDto);
+            QueryConfigDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn));
+            QueryConfigDto.setOrderPriority(-1);
+            OrderAndPageParamThreadLocal.putQueryConfigDtoIntoOrderList(QueryConfigDto);
         }
 
-        List<CustomerOrderDto> orderList = OrderAndPageParamThreadLocal.getOrderList();
+        List<QueryConfigDto> orderList = OrderAndPageParamThreadLocal.getOrderList();
 
         //对查询进行排序
         if (CollectionUtil.isNotEmpty(orderList)) {
-            for (CustomerOrderDto customerOrderDto : orderList) {
-                String tableColumnName = customerOrderDto.getTableColumnName();
-                OrderType orderType = customerOrderDto.getOrderType();
+            for (QueryConfigDto QueryConfigDto : orderList) {
+                String tableColumnName = QueryConfigDto.getTableColumnName();
+                OrderType orderType = QueryConfigDto.getOrderType();
                 if (ObjectUtil.isNotNull(orderType) && orderType.equals(OrderType.ASC)) {
                     queryWrapper.orderByAsc(tableColumnName);
                 }

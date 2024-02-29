@@ -18,5 +18,7 @@ public enum JoinType {
         this.description = description;
     }
 
-
+    public String getDescription() {
+        return description;
+    }
 }

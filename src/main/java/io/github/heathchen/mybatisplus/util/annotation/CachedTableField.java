@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface CustomerCacheTableField {
+public @interface CachedTableField {
     /**
      * 分组id
      * @return int
