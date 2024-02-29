@@ -9,10 +9,8 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
 import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.utils.ApplicationContextProvider;
-import io.github.heathchen.mybatisplus.util.utils.ApplicationContextUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 
-import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -88,6 +86,9 @@ public class AccurateMatchingQueryTypeStrategy {
                     buildQuery(queryWrapper);
                     return Boolean.TRUE;
                 }
+                if (MatchMode.ACCURATE_MATCH_MODE.equals(queryConfig.matchMode())) {
+                    return Boolean.TRUE;
+                }
                 if (MatchMode.USING_GLOBAL_MODE.equals(queryConfig.matchMode())) {
                     return matchByGlobalSetting(queryWrapper);
                 }
@@ -107,6 +108,9 @@ public class AccurateMatchingQueryTypeStrategy {
         if (ObjectUtil.isNotNull(myBatisPlusUtilConfig)) {
             if (MatchMode.ALL_MATCH_MODE.getName().equals(myBatisPlusUtilConfig.getGlobalMatchMode())) {
                 buildQuery(queryWrapper);
+                return Boolean.TRUE;
+            }
+            if (MatchMode.ACCURATE_MATCH_MODE.getName().equals(myBatisPlusUtilConfig.getGlobalMatchMode())) {
                 return Boolean.TRUE;
             }
         }
