@@ -108,13 +108,13 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑CountQuery后获取Bean查询再转成对应类型
      *
-     * @param e             查询参数
-     * @param matchMode     匹配模式
-     * @param ignoreParams  忽略参数名
+     * @param e            查询参数
+     * @param matchMode    匹配模式
+     * @param ignoreParams 忽略参数名
      * @return {@link Integer}
      */
-    public static < E> Integer countByReflect(E e,MatchMode matchMode, String... ignoreParams) {
-        QueryWrapper query = getQuery(e, matchMode, ignoreParams);
+    public static <E> Integer countByReflect(E e, MatchMode matchMode, String... ignoreParams) {
+        QueryWrapper query = getQueryWrapper(e, matchMode, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectCount(query);
     }
@@ -122,12 +122,12 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑CountQuery后获取Bean查询再转成对应类型
      *
-     * @param e             查询参数
-     * @param matchMode     匹配模式
+     * @param e         查询参数
+     * @param matchMode 匹配模式
      * @return {@link Integer}
      */
-    public static < E> Integer countByReflect(E e,MatchMode matchMode) {
-        QueryWrapper query = getQuery(e, matchMode, ArrayUtil.newArray(String.class, 0));
+    public static <E> Integer countByReflect(E e, MatchMode matchMode) {
+        QueryWrapper query = getQueryWrapper(e, matchMode, ArrayUtil.newArray(String.class, 0));
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectCount(query);
     }
@@ -135,12 +135,12 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑CountQuery后获取Bean查询再转成对应类型
      *
-     * @param e             查询参数
-     * @param ignoreParams  忽略参数名
+     * @param e            查询参数
+     * @param ignoreParams 忽略参数名
      * @return {@link Integer}
      */
-    public static < E> Integer countByReflect(E e, String... ignoreParams) {
-        QueryWrapper query = getQuery(e, null, ArrayUtil.newArray(String.class, 0));
+    public static <E> Integer countByReflect(E e, String... ignoreParams) {
+        QueryWrapper query = getQueryWrapper(e, null, ArrayUtil.newArray(String.class, 0));
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectCount(query);
     }
@@ -184,7 +184,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, MatchMode matchMode, String... ignoreParams) {
-        QueryWrapper query = getQuery(e, matchMode, ignoreParams);
+        QueryWrapper query = getQueryWrapper(e, matchMode, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectList(query);
     }
@@ -199,7 +199,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, String... ignoreParams) {
-        QueryWrapper query = getQuery(e, null, ignoreParams);
+        QueryWrapper query = getQueryWrapper(e, null, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectList(query);
     }
@@ -241,7 +241,7 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper<E> getQuery(E e, MatchMode matchMode, String... ignoreParams) {
+    public static <E> QueryWrapper<E> getQueryWrapper(E e, MatchMode matchMode, String... ignoreParams) {
         QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
         QueryParamThreadLocal.removeParamFromQueryParamMap(ignoreParams);
         Class<?> clazz = e.getClass();
@@ -251,13 +251,36 @@ public class MyBatisPlusUtil {
         //从类上注解获取排序字段
         PageHelperUtil.checkColumnOrderOnClass(clazz);
         //遍历map然后从子级逐级反射获得注解判断比较类型
-        queryWrapper = buildQueryByReflect(clazz, queryWrapper);
+        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper);
         //获取不到注解的,默认做精确匹配
         AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper, matchMode);
         //构筑排序
         PageHelperUtil.buildQueryOrder(queryWrapper);
         //清除查询数据
-        cleanData();
+        QueryUtil.cleanData();
+        return queryWrapper;
+    }
+
+    /**
+     * 根据CustomerQuery注解构筑单表通用查询
+     *
+     * @param e   查询参数
+     * @param <E> 查询参数dto或实体类的类型
+     * @param groupId 唯一值分组id
+     * @return {@link QueryWrapper } 查询queryWrapper
+     * @author HeathCHEN
+     */
+    public static <E> QueryWrapper<E> getCheckUniqueQueryWrapper(E e, String groupId) {
+        QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
+
+        Class<?> clazz = e.getClass();
+
+        Map<String, QueryWrapper<E>> queryWrapperMap = new HashMap<>();
+        //遍历map然后从子级逐级反射获得注解判断比较类型
+        queryWrapper = QueryUtil.buildUniqueCheckQueryByReflect(clazz, queryWrapperMap, groupId);
+
+        //清除查询数据
+        QueryUtil.cleanData();
         return queryWrapper;
     }
 
@@ -270,8 +293,8 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper<E> getQuery(E e, String... ignoreParams) {
-        return getQuery(e, null, ArrayUtil.newArray(String.class, 0));
+    public static <E> QueryWrapper<E> getQueryWrapper(E e, String... ignoreParams) {
+        return getQueryWrapper(e, null, ArrayUtil.newArray(String.class, 0));
     }
 
 
@@ -283,8 +306,23 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
+    public static <E> QueryWrapper<E> getQueryWrapper(E e) {
+        return getQueryWrapper(e, null, ArrayUtil.newArray(String.class, 0));
+    }
+
+    /**
+     * 根据CustomerQuery注解构筑单表通用查询
+     * 新方法名getQueryWrapper()
+     *
+     * @param e   查询参数
+     * @param <E> 查询参数dto或实体类的类型
+     * @return {@link QueryWrapper } 查询queryWrapper
+     * @author HeathCHEN
+     */
+    @Deprecated
+    @SuppressWarnings("depracated method! please use getQueryWrapper() or queryByReflect() ")
     public static <E> QueryWrapper<E> getQuery(E e) {
-        return getQuery(e, null, ArrayUtil.newArray(String.class, 0));
+        return getQueryWrapper(e, null, ArrayUtil.newArray(String.class, 0));
     }
 
     /**
@@ -296,57 +334,24 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper<E> getQuery(E e, MatchMode matchMode) {
-        return getQuery(e, matchMode, ArrayUtil.newArray(String.class, 0));
+    public static <E> QueryWrapper<E> getQueryWrapper(E e, MatchMode matchMode) {
+        return getQueryWrapper(e, matchMode, ArrayUtil.newArray(String.class, 0));
     }
 
 
     /**
-     * 递归反射获取注解构建单表查询
+     * 反射构筑Query后获取Bean查询
      *
-     * @param <T>          查询参数dto或实体类的类型
-     * @param clazz        clazz
-     * @param queryWrapper 查询包装
-     * @return {@link QueryWrapper } 查询queryWrapper
+     * @param e   查询参数
+     * @param <E> 查询参数dto或实体类的类型
+     * @return {@link List } 查询结果
      * @author HeathCHEN
      */
-    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper) {
-        //如果父类为空,则不再递归
-        if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
-            return queryWrapper;
-        }
-        Field[] clazzDeclaredFields = clazz.getDeclaredFields();
-        if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
-            for (Field clazzDeclaredField : clazzDeclaredFields) {
-                Field field = clazzDeclaredField;
-                try {
-                    //如果没有注解就暂且跳过,留到父类看看能否匹配,如果都没有匹配,最后做eq匹配
-                    if (!field.isAnnotationPresent(QueryField.class)) {
-                        continue;
-                    }
-                    //获取属性上的注解
-                    QueryField queryField = field.getAnnotation(QueryField.class);
-                    //剔除不参与的参数
-                    if (!queryField.exist()) {
-                        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
-                        continue;
-                    }
-                    //根据查询类型构建查询
-                    QueryTypeStrategyManager.invokeQueryTypeStrategy(queryField, clazz, field, queryWrapper);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(QueryParamThreadLocal.getQueryParamMap())) {
-            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper);
-        } else {
-            return queryWrapper;
-        }
+    public static <E> Boolean checkUniqueByReflect(E e) {
+        QueryWrapper query = getQueryWrapper(e);
+        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
+        return CollectionUtil.isNotEmpty(baseMapper.selectList(query)) ? false : true;
     }
-
 
     /**
      * 利用注解标注字段更新冗余字段
@@ -360,7 +365,7 @@ public class MyBatisPlusUtil {
         try {
 
             List<CacheGroup> cacheGroups = new ArrayList<>();
-            constructCacheGroup(clazz, cacheGroups);
+            QueryUtil.constructCacheGroup(clazz, cacheGroups);
 
             if (CollectionUtil.isNotEmpty(cacheGroups)) {
                 for (CacheGroup cacheGroup : cacheGroups) {
@@ -384,62 +389,6 @@ public class MyBatisPlusUtil {
 
 
     /**
-     * 构建冗余组对象List
-     *
-     * @param <T>         类型
-     * @param clazz       类
-     * @param cacheGroups 冗余组对象List
-     * @author HeathCHEN
-     */
-    public static <T> void constructCacheGroup(Class<T> clazz, List<CacheGroup> cacheGroups) {
-        Map<String, CacheGroup> cacheGroupHashMap = new HashMap<>();
-        Field[] declaredFields = clazz.getDeclaredFields();
-
-        if (ArrayUtil.isNotEmpty(declaredFields)) {
-            for (Field field : declaredFields) {
-                if (field.isAnnotationPresent(CachedTableField.class)) {
-                    CachedTableField CachedTableField = field.getAnnotation(CachedTableField.class);
-                    String groupId = CachedTableField.value();
-                    CacheGroup cacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
-                    cacheGroup.addCachedTableFields(CachedTableField);
-                    cacheGroup.addTableFields(TableUtil.getTableColumnName(clazz, field));
-                }
-                if (field.isAnnotationPresent(CachedTableId.class)) {
-                    CachedTableId CachedTableId = field.getAnnotation(CachedTableId.class);
-                    String groupId = CachedTableId.value();
-                    CacheGroup cacheGroup = getCustomerCacheGroupFromMap(groupId, cacheGroupHashMap);
-                    cacheGroup.setCachedTableId(CachedTableId);
-                    cacheGroup.setTableId(TableUtil.getTableColumnName(clazz, field));
-                }
-
-            }
-
-        }
-        cacheGroupHashMap.forEach((key, value) -> cacheGroups.add(value));
-
-    }
-
-    /**
-     * 从Map中获取自定义冗余组对象
-     *
-     * @param groupId           组id
-     * @param cacheGroupHashMap 缓存map
-     * @return {@link CacheGroup } 冗余组对象List
-     * @author HeathCHEN
-     */
-    public static CacheGroup getCustomerCacheGroupFromMap(String groupId, Map<String, CacheGroup> cacheGroupHashMap) {
-        CacheGroup cacheGroup = cacheGroupHashMap.get(groupId);
-
-        if (ObjectUtil.isNull(cacheGroup)) {
-            cacheGroup = new CacheGroup();
-            cacheGroup.setGroupId(cacheGroup.getGroupId());
-            cacheGroupHashMap.put(groupId, cacheGroup);
-
-        }
-        return cacheGroup;
-    }
-
-    /**
      * 批量更新
      *
      * @param clazzArr           类Array
@@ -456,13 +405,5 @@ public class MyBatisPlusUtil {
         }
     }
 
-    /**
-     * 清除查询和分页数据,防止内存溢出
-     *
-     * @author HeathCHEN
-     */
-    public static void cleanData() {
-        QueryParamThreadLocal.cleanData();
-    }
 
 }
