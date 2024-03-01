@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.log.GlobalLogFactory;
+import cn.hutool.log.Log;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableField;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
@@ -13,6 +15,7 @@ import io.github.heathchen.mybatisplus.util.domain.CacheGroup;
 import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -23,6 +26,7 @@ import java.util.*;
  */
 public class QueryUtil {
 
+    private static final Log log = GlobalLogFactory.get().getLog(QueryUtil.class);
 
     /**
      * 校验参数是否有意义
@@ -249,4 +253,28 @@ public class QueryUtil {
         QueryParamThreadLocal.cleanData();
     }
 
+
+
+    public static BigDecimal numberToBigDecimal(Number number){
+
+        if(number instanceof BigDecimal){
+            return (BigDecimal) number;
+        }
+
+        if(number instanceof Long){
+            return BigDecimal.valueOf((Long)number);
+        }
+        if(number instanceof Integer){
+            return BigDecimal.valueOf((Integer)number);
+        }
+        if(number instanceof Double){
+            return BigDecimal.valueOf((Double)number);
+        }
+        if(number instanceof Short){
+            return BigDecimal.valueOf((Short)number);
+        }
+
+        log.error("数字类型转换异常!");
+        throw new RuntimeException("数字类型转换异常!");
+    }
 }

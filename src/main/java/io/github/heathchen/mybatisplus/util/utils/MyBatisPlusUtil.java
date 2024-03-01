@@ -26,6 +26,7 @@ import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -401,11 +402,14 @@ public class MyBatisPlusUtil {
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
-    public static <E> Boolean checkUniqueByReflect(E e, Integer limit, String... groupIds) {
+    public static <E> Boolean checkUniqueByReflect(E e, Number limit, String... groupIds) {
         QueryWrapper checkUniqueQueryWrapper = getCheckUniqueQueryWrapper(e, groupIds);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        Integer count = baseMapper.selectCount(checkUniqueQueryWrapper);
-        if (count > limit) {
+        Number count = baseMapper.selectCount(checkUniqueQueryWrapper);
+        BigDecimal countBigDecimal = QueryUtil.numberToBigDecimal(count);
+        BigDecimal limitBigDecimal = QueryUtil.numberToBigDecimal(limit);
+
+        if ( countBigDecimal.compareTo(limitBigDecimal) != 0) {
             return false;
         }
 

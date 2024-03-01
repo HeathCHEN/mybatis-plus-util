@@ -54,6 +54,12 @@ public @interface QueryConfig {
     MatchMode matchMode() default MatchMode.USING_GLOBAL_MODE;
 
 
+    /**
+     * 分组id 用于分组查询
+     * @author HeathCHEN
+     */
+    String[] groupId() default {"default"};
+
 
 
 
