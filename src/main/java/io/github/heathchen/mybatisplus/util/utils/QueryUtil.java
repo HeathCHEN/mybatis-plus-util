@@ -126,7 +126,7 @@ public class QueryUtil {
 
         //如果已匹配全部则直接返回查询,否则继续迭代
         if (CollectionUtil.isNotEmpty(QueryParamThreadLocal.getQueryParamMap())) {
-            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper);
+            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper,groupIds);
         } else {
             return queryWrapper;
         }
