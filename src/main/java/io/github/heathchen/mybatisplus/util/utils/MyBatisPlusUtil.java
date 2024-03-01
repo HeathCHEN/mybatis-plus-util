@@ -83,7 +83,7 @@ public class MyBatisPlusUtil {
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
-    public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, MatchMode matchMode, String... ignoreParams) {
+    public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz, String... ignoreParams) {
         Class<?> tClazz = e.getClass();
         if (ObjectUtil.isNull(clazz)) {
             return ((List<T>) queryByReflect(e, matchMode, ignoreParams));
@@ -115,7 +115,7 @@ public class MyBatisPlusUtil {
      * @return {@link Integer}
      */
     public static <E> Integer countByReflect(E e, MatchMode matchMode, String... ignoreParams) {
-        QueryWrapper query = getQueryWrapper(e, matchMode, ignoreParams);
+        QueryWrapper query = getCountQueryWrapper(e, matchMode, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectCount(query);
     }
@@ -128,9 +128,7 @@ public class MyBatisPlusUtil {
      * @return {@link Integer}
      */
     public static <E> Integer countByReflect(E e, MatchMode matchMode) {
-        QueryWrapper query = getQueryWrapper(e, matchMode, ArrayUtil.newArray(String.class, 0));
-        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        return baseMapper.selectCount(query);
+        return countByReflect(e, matchMode, null);
     }
 
     /**
@@ -141,9 +139,17 @@ public class MyBatisPlusUtil {
      * @return {@link Integer}
      */
     public static <E> Integer countByReflect(E e, String... ignoreParams) {
-        QueryWrapper query = getQueryWrapper(e, null, ArrayUtil.newArray(String.class, 0));
-        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        return baseMapper.selectCount(query);
+        return countByReflect(e, null, ignoreParams);
+    }
+
+    /**
+     * 反射构筑CountQuery后获取Bean查询再转成对应类型
+     *
+     * @param e 查询参数
+     * @return {@link Integer}
+     */
+    public static <E> Integer countByReflect(E e) {
+        return countByReflect(e, null, null);
     }
 
 
@@ -157,7 +163,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz) {
-        return queryByReflect(e, clazz, null, ArrayUtil.newArray(String.class, 0));
+        return queryByReflect(e, null, clazz, null);
     }
 
     /**
@@ -171,7 +177,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz) {
-        return queryByReflect(e, clazz, matchMode, ArrayUtil.newArray(String.class, 0));
+        return queryByReflect(e, matchMode, clazz, null);
     }
 
     /**
@@ -200,9 +206,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, String... ignoreParams) {
-        QueryWrapper query = getQueryWrapper(e, null, ignoreParams);
-        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        return baseMapper.selectList(query);
+        return queryByReflect(e,null,ignoreParams);
     }
 
     /**
@@ -215,7 +219,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, MatchMode matchMode) {
-        return queryByReflect(e, null, matchMode, ArrayUtil.newArray(String.class, 0));
+        return queryByReflect(e,matchMode, ArrayUtil.newArray(String.class, 0));
 
     }
 
@@ -229,7 +233,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e) {
-        return queryByReflect(e, null, ArrayUtil.newArray(String.class, 0));
+        return queryByReflect(e, null, null, null);
     }
 
     /**
@@ -262,11 +266,36 @@ public class MyBatisPlusUtil {
         return queryWrapper;
     }
 
+
+    /**
+     * 根据QueryField注解构筑单表Count查询
+     *
+     * @param ignoreParams 忽略参数名
+     * @param matchMode    匹配模式
+     * @param e            查询参数
+     * @param <E>          查询参数dto或实体类的类型
+     * @return {@link QueryWrapper } 查询queryWrapper
+     * @author HeathCHEN
+     */
+    public static <E> QueryWrapper<E> getCountQueryWrapper(E e, MatchMode matchMode, String... ignoreParams) {
+        QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
+        QueryParamThreadLocal.removeParamFromQueryParamMap(ignoreParams);
+        Class<?> clazz = e.getClass();
+        QueryWrapper<E> queryWrapper = new QueryWrapper<E>();
+        //遍历map然后从子级逐级反射获得注解判断比较类型
+        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper);
+        //获取不到注解的,默认做精确匹配
+        AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper, matchMode);
+        //清除查询数据
+        QueryUtil.cleanData();
+        return queryWrapper;
+    }
+
     /**
      * 根据UniqueValue注解构筑单表查询
      *
-     * @param e       查询参数
-     * @param <E>     查询参数dto或实体类的类型
+     * @param e        查询参数
+     * @param <E>      查询参数dto或实体类的类型
      * @param groupIds 唯一值分组id
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
@@ -342,10 +371,10 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后校验被UniqueValue标注的字段是否超过limit
      *
-     * @param e       查询参数
-     * @param limit   最多个数
+     * @param e        查询参数
+     * @param limit    最多个数
      * @param groupIds 指定分组id
-     * @param <E>     查询参数dto或实体类的类型
+     * @param <E>      查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
@@ -377,18 +406,18 @@ public class MyBatisPlusUtil {
     public static <E> Boolean checkUniqueByReflect(E e, Integer limit) {
         return checkUniqueByReflect(e, limit, null);
     }
+
     /**
      * 反射构筑Query后校验被UniqueValue标注的字段是否唯一
      *
-     * @param e     查询参数
-     * @param <E>   查询参数dto或实体类的类型
+     * @param e   查询参数
+     * @param <E> 查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
     public static <E> Boolean checkUniqueByReflect(E e) {
         return checkUniqueByReflect(e, 1, null);
     }
-
 
 
     /**
