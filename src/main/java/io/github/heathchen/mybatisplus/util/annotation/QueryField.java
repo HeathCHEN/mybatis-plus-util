@@ -140,5 +140,10 @@ public @interface QueryField {
      */
     String sql() default "";
 
+    /**
+     * 分组id 用于分组查询
+     * @author HeathCHEN
+     */
+    String[] groupId() default {"default"};
 
 }

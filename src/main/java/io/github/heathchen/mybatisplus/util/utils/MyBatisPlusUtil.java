@@ -76,40 +76,6 @@ public class MyBatisPlusUtil {
 
 
     /**
-     * 反射构筑Query后获取Bean查询再转成对应类型
-     *
-     * @param ignoreParams 忽略参数名
-     * @param matchMode    匹配模式
-     * @param <T>          查询结果的返回类型
-     * @param e            查询参数
-     * @param clazz        返回类型
-     * @return {@link List } 查询结果
-     * @author HeathCHEN
-     */
-    public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz, String... ignoreParams) {
-        Class<?> tClazz = e.getClass();
-        if (ObjectUtil.isNull(clazz)) {
-            return ((List<T>) queryByReflect(e, matchMode, ignoreParams));
-        }
-        while (!clazz.isAnnotationPresent(TableName.class)) {
-            Class<?> superclass = clazz.getSuperclass();
-            if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
-                tClazz = e.getClass();
-                break;
-            } else {
-                tClazz = superclass;
-            }
-        }
-        if (tClazz.equals(clazz)) {
-            return ((List<T>) queryByReflect(e, matchMode, ignoreParams));
-        } else {
-            List<E> list = queryByReflect(e);
-            return BeanUtil.copyToList(list, clazz);
-        }
-    }
-
-
-    /**
      * 反射构筑CountQuery后获取Bean查询再转成对应类型
      *
      * @param e            查询参数
@@ -155,32 +121,38 @@ public class MyBatisPlusUtil {
         return countByReflect(e, null, null);
     }
 
-
     /**
      * 反射构筑Query后获取Bean查询再转成对应类型
      *
-     * @param <T>   查询结果的返回类型
-     * @param e     查询参数
-     * @param clazz 返回类型
+     * @param ignoreParams 忽略参数名
+     * @param matchMode    匹配模式
+     * @param groupIds     分组id
+     * @param <T>          查询结果的返回类型
+     * @param e            查询参数
+     * @param clazz        返回类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
-    public static <T, E> List<T> queryByReflect(E e, Class<T> clazz) {
-        return queryByReflect(e, null, clazz, null);
-    }
-
-    /**
-     * 反射构筑Query后获取Bean查询再转成对应类型
-     *
-     * @param <T>       查询结果的返回类型
-     * @param matchMode 匹配模式
-     * @param e         查询参数
-     * @param clazz     返回类型
-     * @return {@link List } 查询结果
-     * @author HeathCHEN
-     */
-    public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz) {
-        return queryByReflect(e, matchMode, clazz, null);
+    public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz, String[] groupIds, String... ignoreParams) {
+        Class<?> tClazz = e.getClass();
+        if (ObjectUtil.isNull(clazz)) {
+            return ((List<T>) queryByReflect(e, matchMode, groupIds, ignoreParams));
+        }
+        while (!clazz.isAnnotationPresent(TableName.class)) {
+            Class<?> superclass = clazz.getSuperclass();
+            if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
+                tClazz = e.getClass();
+                break;
+            } else {
+                tClazz = superclass;
+            }
+        }
+        if (tClazz.equals(clazz)) {
+            return ((List<T>) queryByReflect(e, matchMode, groupIds, ignoreParams));
+        } else {
+            List<E> list = queryByReflect(e);
+            return BeanUtil.copyToList(list, clazz);
+        }
     }
 
     /**
@@ -188,28 +160,16 @@ public class MyBatisPlusUtil {
      *
      * @param ignoreParams 忽略参数名
      * @param matchMode    匹配模式
+     * @param groupIds     分组id
      * @param e            查询参数
      * @param <E>          查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
-    public static <E> List<E> queryByReflect(E e, MatchMode matchMode, String... ignoreParams) {
-        QueryWrapper query = getQueryWrapper(e, matchMode, ignoreParams);
+    public static <E> List<E> queryByReflect(E e, MatchMode matchMode, String[] groupIds, String... ignoreParams) {
+        QueryWrapper query = getQueryWrapper(e, matchMode, groupIds, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectList(query);
-    }
-
-    /**
-     * 反射构筑Query后获取Bean查询
-     *
-     * @param ignoreParams 忽略参数名
-     * @param e            查询参数
-     * @param <E>          查询参数dto或实体类的类型
-     * @return {@link List } 查询结果
-     * @author HeathCHEN
-     */
-    public static <E> List<E> queryByReflect(E e, String... ignoreParams) {
-        return queryByReflect(e, null, ignoreParams);
     }
 
     /**
@@ -222,8 +182,137 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, MatchMode matchMode) {
-        return queryByReflect(e, matchMode, ArrayUtil.newArray(String.class, 0));
+        return queryByReflect(e, matchMode, null, null, null);
 
+    }
+
+
+    /**
+     * 反射构筑Query后获取Bean查询再转成对应类型
+     *
+     * @param <T>      查询结果的返回类型
+     * @param e        查询参数
+     * @param groupIds 分组id
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <T, E> List<T> queryByReflect(E e, Collection<String> groupIds) {
+        return queryByReflect(e, null, null, ArrayUtil.toArray(groupIds, String.class), null);
+    }
+
+    /**
+     * 反射构筑Query后获取Bean查询
+     *
+     * @param ignoreParams 忽略参数名
+     * @param e            查询参数
+     * @param <E>          查询参数dto或实体类的类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <E> List<E> queryByReflect(E e, String... ignoreParams) {
+        return queryByReflect(e, null, null, null, ignoreParams);
+    }
+
+
+    /**
+     * 反射构筑Query后获取Bean查询再转成对应类型
+     *
+     * @param <T>   查询结果的返回类型
+     * @param e     查询参数
+     * @param clazz 返回类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <T, E> List<T> queryByReflect(E e, Class<T> clazz) {
+        return queryByReflect(e, null, clazz, null, null);
+    }
+
+
+    /**
+     * 反射构筑Query后获取Bean查询再转成对应类型
+     *
+     * @param <T>       查询结果的返回类型
+     * @param matchMode 匹配模式
+     * @param e         查询参数
+     * @param clazz     返回类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz) {
+        return queryByReflect(e, matchMode, clazz, null, null);
+    }
+
+    /**
+     * 反射构筑Query后获取Bean查询再转成对应类型
+     *
+     * @param <T>       查询结果的返回类型
+     * @param matchMode 匹配模式
+     * @param groupIds  分组id
+     * @param e         查询参数
+     * @param clazz     返回类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz, String[] groupIds) {
+        return queryByReflect(e, matchMode, clazz, groupIds, null);
+    }
+
+
+    /**
+     * 反射构筑Query后获取Bean查询
+     *
+     * @param ignoreParams 忽略参数名
+     * @param matchMode    匹配模式
+     * @param e            查询参数
+     * @param <E>          查询参数dto或实体类的类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <E> List<E> queryByReflect(E e, MatchMode matchMode, String... ignoreParams) {
+        return queryByReflect(e, matchMode, null, null, ignoreParams);
+    }
+
+    /**
+     * 反射构筑Query后获取Bean查询
+     *
+     * @param ignoreParams 忽略参数名
+     * @param groupIds     分组id
+     * @param e            查询参数
+     * @param <E>          查询参数dto或实体类的类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <E> List<E> queryByReflect(E e, String[] groupIds, String... ignoreParams) {
+        return queryByReflect(e, null, null, groupIds, ignoreParams);
+    }
+
+    /**
+     * 反射构筑Query后获取Bean查询再转成对应类型
+     *
+     * @param <T>      查询结果的返回类型
+     * @param ignoreParams 忽略参数名
+     * @param e        查询参数
+     * @param clazz    返回类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, String... ignoreParams) {
+        return queryByReflect(e, null, clazz, null, ignoreParams);
+    }
+
+
+    /**
+     * 反射构筑Query后获取Bean查询再转成对应类型
+     *
+     * @param <T>      查询结果的返回类型
+     * @param groupIds 分组id
+     * @param e        查询参数
+     * @param clazz    返回类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, Collection<String> groupIds) {
+        return queryByReflect(e, null, clazz, ArrayUtil.toArray(groupIds, String.class), null);
     }
 
 
@@ -236,7 +325,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e) {
-        return queryByReflect(e, null, null, null);
+        return queryByReflect(e, null, null, null, null);
     }
 
     /**
@@ -249,7 +338,7 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper<E> getQueryWrapper(E e, MatchMode matchMode, String... ignoreParams) {
+    public static <E> QueryWrapper<E> getQueryWrapper(E e, MatchMode matchMode, String[] groupIds, String... ignoreParams) {
         QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
         QueryParamThreadLocal.removeParamFromQueryParamMap(ignoreParams);
         Class<?> clazz = e.getClass();
@@ -259,7 +348,7 @@ public class MyBatisPlusUtil {
         //从类上注解获取排序字段
         PageHelperUtil.checkColumnOrderOnClass(clazz);
         //遍历map然后从子级逐级反射获得注解判断比较类型
-        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper);
+        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper, groupIds);
         //获取不到注解的,默认做精确匹配
         AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper, matchMode);
         //构筑排序
@@ -280,13 +369,13 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper<E> getCountQueryWrapper(E e, MatchMode matchMode, String... ignoreParams) {
+    public static <E> QueryWrapper<E> getCountQueryWrapper(E e, MatchMode matchMode, String[] groupIds, String... ignoreParams) {
         QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
         QueryParamThreadLocal.removeParamFromQueryParamMap(ignoreParams);
         Class<?> clazz = e.getClass();
         QueryWrapper<E> queryWrapper = new QueryWrapper<E>();
         //遍历map然后从子级逐级反射获得注解判断比较类型
-        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper);
+        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper, groupIds);
         //获取不到注解的,默认做精确匹配
         AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper, matchMode);
         //清除查询数据
@@ -406,10 +495,13 @@ public class MyBatisPlusUtil {
         QueryWrapper checkUniqueQueryWrapper = getCheckUniqueQueryWrapper(e, groupIds);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         Number count = baseMapper.selectCount(checkUniqueQueryWrapper);
+        if (ObjectUtil.isNull(limit)) {
+            limit = 1;
+        }
         BigDecimal countBigDecimal = QueryUtil.numberToBigDecimal(count);
         BigDecimal limitBigDecimal = QueryUtil.numberToBigDecimal(limit);
 
-        if ( countBigDecimal.compareTo(limitBigDecimal) != 0) {
+        if (countBigDecimal.compareTo(limitBigDecimal) != 0) {
             return false;
         }
 
@@ -427,6 +519,19 @@ public class MyBatisPlusUtil {
      */
     public static <E> Boolean checkUniqueByReflect(E e, Integer limit) {
         return checkUniqueByReflect(e, limit, null);
+    }
+
+    /**
+     * 反射构筑Query后校验被UniqueValue标注的字段是否唯一
+     *
+     * @param e        查询参数
+     * @param groupIds 指定分组id
+     * @param <E>      查询参数dto或实体类的类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <E> Boolean checkUniqueByReflect(E e, String... groupIds) {
+        return checkUniqueByReflect(e, null, groupIds);
     }
 
     /**

@@ -95,7 +95,7 @@ public class QueryUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper) {
+    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper,String[] groupIds) {
         //如果父类为空,则不再递归
         if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
             return queryWrapper;
@@ -117,7 +117,7 @@ public class QueryUtil {
                         continue;
                     }
                     //根据查询类型构建查询
-                    QueryTypeStrategyManager.invokeQueryStrategy(queryField, clazz, field, queryWrapper);
+                    QueryTypeStrategyManager.invokeQueryStrategy(queryField, clazz, field, queryWrapper,groupIds);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -254,8 +254,18 @@ public class QueryUtil {
     }
 
 
-
+    /**
+     * 转行数字到BigDecimal
+     * @param number 数字
+     * @return {@link BigDecimal }
+     * @author HeathCHEN
+     */
     public static BigDecimal numberToBigDecimal(Number number){
+
+        if (ObjectUtil.isNull(number)) {
+            log.error("数字类型转换异常!");
+            throw new RuntimeException("数字类型转换异常!");
+        }
 
         if(number instanceof BigDecimal){
             return (BigDecimal) number;

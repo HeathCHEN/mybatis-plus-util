@@ -27,5 +27,6 @@ public interface QueryTypeStrategy {
     <T> void buildQuery(QueryField queryField,
                         Class clazz,
                         Field field,
-                        QueryWrapper<T> queryWrapper);
+                        QueryWrapper<T> queryWrapper,
+                        String[] groupIds);
 }

@@ -1,5 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
+import cn.hutool.core.util.ArrayUtil;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
@@ -34,7 +35,24 @@ public class SqlQueryTypeStrategy implements QueryTypeStrategy {
      * @author HeathCHEN
      */
     @Override
-    public  <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public  <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
+        String[] groupIdsOnQueryField = queryField.groupId();
+        boolean inGroup = Boolean.FALSE;
+        if (ArrayUtil.isNotEmpty(groupIds)) {
+            for (String groupId : groupIds) {
+                if (ArrayUtil.contains(groupIdsOnQueryField,groupId)) {
+                    inGroup = Boolean.TRUE;
+                }
+            }
+        }else {
+            inGroup = Boolean.TRUE;
+        }
+
+        if (!inGroup) {
+            QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
+            return;
+        }
+
         Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
         if (QueryUtil.checkValue(value)|| StrUtil.isNotBlank(queryField.sql())) {
             queryWrapper.apply(queryField.sql(), value);

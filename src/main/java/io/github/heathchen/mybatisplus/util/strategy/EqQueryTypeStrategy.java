@@ -37,10 +37,27 @@ public class EqQueryTypeStrategy implements QueryTypeStrategy {
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
         Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
 
         String[] orColumns = queryField.orColumns();
+        String[] groupIdsOnQueryField = queryField.groupId();
+        boolean inGroup = Boolean.FALSE;
+        if (ArrayUtil.isNotEmpty(groupIds)) {
+            for (String groupId : groupIds) {
+                if (ArrayUtil.contains(groupIdsOnQueryField,groupId)) {
+                    inGroup = Boolean.TRUE;
+                }
+            }
+        }else {
+            inGroup = Boolean.TRUE;
+        }
+
+        if (!inGroup) {
+            QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
+            return;
+        }
+
         //查询属性名对应字段名
         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
         if (QueryUtil.checkValue(value)) {

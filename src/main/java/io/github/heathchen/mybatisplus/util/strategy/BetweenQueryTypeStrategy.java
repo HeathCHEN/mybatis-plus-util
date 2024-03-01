@@ -1,5 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
+import cn.hutool.core.util.ArrayUtil;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
@@ -12,6 +13,7 @@ import java.lang.reflect.Field;
 
 /**
  * BETWEEN 值1 AND 值2 查询策略
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/26
@@ -26,30 +28,51 @@ public class BetweenQueryTypeStrategy implements QueryTypeStrategy {
 
     /**
      * 构造查询
-     * @param queryField QueryField注解
-     * @param clazz 类
-     * @param field 字段
+     *
+     * @param queryField   QueryField注解
+     * @param clazz        类
+     * @param field        字段
      * @param queryWrapper 查询queryWrapper
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
+
+        String[] groupIdsOnQueryField = queryField.groupId();
+        boolean inGroup = Boolean.FALSE;
+        if (ArrayUtil.isNotEmpty(groupIds)) {
+            for (String groupId : groupIds) {
+                if (ArrayUtil.contains(groupIdsOnQueryField,groupId)) {
+                    inGroup = Boolean.TRUE;
+                }
+            }
+        }else {
+            inGroup = Boolean.TRUE;
+        }
+
+        if (!inGroup) {
+            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
+            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
+            return;
+        }
+
 
         //查询属性名对应字段名
-        String tableColumnName = TableUtil.getTableColumnName(clazz,field);
+        String tableColumnName = TableUtil.getTableColumnName(clazz, field);
 
         Object startValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.betweenStartVal());
         Object endValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.betweenEndVal());
-        
+
         if (QueryUtil.checkValue(startValue)) {
             queryWrapper.ge(tableColumnName, startValue);
-            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
+
         }
         if (QueryUtil.checkValue(endValue)) {
             queryWrapper.le(tableColumnName, endValue);
-            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
         }
+        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
         //检查是否使用排序
-        PageHelperUtil.checkColumnOrderOnField(queryField,clazz, field,tableColumnName);
+        PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);
     }
 }

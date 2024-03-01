@@ -1,5 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
+import cn.hutool.core.util.ArrayUtil;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
@@ -33,7 +34,25 @@ public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
+        String[] groupIdsOnQueryField = queryField.groupId();
+        boolean inGroup = Boolean.FALSE;
+        if (ArrayUtil.isNotEmpty(groupIds)) {
+            for (String groupId : groupIds) {
+                if (ArrayUtil.contains(groupIdsOnQueryField,groupId)) {
+                    inGroup = Boolean.TRUE;
+                }
+            }
+        }else {
+            inGroup = Boolean.TRUE;
+        }
+
+        if (!inGroup) {
+            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
+            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
+            return;
+        }
+
 
         //将属性转为下划线格式
         String tableColumnName = TableUtil.getTableColumnName(clazz,field);
@@ -43,12 +62,14 @@ public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
 
         if (QueryUtil.checkValue(notBetweenStartValue)) {
             queryWrapper.le(tableColumnName, notBetweenStartValue);
-            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
+
         }
         if (QueryUtil.checkValue(notBetweenEndValue)) {
             queryWrapper.ge(tableColumnName, notBetweenEndValue);
-            QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
         }
+
+        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
         //检查是否使用排序
         PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);
     }

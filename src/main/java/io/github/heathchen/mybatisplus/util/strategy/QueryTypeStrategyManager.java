@@ -40,9 +40,9 @@ public class QueryTypeStrategyManager {
 
 
 
-    public static <T> void invokeQueryStrategy(QueryField queryField, Class<?> clazz, Field field , QueryWrapper<T> queryWrapper){
+    public static <T> void invokeQueryStrategy(QueryField queryField, Class<?> clazz, Field field , QueryWrapper<T> queryWrapper,String[] groupIds){
         QueryTypeStrategy queryTypeStrategy = getQueryTypeStrategyToManager(queryField.value().getCompareType());
-        queryTypeStrategy.buildQuery(queryField, clazz, field, queryWrapper);
+        queryTypeStrategy.buildQuery(queryField, clazz, field, queryWrapper,groupIds);
 
     }
 

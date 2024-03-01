@@ -36,7 +36,24 @@ public class NotLikeQueryTypeStrategy implements QueryTypeStrategy {
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
+        String[] groupIdsOnQueryField = queryField.groupId();
+        boolean inGroup = Boolean.FALSE;
+        if (ArrayUtil.isNotEmpty(groupIds)) {
+            for (String groupId : groupIds) {
+                if (ArrayUtil.contains(groupIdsOnQueryField,groupId)) {
+                    inGroup = Boolean.TRUE;
+                }
+            }
+        }else {
+            inGroup = Boolean.TRUE;
+        }
+
+        if (!inGroup) {
+            QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
+            return;
+        }
+
         Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
         //将属性转为下划线格式
         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
