@@ -32,7 +32,6 @@ public class QueryParamThreadLocal {
      * @author HeathCHEN
      */
     public static void cleanData(){
-
         QUERY_PARAM_LOCAL.remove();
         ORDER_AND_PAGE_PARAM_LOCAL.remove();
     }

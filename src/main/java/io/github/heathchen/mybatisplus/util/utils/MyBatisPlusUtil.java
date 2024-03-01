@@ -26,6 +26,7 @@ import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * MyBatisPlus工具类
@@ -232,7 +233,7 @@ public class MyBatisPlusUtil {
     }
 
     /**
-     * 根据CustomerQuery注解构筑单表通用查询
+     * 根据QueryField注解构筑单表通用查询
      *
      * @param ignoreParams 忽略参数名
      * @param matchMode    匹配模式
@@ -262,30 +263,29 @@ public class MyBatisPlusUtil {
     }
 
     /**
-     * 根据CustomerQuery注解构筑单表通用查询
+     * 根据UniqueValue注解构筑单表查询
      *
-     * @param e   查询参数
-     * @param <E> 查询参数dto或实体类的类型
-     * @param groupId 唯一值分组id
+     * @param e       查询参数
+     * @param <E>     查询参数dto或实体类的类型
+     * @param groupIds 唯一值分组id
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper<E> getCheckUniqueQueryWrapper(E e, String groupId) {
+    public static <E> List<QueryWrapper<E>> getCheckUniqueQueryWrapper(E e, String... groupIds) {
         QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
 
         Class<?> clazz = e.getClass();
 
         Map<String, QueryWrapper<E>> queryWrapperMap = new HashMap<>();
         //遍历map然后从子级逐级反射获得注解判断比较类型
-        queryWrapper = QueryUtil.buildUniqueCheckQueryByReflect(clazz, queryWrapperMap, groupId);
-
+        QueryUtil.buildUniqueCheckQueryByReflect(clazz, queryWrapperMap, groupIds);
         //清除查询数据
         QueryUtil.cleanData();
-        return queryWrapper;
+        return new ArrayList<>(queryWrapperMap.values());
     }
 
     /**
-     * 根据CustomerQuery注解构筑单表通用查询
+     * 根据QueryField注解构筑单表通用查询
      *
      * @param e            查询参数
      * @param ignoreParams 忽略参数名
@@ -299,7 +299,7 @@ public class MyBatisPlusUtil {
 
 
     /**
-     * 根据CustomerQuery注解构筑单表通用查询
+     * 根据QueryField注解构筑单表通用查询
      *
      * @param e   查询参数
      * @param <E> 查询参数dto或实体类的类型
@@ -311,7 +311,7 @@ public class MyBatisPlusUtil {
     }
 
     /**
-     * 根据CustomerQuery注解构筑单表通用查询
+     * 根据QueryField注解构筑单表通用查询
      * 新方法名getQueryWrapper()
      *
      * @param e   查询参数
@@ -326,7 +326,7 @@ public class MyBatisPlusUtil {
     }
 
     /**
-     * 根据CustomerQuery注解构筑单表通用查询
+     * 根据QueryField注解构筑单表通用查询
      *
      * @param e         查询参数
      * @param matchMode 匹配模式
@@ -340,18 +340,56 @@ public class MyBatisPlusUtil {
 
 
     /**
-     * 反射构筑Query后获取Bean查询
+     * 反射构筑Query后校验被UniqueValue标注的字段是否超过limit
      *
-     * @param e   查询参数
-     * @param <E> 查询参数dto或实体类的类型
+     * @param e       查询参数
+     * @param limit   最多个数
+     * @param groupIds 指定分组id
+     * @param <E>     查询参数dto或实体类的类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <E> Boolean checkUniqueByReflect(E e, Integer limit, String... groupIds) {
+        List<QueryWrapper<E>> checkUniqueQueryWrapper = getCheckUniqueQueryWrapper(e, groupIds);
+        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
+        if (CollectionUtil.isNotEmpty(checkUniqueQueryWrapper)) {
+            for (QueryWrapper queryWrapper : checkUniqueQueryWrapper) {
+                Integer count = baseMapper.selectCount(queryWrapper);
+                if (count > limit) {
+                    return false;
+                }
+
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 反射构筑Query后校验被UniqueValue标注的字段是否唯一
+     *
+     * @param e     查询参数
+     * @param limit 最多个数
+     * @param <E>   查询参数dto或实体类的类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <E> Boolean checkUniqueByReflect(E e, Integer limit) {
+        return checkUniqueByReflect(e, limit, null);
+    }
+    /**
+     * 反射构筑Query后校验被UniqueValue标注的字段是否唯一
+     *
+     * @param e     查询参数
+     * @param <E>   查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
     public static <E> Boolean checkUniqueByReflect(E e) {
-        QueryWrapper query = getQueryWrapper(e);
-        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        return CollectionUtil.isNotEmpty(baseMapper.selectList(query)) ? false : true;
+        return checkUniqueByReflect(e, 1, null);
     }
+
+
 
     /**
      * 利用注解标注字段更新冗余字段

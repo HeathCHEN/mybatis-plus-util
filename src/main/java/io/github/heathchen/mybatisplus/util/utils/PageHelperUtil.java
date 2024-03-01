@@ -104,7 +104,7 @@ public class PageHelperUtil {
     /**
      * 检查是否使用排序
      *
-     * @param queryField 注解CustomerQuery
+     * @param queryField 注解QueryField
      * @param field         字段
      * @author HeathCHEN
      */

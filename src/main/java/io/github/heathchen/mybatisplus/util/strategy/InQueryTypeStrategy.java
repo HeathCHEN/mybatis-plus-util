@@ -28,7 +28,7 @@ public class InQueryTypeStrategy implements QueryTypeStrategy {
     }
     /**
      * 构造查询
-     * @param queryField CustomerQuery注解
+     * @param queryField QueryField注解
      * @param clazz 类
      * @param field 字段
      * @param queryWrapper 查询queryWrapper
