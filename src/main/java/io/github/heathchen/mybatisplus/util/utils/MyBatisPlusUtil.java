@@ -289,10 +289,10 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后获取Bean查询再转成对应类型
      *
-     * @param <T>      查询结果的返回类型
+     * @param <T>          查询结果的返回类型
      * @param ignoreParams 忽略参数名
-     * @param e        查询参数
-     * @param clazz    返回类型
+     * @param e            查询参数
+     * @param clazz        返回类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
@@ -404,6 +404,14 @@ public class MyBatisPlusUtil {
         QueryWrapper queryWrapper = new QueryWrapper<>();
 
         if (CollectionUtil.isNotEmpty(queryGroupMap)) {
+            if (queryGroupMap.size() == 1) {
+                Iterator<Map<String, Object>> iterator = queryGroupMap.values().iterator();
+                Map<String, Object> queryParamMap = iterator.next();
+                if (CollectionUtil.isNotEmpty(queryParamMap)) {
+                    queryParamMap.forEach((key, value) -> queryWrapper.eq(key, value));
+                }
+            }
+        } else {
             queryWrapper.and(tQueryWrapper -> {
                 Iterator<Map<String, Object>> iterator = queryGroupMap.values().iterator();
                 while (iterator.hasNext()) {
@@ -416,11 +424,7 @@ public class MyBatisPlusUtil {
                     }
                 }
             });
-
-
         }
-
-
         //清除查询数据
         QueryUtil.cleanData();
         return queryWrapper;
