@@ -24,7 +24,7 @@ public @interface UniqueValue {
      * 分组id相同的@UniqueValue会构筑在同一个QueryWrapper查询是否唯一
      * 如果具有多组@UniqueValue,则会分别构筑多个QueryWrapper去查询是否每组都唯一
      *
-     * @return int
+     * @return {@link String }
      * @author HeathCHEN
      */
     String value() default "default";

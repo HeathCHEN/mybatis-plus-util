@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 public @interface CachedTableField {
     /**
      * 分组id
-     * @return int
+     * @return {@link String }
      * @author HeathCHEN
      */
     String value() default "default";
