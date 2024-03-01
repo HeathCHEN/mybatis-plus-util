@@ -86,7 +86,7 @@ public class MyBatisPlusUtil {
     public static <E> Integer countByReflect(E e, MatchMode matchMode, String... ignoreParams) {
         QueryWrapper query = getCountQueryWrapper(e, matchMode, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        return baseMapper.selectCount(query);
+        return baseMapper.selectList(query).size();
     }
 
     /**
@@ -494,7 +494,7 @@ public class MyBatisPlusUtil {
     public static <E> Boolean checkUniqueByReflect(E e, Number limit, String... groupIds) {
         QueryWrapper checkUniqueQueryWrapper = getCheckUniqueQueryWrapper(e, groupIds);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        Number count = baseMapper.selectCount(checkUniqueQueryWrapper);
+        int count = baseMapper.selectList(checkUniqueQueryWrapper).size();
         if (ObjectUtil.isNull(limit)) {
             limit = 1;
         }
