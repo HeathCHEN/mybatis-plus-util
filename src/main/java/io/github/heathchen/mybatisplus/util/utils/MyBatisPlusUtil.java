@@ -15,6 +15,7 @@ import cn.hutool.log.Log;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableField;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
@@ -26,6 +27,7 @@ import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -206,7 +208,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, String... ignoreParams) {
-        return queryByReflect(e,null,ignoreParams);
+        return queryByReflect(e, null, ignoreParams);
     }
 
     /**
@@ -219,7 +221,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, MatchMode matchMode) {
-        return queryByReflect(e,matchMode, ArrayUtil.newArray(String.class, 0));
+        return queryByReflect(e, matchMode, ArrayUtil.newArray(String.class, 0));
 
     }
 
@@ -300,17 +302,38 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> List<QueryWrapper<E>> getCheckUniqueQueryWrapper(E e, String... groupIds) {
+    public static <E> QueryWrapper getCheckUniqueQueryWrapper(E e, String... groupIds) {
         QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
 
         Class<?> clazz = e.getClass();
 
-        Map<String, QueryWrapper<E>> queryWrapperMap = new HashMap<>();
+        Map<String, Map<String, Object>> queryGroupMap = new HashMap<>();
         //遍历map然后从子级逐级反射获得注解判断比较类型
-        QueryUtil.buildUniqueCheckQueryByReflect(clazz, queryWrapperMap, groupIds);
+        QueryUtil.buildUniqueCheckQueryByReflect(clazz, queryGroupMap, groupIds);
+
+        QueryWrapper queryWrapper = new QueryWrapper<>();
+
+        if (CollectionUtil.isNotEmpty(queryGroupMap)) {
+            queryWrapper.and(tQueryWrapper -> {
+                Iterator<Map<String, Object>> iterator = queryGroupMap.values().iterator();
+                while (iterator.hasNext()) {
+                    Map<String, Object> queryParamMap = iterator.next();
+                    if (CollectionUtil.isNotEmpty(queryParamMap)) {
+                        queryParamMap.forEach((key, value) -> queryWrapper.eq(key, value));
+                    }
+                    if (iterator.hasNext()) {
+                        queryWrapper.or();
+                    }
+                }
+            });
+
+
+        }
+
+
         //清除查询数据
         QueryUtil.cleanData();
-        return new ArrayList<>(queryWrapperMap.values());
+        return queryWrapper;
     }
 
     /**
@@ -379,16 +402,11 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> Boolean checkUniqueByReflect(E e, Integer limit, String... groupIds) {
-        List<QueryWrapper<E>> checkUniqueQueryWrapper = getCheckUniqueQueryWrapper(e, groupIds);
+        QueryWrapper checkUniqueQueryWrapper = getCheckUniqueQueryWrapper(e, groupIds);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        if (CollectionUtil.isNotEmpty(checkUniqueQueryWrapper)) {
-            for (QueryWrapper queryWrapper : checkUniqueQueryWrapper) {
-                Integer count = baseMapper.selectCount(queryWrapper);
-                if (count > limit) {
-                    return false;
-                }
-
-            }
+        Integer count = baseMapper.selectCount(checkUniqueQueryWrapper);
+        if (count > limit) {
+            return false;
         }
 
         return true;

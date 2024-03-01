@@ -137,10 +137,10 @@ public class QueryUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <T> Map<String, QueryWrapper<T>> buildUniqueCheckQueryByReflect(Class<?> clazz, Map<String, QueryWrapper<T>> queryWrapperMap, String... groupIds) {
+    public static <T> Map<String, Map<String, Object>> buildUniqueCheckQueryByReflect(Class<?> clazz, Map<String, Map<String, Object>> queryGroupMap, String... groupIds) {
         //如果父类为空,则不再递归
         if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
-            return queryWrapperMap;
+            return queryGroupMap;
         }
         Field[] clazzDeclaredFields = clazz.getDeclaredFields();
         if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
@@ -150,33 +150,36 @@ public class QueryUtil {
                     if (field.isAnnotationPresent(UniqueValue.class)) {
                         UniqueValue uniqueValue = field.getAnnotation(UniqueValue.class);
 
-                        if (ArrayUtil.isNotEmpty(groupIds) && !ArrayUtil.contains(groupIds,uniqueValue.value())) {
+                        if (ArrayUtil.isNotEmpty(groupIds) && !ArrayUtil.contains(groupIds, uniqueValue.value())) {
                             continue;
                         }
-                        QueryWrapper<T> queryWrapper = queryWrapperMap.get(uniqueValue.value());
-                        if (ObjectUtil.isNull(queryWrapper)) {
-                            queryWrapper = new QueryWrapper<T>();
-                            queryWrapperMap.put(uniqueValue.value(), queryWrapper);
+                        Map<String, Object> queryParamMap = queryGroupMap.get(uniqueValue.value());
+                        if (ObjectUtil.isNull(queryParamMap)) {
+                            queryParamMap = new HashMap<>();
+                            queryGroupMap.put(uniqueValue.value(), queryParamMap);
                         }
                         //查询属性名对应字段名
                         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
                         Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
                         //校验数据有效性
                         if (QueryUtil.checkValue(value)) {
-                            queryWrapper.eq(tableColumnName, value);
+                            queryParamMap.put(tableColumnName, value);
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
+
+
         }
 
         //如果已匹配全部则直接返回查询,否则继续迭代
         if (CollectionUtil.isNotEmpty(QueryParamThreadLocal.getQueryParamMap())) {
-            return buildUniqueCheckQueryByReflect(clazz.getSuperclass(), queryWrapperMap, groupIds);
+            return buildUniqueCheckQueryByReflect(clazz.getSuperclass(), queryGroupMap, groupIds);
         } else {
-            return queryWrapperMap;
+            return queryGroupMap;
         }
     }
 
