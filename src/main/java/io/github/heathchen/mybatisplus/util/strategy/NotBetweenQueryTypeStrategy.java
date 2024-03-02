@@ -23,28 +23,7 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
         QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
     }
 
-    /**
-     * @param queryField
-     * @param field
-     * @author HeathCHEN
-     */
-    @Override
-    public void removeParam(QueryField queryField, Field field) {
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
-    }
 
-    /**
-     * 检查字段值状态
-     *
-     * @param queryField      QueryField注解
-     * @param queryWrapper    查询queryWrapper
-     * @param tableColumnName
-     * @author HeathCHEN
-     */
-    @Override
-    public <T> void checkConditionType(QueryField queryField, QueryWrapper<T> queryWrapper, String tableColumnName) {
-    }
 
     /**
      * 构造查询
@@ -66,5 +45,18 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
         if (QueryUtil.checkValue(notBetweenEndValue)) {
             queryWrapper.ge(tableColumnName, notBetweenEndValue);
         }
+    }
+
+    /**
+     * 清除查询参数
+     *
+     * @param queryField QueryField注解
+     * @param field      字段
+     */
+    @Override
+    public void removeParam(QueryField queryField, Field field) {
+        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
     }
 }

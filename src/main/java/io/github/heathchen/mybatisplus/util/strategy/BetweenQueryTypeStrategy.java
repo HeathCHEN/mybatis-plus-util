@@ -57,32 +57,19 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
         if (QueryUtil.checkValue(endValue)) {
             queryWrapper.le(tableColumnName, endValue);
         }
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
-
     }
 
     /**
-     * 检查字段值状态
+     * 清除查询参数
      *
-     * @param queryField      QueryField注解
-     * @param queryWrapper    查询queryWrapper
-     * @param tableColumnName
-     * @author HeathCHEN
-     */
-    @Override
-    public <T> void checkConditionType(QueryField queryField, QueryWrapper<T> queryWrapper, String tableColumnName) {
-    }
-
-    /**
-     * @param queryField
-     * @param field
-     * @author HeathCHEN
+     * @param queryField QueryField注解
+     * @param field      字段
      */
     @Override
     public void removeParam(QueryField queryField, Field field) {
         QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
         QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
     }
 
 
