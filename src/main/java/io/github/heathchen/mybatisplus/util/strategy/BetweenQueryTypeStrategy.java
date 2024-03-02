@@ -72,6 +72,7 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
     public void removeParam(QueryField queryField, Field field) {
         QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
         QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
     }
 
 

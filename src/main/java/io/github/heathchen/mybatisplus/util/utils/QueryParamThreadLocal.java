@@ -23,6 +23,7 @@ public class QueryParamThreadLocal {
 
     private static final ThreadLocal<Map<String, Object>> QUERY_PARAM_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, Object>> ORDER_AND_PAGE_PARAM_LOCAL = new ThreadLocal<>();
+
     private QueryParamThreadLocal() {
     }
 

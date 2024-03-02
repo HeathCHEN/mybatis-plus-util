@@ -23,7 +23,6 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
     }
 
 
-
     /**
      * 构造查询
      *
