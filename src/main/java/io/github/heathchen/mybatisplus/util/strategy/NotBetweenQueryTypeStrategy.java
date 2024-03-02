@@ -1,6 +1,7 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
@@ -35,25 +36,11 @@ public class NotBetweenQueryTypeStrategy implements QueryTypeStrategy {
      */
     @Override
     public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
-        String[] groupIdsOnQueryField = queryField.groupId();
-        boolean inGroup = Boolean.FALSE;
-        if (ArrayUtil.isNotEmpty(groupIds)) {
-            for (String groupId : groupIds) {
-                if (ArrayUtil.contains(groupIdsOnQueryField,groupId)) {
-                    inGroup = Boolean.TRUE;
-                }
-            }
-        }else {
-            inGroup = Boolean.TRUE;
-        }
-
-        if (!inGroup) {
+        if (!QueryUtil.checkIfInGroup(queryField, groupIds)) {
             QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
             QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
             return;
         }
-
-
         //将属性转为下划线格式
         String tableColumnName = TableUtil.getTableColumnName(clazz,field);
 

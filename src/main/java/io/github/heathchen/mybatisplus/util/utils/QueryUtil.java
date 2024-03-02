@@ -287,4 +287,20 @@ public class QueryUtil {
         log.error("数字类型转换异常!");
         throw new RuntimeException("数字类型转换异常!");
     }
+
+
+    public static Boolean checkIfInGroup(QueryField queryField,String[] groupIds){
+        String[] groupIdsOnQueryField = queryField.groupId();
+        boolean inGroup = Boolean.FALSE;
+        if (ArrayUtil.isNotEmpty(groupIds)) {
+            for (String groupId : groupIds) {
+                if (ArrayUtil.contains(groupIdsOnQueryField,groupId)) {
+                    inGroup = Boolean.TRUE;
+                }
+            }
+        }else {
+            inGroup = Boolean.TRUE;
+        }
+        return inGroup;
+    }
 }
