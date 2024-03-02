@@ -1,7 +1,5 @@
 package io.github.heathchen.mybatisplus.util.annotation;
 
-import io.github.heathchen.mybatisplus.util.enums.QueryType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

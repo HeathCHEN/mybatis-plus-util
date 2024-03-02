@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 
 /**
  * 上下文工具类
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/26
@@ -22,11 +23,12 @@ public class ApplicationContextUtil {
 
     /**
      * 获取实体类对应的MapperBean
+     *
      * @param clazz 类
      * @return {@link BaseMapper } 实体类对应BaseMapper的Bean
      * @author HeathCHEN
      */
-    public static  BaseMapper getMapperBean(Class<?> clazz) {
+    public static BaseMapper getMapperBean(Class<?> clazz) {
 
         while (!clazz.isAnnotationPresent(TableName.class)) {
             Class<?> superclass = clazz.getSuperclass();
@@ -58,7 +60,7 @@ public class ApplicationContextUtil {
     /**
      * 通过MyBatis解析获取Mapper
      *
-     * @param <T> 实体类的实体类型
+     * @param <T>   实体类的实体类型
      * @param clazz 类
      * @return {@link BaseMapper } 实体类对应BaseMapper的Bean
      * @author HeathCHEN
@@ -81,7 +83,7 @@ public class ApplicationContextUtil {
     /**
      * 通过名字拼接获取Mapper
      *
-     * @param <T> 实体类的实体类型
+     * @param <T>   实体类的实体类型
      * @param clazz 实体类
      * @return {@link BaseMapper } 实体类对应BaseMapper的Bean
      * @author HeathCHEN

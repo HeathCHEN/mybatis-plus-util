@@ -1,14 +1,13 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
+import cn.hutool.core.util.ArrayUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
-import cn.hutool.core.util.ArrayUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
 
@@ -92,6 +91,7 @@ public class LessThanQueryTypeStrategy extends BaseQueryTypeStrategy implements 
     public void removeParam(QueryField queryField, Field field) {
         super.removeParam(null, field);
     }
+
     /**
      * 检查排序
      *

@@ -9,27 +9,18 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
-
 import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.Log;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import io.github.heathchen.mybatisplus.util.annotation.CachedTableField;
-import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.domain.CacheGroup;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingQueryTypeStrategy;
-import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * MyBatisPlus工具类
@@ -505,11 +496,7 @@ public class MyBatisPlusUtil {
         BigDecimal countBigDecimal = QueryUtil.numberToBigDecimal(count);
         BigDecimal limitBigDecimal = QueryUtil.numberToBigDecimal(limit);
 
-        if (countBigDecimal.compareTo(limitBigDecimal) != 0) {
-            return false;
-        }
-
-        return true;
+        return countBigDecimal.compareTo(limitBigDecimal) == 0;
     }
 
     /**

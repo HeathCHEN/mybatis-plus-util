@@ -3,7 +3,6 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
@@ -57,7 +56,11 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
         if (QueryUtil.checkValue(endValue)) {
             queryWrapper.le(tableColumnName, endValue);
         }
+        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
+        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
+
     }
+
 
     /**
      * 清除查询参数
@@ -69,7 +72,6 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
     public void removeParam(QueryField queryField, Field field) {
         QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
         QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
-        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
     }
 
 

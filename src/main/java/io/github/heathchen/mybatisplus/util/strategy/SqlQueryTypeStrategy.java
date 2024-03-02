@@ -1,13 +1,9 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
-import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
-import io.github.heathchen.mybatisplus.util.utils.TableUtil;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.enums.QueryType;
 
 /**
  * 自定义SQL查询策略类

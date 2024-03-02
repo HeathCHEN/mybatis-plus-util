@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * 应用上下文提供者
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/26
@@ -14,11 +15,6 @@ import org.springframework.context.ApplicationContextAware;
 public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
-
-    @Override
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
-        applicationContext = context;
-    }
 
     public static <T> T getBean(Class<T> beanClass) {
         return applicationContext.getBean(beanClass);
@@ -32,7 +28,12 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         return applicationContext.getBean(name);
     }
 
-    public static Object getBean(String name,Object... args) {
-        return applicationContext.getBean(name,args);
+    public static Object getBean(String name, Object... args) {
+        return applicationContext.getBean(name, args);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        applicationContext = context;
     }
 }

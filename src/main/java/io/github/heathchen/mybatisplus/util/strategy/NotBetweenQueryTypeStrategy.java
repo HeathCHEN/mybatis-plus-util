@@ -1,17 +1,16 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
-import io.github.heathchen.mybatisplus.util.utils.TableUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.lang.reflect.Field;
 
 /**
  * NOT BETWEEN 值1 AND 值2 查询策略类
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/26
@@ -27,10 +26,11 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
 
     /**
      * 构造查询
-     * @param queryField QueryField注解
-     * @param value 类
+     *
+     * @param queryField      QueryField注解
+     * @param value           类
      * @param tableColumnName 字段
-     * @param queryWrapper 查询queryWrapper
+     * @param queryWrapper    查询queryWrapper
      * @author HeathCHEN
      */
     @Override

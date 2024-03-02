@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 自定义冗余字段
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/28
@@ -17,6 +18,7 @@ import java.lang.annotation.Target;
 public @interface CachedTableField {
     /**
      * 分组id
+     *
      * @return {@link String }
      * @author HeathCHEN
      */

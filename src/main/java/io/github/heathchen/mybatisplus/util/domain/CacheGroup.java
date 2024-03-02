@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * 冗余字段组
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/26
@@ -26,7 +27,7 @@ public class CacheGroup {
     /**
      * 自定义冗余字段注解List
      */
-    List<CachedTableField> CachedTableFields ;
+    List<CachedTableField> CachedTableFields;
 
 
     /**
@@ -61,7 +62,9 @@ public class CacheGroup {
         return CachedTableFields;
     }
 
-
+    public void setCachedTableFields(List<CachedTableField> CachedTableFields) {
+        this.CachedTableFields = CachedTableFields;
+    }
 
     public void addCachedTableFields(CachedTableField CachedTableField) {
 
@@ -83,10 +86,6 @@ public class CacheGroup {
         return tableFields;
     }
 
-    public void setCachedTableFields(List<CachedTableField> CachedTableFields) {
-        this.CachedTableFields = CachedTableFields;
-    }
-
     public void setTableFields(List<String> tableFields) {
         this.tableFields = tableFields;
     }
@@ -104,7 +103,7 @@ public class CacheGroup {
     }
 
     public void checkGroupConfig() throws Exception {
-        if (StringUtil.isEmpty(tableId)||CollectionUtil.isEmpty(tableFields)) {
+        if (StringUtil.isEmpty(tableId) || CollectionUtil.isEmpty(tableFields)) {
             throw new Exception("注解配置异常!");
         }
 

@@ -105,7 +105,7 @@ public class PageHelperUtil {
      * 检查是否使用排序
      *
      * @param queryField 注解QueryField
-     * @param field         字段
+     * @param field      字段
      * @author HeathCHEN
      */
     public static void checkColumnOrderOnField(QueryField queryField, Class<?> clazz, Field field, String tableColumnName) {

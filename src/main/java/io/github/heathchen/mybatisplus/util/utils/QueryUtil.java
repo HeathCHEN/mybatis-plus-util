@@ -47,38 +47,22 @@ public class QueryUtil {
         //文字
         if (t instanceof CharSequence) {
             CharSequence charSequence = (CharSequence) t;
-            if (StrUtil.isNotBlank(charSequence)) {
-                return true;
-            } else {
-                return false;
-            }
+            return StrUtil.isNotBlank(charSequence);
         }
         //Map
         if (t instanceof Map) {
             Map map = (Map) t;
-            if (map.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !map.isEmpty();
         }
         //数组
         if (t.getClass().isArray()) {
             Object[] objectArray = (Object[]) t;
-            if (ArrayUtil.isNotEmpty(objectArray)) {
-                return true;
-            } else {
-                return false;
-            }
+            return ArrayUtil.isNotEmpty(objectArray);
         }
         //集合
         if (t instanceof Collection) {
             Collection collection = (Collection) t;
-            if (CollectionUtil.isNotEmpty(collection)) {
-                return true;
-            } else {
-                return false;
-            }
+            return CollectionUtil.isNotEmpty(collection);
         }
 
 
@@ -95,7 +79,7 @@ public class QueryUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper,String[] groupIds) {
+    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper, String[] groupIds) {
         //如果父类为空,则不再递归
         if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
             return queryWrapper;
@@ -117,7 +101,7 @@ public class QueryUtil {
                         continue;
                     }
                     //根据查询类型构建查询
-                    QueryTypeStrategyManager.invokeQueryStrategy(queryField, clazz, field, queryWrapper,groupIds);
+                    QueryTypeStrategyManager.invokeQueryStrategy(queryField, clazz, field, queryWrapper, groupIds);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -126,7 +110,7 @@ public class QueryUtil {
 
         //如果已匹配全部则直接返回查询,否则继续迭代
         if (CollectionUtil.isNotEmpty(QueryParamThreadLocal.getQueryParamMap())) {
-            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper,groupIds);
+            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper, groupIds);
         } else {
             return queryWrapper;
         }
@@ -174,7 +158,6 @@ public class QueryUtil {
                     e.printStackTrace();
                 }
             }
-
 
 
         }
@@ -256,32 +239,33 @@ public class QueryUtil {
 
     /**
      * 转行数字到BigDecimal
+     *
      * @param number 数字
      * @return {@link BigDecimal }
      * @author HeathCHEN
      */
-    public static BigDecimal numberToBigDecimal(Number number){
+    public static BigDecimal numberToBigDecimal(Number number) {
 
         if (ObjectUtil.isNull(number)) {
             log.error("数字类型转换异常!");
             throw new RuntimeException("数字类型转换异常!");
         }
 
-        if(number instanceof BigDecimal){
+        if (number instanceof BigDecimal) {
             return (BigDecimal) number;
         }
 
-        if(number instanceof Long){
-            return BigDecimal.valueOf((Long)number);
+        if (number instanceof Long) {
+            return BigDecimal.valueOf((Long) number);
         }
-        if(number instanceof Integer){
-            return BigDecimal.valueOf((Integer)number);
+        if (number instanceof Integer) {
+            return BigDecimal.valueOf((Integer) number);
         }
-        if(number instanceof Double){
-            return BigDecimal.valueOf((Double)number);
+        if (number instanceof Double) {
+            return BigDecimal.valueOf((Double) number);
         }
-        if(number instanceof Short){
-            return BigDecimal.valueOf((Short)number);
+        if (number instanceof Short) {
+            return BigDecimal.valueOf((Short) number);
         }
 
         log.error("数字类型转换异常!");
@@ -289,16 +273,16 @@ public class QueryUtil {
     }
 
 
-    public static Boolean checkIfInGroup(QueryField queryField, String[] groupIds){
+    public static Boolean checkIfInGroup(QueryField queryField, String[] groupIds) {
         String[] groupIdsOnQueryField = queryField.groupId();
         boolean inGroup = Boolean.FALSE;
         if (ArrayUtil.isNotEmpty(groupIds)) {
             for (String groupId : groupIds) {
-                if (ArrayUtil.contains(groupIdsOnQueryField,groupId)) {
+                if (ArrayUtil.contains(groupIdsOnQueryField, groupId)) {
                     inGroup = Boolean.TRUE;
                 }
             }
-        }else {
+        } else {
             inGroup = Boolean.TRUE;
         }
         return inGroup;
