@@ -1,11 +1,11 @@
 package io.github.heathchen.mybatisplus.util.utils;
 
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 
@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * 表工具类
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/26
@@ -23,6 +24,7 @@ public class TableUtil {
 
     /**
      * 获取实体属性对应表字段名
+     *
      * @param clazz 类
      * @param field 字段
      * @return {@link String } 表字段名
@@ -61,7 +63,8 @@ public class TableUtil {
                     }
                 }
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
 
         columnName = StrUtil.toUnderlineCase(field.getName());
@@ -70,10 +73,10 @@ public class TableUtil {
     }
 
 
-    public static String checkOrColumnName(String orColumn){
+    public static String checkOrColumnName(String orColumn) {
         if (orColumn.contains("_")) {
             return orColumn;
-        }else {
+        } else {
             return StrUtil.toUnderlineCase(orColumn);
         }
 

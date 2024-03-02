@@ -3,12 +3,10 @@ package io.github.heathchen.mybatisplus.util.config;
 import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.dialect.slf4j.Slf4jLogFactory;
 import io.github.heathchen.mybatisplus.util.strategy.*;
-import io.github.heathchen.mybatisplus.util.utils.MyBatisPlusUtil;
-import org.mybatis.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- *  MyBatisPlusUtil配置类
+ * MyBatisPlusUtil配置类
  *
  * @author Administrator
  * @since 2024/02/22
@@ -26,6 +24,7 @@ public class MyBatisPlusUtilConfig {
 
     /**
      * 初始化策略类
+     *
      * @author HeathCHEN
      */
     public void initStrategy() {

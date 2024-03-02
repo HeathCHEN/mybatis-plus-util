@@ -2,6 +2,7 @@ package io.github.heathchen.mybatisplus.util.enums;
 
 /**
  * 表连接枚举类
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2023/10/21
@@ -14,6 +15,7 @@ public enum JoinType {
     FULL_JOIN("全连接");
 
     private final String description;
+
     JoinType(String description) {
         this.description = description;
     }

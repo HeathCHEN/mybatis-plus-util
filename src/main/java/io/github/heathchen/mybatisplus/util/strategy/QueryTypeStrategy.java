@@ -1,8 +1,7 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 
 import java.lang.reflect.Field;
 

@@ -1,17 +1,11 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
-import io.github.heathchen.mybatisplus.util.enums.ConditionType;
-import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
-import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
-import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.enums.QueryType;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 
 /**
@@ -27,6 +21,7 @@ public class InQueryTypeStrategy extends BaseQueryTypeStrategy implements QueryT
     public InQueryTypeStrategy() {
         QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
     }
+
     /**
      * 构造查询
      *

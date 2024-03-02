@@ -36,10 +36,10 @@ public class AccurateMatchingQueryTypeStrategy {
      */
     public static <T> void buildQuery(Class<?> clazz, QueryWrapper<T> queryWrapper, MatchMode matchMode) {
 
-        if (matchByMethodParam(queryWrapper,matchMode)) {
+        if (matchByMethodParam(queryWrapper, matchMode)) {
             return;
         }
-        if (matchByAnnotationOnClass(clazz,queryWrapper)) {
+        if (matchByAnnotationOnClass(clazz, queryWrapper)) {
             return;
         }
         if (matchByGlobalSetting(queryWrapper)) {
@@ -51,12 +51,13 @@ public class AccurateMatchingQueryTypeStrategy {
 
     /**
      * 从方法参数获取匹配模式
+     *
      * @param queryWrapper 查询queryWrapper
-     * @param matchMode 匹配模式
+     * @param matchMode    匹配模式
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    public static <T> Boolean matchByMethodParam( QueryWrapper<T> queryWrapper, MatchMode matchMode){
+    public static <T> Boolean matchByMethodParam(QueryWrapper<T> queryWrapper, MatchMode matchMode) {
         if (ObjectUtil.isNotNull(matchMode) && MatchMode.ALL_MATCH_MODE.equals(matchMode)) {
             buildQuery(queryWrapper);
             return Boolean.TRUE;
@@ -66,12 +67,13 @@ public class AccurateMatchingQueryTypeStrategy {
 
     /**
      * 从注解中获取匹配模式
-     * @param clazz 查询参数类
+     *
+     * @param clazz        查询参数类
      * @param queryWrapper 查询queryWrapper
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    public static <T> Boolean matchByAnnotationOnClass(Class<?> clazz, QueryWrapper<T> queryWrapper){
+    public static <T> Boolean matchByAnnotationOnClass(Class<?> clazz, QueryWrapper<T> queryWrapper) {
         if (ObjectUtil.isNotNull(clazz)) {
             while (!clazz.isAnnotationPresent(QueryConfig.class)) {
                 Class<?> superclass = clazz.getSuperclass();
@@ -100,11 +102,12 @@ public class AccurateMatchingQueryTypeStrategy {
 
     /**
      * 从全局设定中获取匹配模式
+     *
      * @param queryWrapper 查询queryWrapper
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    public static <T> Boolean matchByGlobalSetting(QueryWrapper<T> queryWrapper){
+    public static <T> Boolean matchByGlobalSetting(QueryWrapper<T> queryWrapper) {
         MyBatisPlusUtilConfig myBatisPlusUtilConfig = ApplicationContextProvider.getBean(MyBatisPlusUtilConfig.class);
         if (ObjectUtil.isNotNull(myBatisPlusUtilConfig)) {
             if (MatchMode.ALL_MATCH_MODE.getName().equals(myBatisPlusUtilConfig.getGlobalMatchMode())) {
@@ -117,8 +120,6 @@ public class AccurateMatchingQueryTypeStrategy {
         }
         return Boolean.FALSE;
     }
-
-
 
 
     /**

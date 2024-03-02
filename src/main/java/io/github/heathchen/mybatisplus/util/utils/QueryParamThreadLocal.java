@@ -14,75 +14,77 @@ import java.util.stream.Collectors;
 
 /**
  * 存放查询参数线程工具类
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/26
  */
 public class QueryParamThreadLocal {
 
-	private QueryParamThreadLocal(){
-    }
-
-	private static final ThreadLocal<Map<String,Object>> QUERY_PARAM_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, Object>> QUERY_PARAM_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, Object>> ORDER_AND_PAGE_PARAM_LOCAL = new ThreadLocal<>();
-
+    private QueryParamThreadLocal() {
+    }
 
     /**
      * 清空数据,防止内存溢出
+     *
      * @author HeathCHEN
      */
-    public static void cleanData(){
+    public static void cleanData() {
         QUERY_PARAM_LOCAL.remove();
         ORDER_AND_PAGE_PARAM_LOCAL.remove();
     }
 
     /**
-     * 设置查询参数到线程中
-     * @param data 查询参数的map
-     * @author HeathCHEN
-     * @since 2024/02/23
-     */
-    public static void setQueryParamMap(Map<String,Object> data){
-        if (ObjectUtil.isNull(QUERY_PARAM_LOCAL.get())) {
-            QUERY_PARAM_LOCAL.set(new HashMap<>());
-        }
-        QUERY_PARAM_LOCAL.set(data);
-    }
-
-
-    /**
      * 获取全部查询参数
+     *
      * @return {@link Map }
      * @author HeathCHEN
      * @since 2024/02/26
      */
-    public static Map<String,Object> getQueryParamMap(){
+    public static Map<String, Object> getQueryParamMap() {
         if (ObjectUtil.isNull(QUERY_PARAM_LOCAL.get())) {
             QUERY_PARAM_LOCAL.set(new HashMap<>());
         }
         return QUERY_PARAM_LOCAL.get();
     }
 
+    /**
+     * 设置查询参数到线程中
+     *
+     * @param data 查询参数的map
+     * @author HeathCHEN
+     * @since 2024/02/23
+     */
+    public static void setQueryParamMap(Map<String, Object> data) {
+        if (ObjectUtil.isNull(QUERY_PARAM_LOCAL.get())) {
+            QUERY_PARAM_LOCAL.set(new HashMap<>());
+        }
+        QUERY_PARAM_LOCAL.set(data);
+    }
 
     /**
      * 获取查询参数
+     *
      * @param key 查询参数的属性名
      * @return {@link Object }
      * @author HeathCHEN
      * @since 2024/02/26
      */
-    public static Object getValueFromQueryParamMap(String key){
+    public static Object getValueFromQueryParamMap(String key) {
         return QUERY_PARAM_LOCAL.get().get(key);
     }
 
 
     /**
      * 移除查询参数
+     *
      * @param keys 查询参数的属性名
      * @author HeathCHEN
      * @since 2024/02/26
      */
-    public static void removeParamFromQueryParamMap(String... keys){
+    public static void removeParamFromQueryParamMap(String... keys) {
         if (ArrayUtil.isNotEmpty(keys)) {
             Map<String, Object> objectMap = getQueryParamMap();
             for (String key : keys) {
@@ -165,6 +167,7 @@ public class QueryParamThreadLocal {
 
     /**
      * 放入排序列表
+     *
      * @param orderDto
      * @author HeathCHEN
      */
@@ -175,6 +178,7 @@ public class QueryParamThreadLocal {
 
     /**
      * 如果不存在则放入排序列表
+     *
      * @param orderDto 排序对象
      * @author HeathCHEN
      */
@@ -186,10 +190,6 @@ public class QueryParamThreadLocal {
         orderMap.putIfAbsent(orderDto.getTableColumnName(), orderDto);
     }
 
-    public static void setStartPage(Boolean startPage) {
-        setValueToOrderAndPageParamMap(PageAndOrderConst.START_PAGE, startPage);
-    }
-
     public static Boolean getStartPage() {
         Boolean startPage = (Boolean) getValueFromOrderAndPageParamMap(PageAndOrderConst.START_PAGE);
         if (ObjectUtil.isNull(startPage)) {
@@ -197,6 +197,10 @@ public class QueryParamThreadLocal {
             setStartPage(startPage);
         }
         return startPage;
+    }
+
+    public static void setStartPage(Boolean startPage) {
+        setValueToOrderAndPageParamMap(PageAndOrderConst.START_PAGE, startPage);
     }
 
 }

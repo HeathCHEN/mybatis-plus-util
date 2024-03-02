@@ -1,14 +1,10 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
-import io.github.heathchen.mybatisplus.util.enums.ConditionType;
-import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
-import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
-import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.enums.QueryType;
+import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
 /**
  * 不等于查询策略类
@@ -28,10 +24,10 @@ public class NotEqQueryTypeStrategy extends BaseQueryTypeStrategy implements Que
     /**
      * 构造查询
      *
-     * @param queryField QueryField注解
-     * @param value         类
-     * @param tableColumnName         字段
-     * @param queryWrapper  查询queryWrapper
+     * @param queryField      QueryField注解
+     * @param value           类
+     * @param tableColumnName 字段
+     * @param queryWrapper    查询queryWrapper
      * @author HeathCHEN
      */
     @Override

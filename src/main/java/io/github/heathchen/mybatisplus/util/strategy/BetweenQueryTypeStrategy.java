@@ -3,7 +3,6 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
@@ -62,22 +61,12 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
 
     }
 
-    /**
-     * 检查字段值状态
-     *
-     * @param queryField      QueryField注解
-     * @param queryWrapper    查询queryWrapper
-     * @param tableColumnName
-     * @author HeathCHEN
-     */
-    @Override
-    public <T> void checkConditionType(QueryField queryField, QueryWrapper<T> queryWrapper, String tableColumnName) {
-    }
 
     /**
-     * @param queryField
-     * @param field
-     * @author HeathCHEN
+     * 清除查询参数
+     *
+     * @param queryField QueryField注解
+     * @param field      字段
      */
     @Override
     public void removeParam(QueryField queryField, Field field) {
