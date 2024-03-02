@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * 查询策略类管理器
+ *
  * @author HeathCHEN
  * @version 1.0
  * @since 2024/02/23
@@ -19,7 +20,8 @@ public class QueryTypeStrategyManager {
 
     /**
      * 设置策略
-     * @param queryType 查询类型名称
+     *
+     * @param queryType         查询类型名称
      * @param queryTypeStrategy 查询策略类
      * @author HeathCHEN
      */
@@ -30,6 +32,7 @@ public class QueryTypeStrategyManager {
 
     /**
      * 获取策略
+     *
      * @param queryType 查询类型名称
      * @return {@link QueryTypeStrategy } 查询策略类
      * @author HeathCHEN
@@ -39,11 +42,19 @@ public class QueryTypeStrategyManager {
     }
 
 
-
-    public static <T> void invokeQueryStrategy(QueryField queryField, Class<?> clazz, Field field , QueryWrapper<T> queryWrapper,String[] groupIds){
-        QueryTypeStrategy queryTypeStrategy = getQueryTypeStrategyToManager(queryField.value().getCompareType());
-        queryTypeStrategy.buildQuery(queryField, clazz, field, queryWrapper,groupIds);
-
+    /**
+     * 获取对应策略类并执行
+     *
+     * @param queryField   QueryField注解
+     * @param clazz        类
+     * @param field        字段
+     * @param queryWrapper 查询queryWrapper
+     * @param groupIds     传入组织Id
+     * @author HeathCHEN
+     */
+    public static <T> void invokeQueryStrategy(QueryField queryField, Class<?> clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
+        BaseQueryTypeStrategy queryTypeStrategy = (BaseQueryTypeStrategy) getQueryTypeStrategyToManager(queryField.value().getCompareType());
+        queryTypeStrategy.constructQueryWrapper(queryField, clazz, field, queryWrapper, groupIds);
     }
 
 

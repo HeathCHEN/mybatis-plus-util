@@ -1,6 +1,5 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import cn.hutool.core.util.ObjectUtil;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
@@ -20,49 +19,93 @@ import java.lang.reflect.Field;
  * @version 1.0
  * @since 2024/02/26
  */
-public class LessThanQueryTypeStrategy implements QueryTypeStrategy {
+public class LessThanQueryTypeStrategy extends BaseQueryTypeStrategy implements QueryTypeStrategy {
     private static final QueryType QUERY_TYPE = QueryType.LESS_THAN;
 
     public LessThanQueryTypeStrategy() {
         QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
     }
 
+    /**
+     * 检测分组
+     *
+     * @param queryField QueryField注解
+     * @param groupIds   传入的分组Ids
+     * @return {@link Boolean }
+     * @author HeathCHEN
+     */
     @Override
-    public <T> void buildQuery(QueryField queryField, Class clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
+    public Boolean checkIfNotInGroup(QueryField queryField, String[] groupIds) {
+        return !QueryUtil.checkIfInGroup(queryField, groupIds);
+    }
 
-        if (!QueryUtil.checkIfInGroup(queryField, groupIds)) {
-            QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
-            return;
-        }
-        Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
-        //查询属性名对应字段名
-        String tableColumnName = TableUtil.getTableColumnName(clazz, field);
+    /**
+     * 构造查询
+     *
+     * @param queryField      QueryField注解
+     * @param value           类
+     * @param tableColumnName 字段
+     * @param queryWrapper    查询queryWrapper
+     * @author HeathCHEN
+     */
+    @Override
+    public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
         String[] orColumns = queryField.orColumns();
-        if (QueryUtil.checkValue(value)) {
-            if (ArrayUtil.isNotEmpty(orColumns)) {
-                queryWrapper.and(tQueryWrapper -> {
-                            tQueryWrapper.lt(tableColumnName, value);
-                            for (String orColumn : orColumns) {
-                                tQueryWrapper.or();
-                                tQueryWrapper.lt(TableUtil.checkOrColumnName(orColumn), value);
-                            }
+        if (ArrayUtil.isNotEmpty(orColumns)) {
+            queryWrapper.and(tQueryWrapper -> {
+                        tQueryWrapper.lt(tableColumnName, value);
+                        for (String orColumn : orColumns) {
+                            tQueryWrapper.or();
+                            tQueryWrapper.lt(TableUtil.checkOrColumnName(orColumn), value);
                         }
-                );
-            } else {
-                queryWrapper.lt(tableColumnName, value);
-            }
+                    }
+            );
         } else {
-            if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NULL)) {
-                queryWrapper.isNull(tableColumnName);
-            }
-            if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NOT_NULL)) {
-                queryWrapper.isNotNull(tableColumnName);
-            }
+            queryWrapper.lt(tableColumnName, value);
         }
+    }
 
+    /**
+     * 检查字段值状态
+     *
+     * @param queryField      QueryField注解
+     * @param queryWrapper    查询queryWrapper
+     * @param tableColumnName
+     * @author HeathCHEN
+     */
+    @Override
+    public <T> void checkConditionType(QueryField queryField, QueryWrapper<T> queryWrapper, String tableColumnName) {
+        if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NULL)) {
+            queryWrapper.isNull(tableColumnName);
+        }
+        if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NOT_NULL)) {
+            queryWrapper.isNotNull(tableColumnName);
+        }
+    }
 
-        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
+    /**
+     * @param queryField
+     * @param field
+     * @author HeathCHEN
+     */
+    @Override
+    public void removeParam(QueryField queryField, Field field) {
+        super.removeParam(null, field);
+    }
+    /**
+     * 检查排序
+     *
+     * @param queryField      QueryField注解
+     * @param clazz           类
+     * @param field           字段
+     * @param tableColumnName 表字段名
+     * @author HeathCHEN
+     */
+    @Override
+    public void checkOrder(QueryField queryField, Class clazz, Field field, String tableColumnName) {
         //检查是否使用排序
         PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);
     }
+
+
 }

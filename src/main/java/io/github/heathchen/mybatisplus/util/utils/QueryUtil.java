@@ -289,7 +289,7 @@ public class QueryUtil {
     }
 
 
-    public static Boolean checkIfInGroup(QueryField queryField,String[] groupIds){
+    public static Boolean checkIfInGroup(QueryField queryField, String[] groupIds){
         String[] groupIdsOnQueryField = queryField.groupId();
         boolean inGroup = Boolean.FALSE;
         if (ArrayUtil.isNotEmpty(groupIds)) {
