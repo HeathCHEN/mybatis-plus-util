@@ -88,7 +88,7 @@ public class MyBatisPlusUtil {
      * @param ignoreParams 忽略参数名
      * @return {@link Integer}
      */
-    public static <E> Integer countByReflect(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<E>> consumer, String... ignoreParams) {
+    public static <E> Integer countByReflect(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<?>> consumer, String... ignoreParams) {
         QueryWrapper query = getCountQueryWrapper(e, matchMode, groupIds, consumer, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectList(query).size();
@@ -151,7 +151,7 @@ public class MyBatisPlusUtil {
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
-    public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz, String[] groupIds, Consumer<QueryWrapper<E>> consumer, String... ignoreParams) {
+    public static <T, E> List<T> queryByReflect(E e, MatchMode matchMode, Class<T> clazz, String[] groupIds, Consumer<QueryWrapper<?>> consumer, String... ignoreParams) {
         Class<?> tClazz = e.getClass();
         if (ObjectUtil.isNull(clazz)) {
             return ((List<T>) queryByReflect(e, matchMode, groupIds, consumer, ignoreParams));
@@ -185,7 +185,7 @@ public class MyBatisPlusUtil {
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
-    public static <E> List<E> queryByReflect(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<E>> consumer, String... ignoreParams) {
+    public static <E> List<E> queryByReflect(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<?>> consumer, String... ignoreParams) {
         QueryWrapper query = getQueryWrapper(e, matchMode, groupIds, consumer, ignoreParams);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         return baseMapper.selectList(query);
@@ -314,7 +314,7 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper<E> getQueryWrapper(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<E>> consumer, String... ignoreParams) {
+    public static <E> QueryWrapper<E> getQueryWrapper(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<?>> consumer, String... ignoreParams) {
         QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
         QueryParamThreadLocal.removeParamFromQueryParamMap(ignoreParams);
         Class<?> clazz = e.getClass();
@@ -350,7 +350,7 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper<E> getCountQueryWrapper(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<E>> consumer, String... ignoreParams) {
+    public static <E> QueryWrapper<E> getCountQueryWrapper(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<?>> consumer, String... ignoreParams) {
         QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
         QueryParamThreadLocal.removeParamFromQueryParamMap(ignoreParams);
         Class<?> clazz = e.getClass();
@@ -378,7 +378,7 @@ public class MyBatisPlusUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <E> QueryWrapper getCheckUniqueQueryWrapper(E e, Consumer<QueryWrapper<E>> consumer, String... groupIds) {
+    public static <E> QueryWrapper getCheckUniqueQueryWrapper(E e, Consumer<QueryWrapper<?>> consumer, String... groupIds) {
         QueryParamThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
 
         Class<?> clazz = e.getClass();
@@ -497,7 +497,7 @@ public class MyBatisPlusUtil {
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
-    public static <E> Boolean checkUniqueByReflect(E e, Number limit, Consumer<QueryWrapper<E>> consumer, String... groupIds) {
+    public static <E> Boolean checkUniqueByReflect(E e, Number limit, Consumer<QueryWrapper<?>> consumer, String... groupIds) {
         QueryWrapper checkUniqueQueryWrapper = getCheckUniqueQueryWrapper(e, consumer, groupIds);
         BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         int count = baseMapper.selectList(checkUniqueQueryWrapper).size();

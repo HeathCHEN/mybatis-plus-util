@@ -17,7 +17,7 @@ public class CheckUniqueBuilder<E> {
     /**
      * QueryWrapper消费者
      */
-    Consumer<QueryWrapper<E>> consumer;
+    Consumer<QueryWrapper<?>> consumer;
     /**
      * 查询参数
      */
@@ -53,11 +53,11 @@ public class CheckUniqueBuilder<E> {
         return this;
     }
 
-    public Consumer<QueryWrapper<E>> getConsumer() {
+    public Consumer<QueryWrapper<?>> getConsumer() {
         return consumer;
     }
 
-    public CheckUniqueBuilder setConsumer(Consumer<QueryWrapper<E>> consumer) {
+    public CheckUniqueBuilder setConsumer(Consumer<QueryWrapper<?>> consumer) {
         this.consumer = consumer;
         return this;
     }

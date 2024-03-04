@@ -15,10 +15,11 @@ import java.util.function.Consumer;
  * @since 2024/03/04
  */
 public class QueryBuilder<E, T> {
+
     /**
      * QueryWrapper消费者
      */
-    Consumer<QueryWrapper<E>> consumer;
+    Consumer<QueryWrapper<?>> consumer;
     /**
      * 查询参数
      */
@@ -39,7 +40,6 @@ public class QueryBuilder<E, T> {
      * 忽略参数名
      */
     private String[] ignoreParams;
-
 
     public QueryBuilder() {
     }
@@ -80,11 +80,11 @@ public class QueryBuilder<E, T> {
         return this;
     }
 
-    public Consumer<QueryWrapper<E>> getConsumer() {
+    public Consumer<QueryWrapper<?>> getConsumer() {
         return consumer;
     }
 
-    public QueryBuilder setConsumer(Consumer<QueryWrapper<E>> consumer) {
+    public QueryBuilder setConsumer(Consumer<QueryWrapper<?>> consumer) {
         this.consumer = consumer;
         return this;
     }
