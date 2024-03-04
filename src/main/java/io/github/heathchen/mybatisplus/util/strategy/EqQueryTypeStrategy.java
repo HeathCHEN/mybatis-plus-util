@@ -18,7 +18,7 @@ public class EqQueryTypeStrategy extends BaseQueryTypeStrategy implements QueryT
     private static final QueryType QUERY_TYPE = QueryType.EQ;
 
     public EqQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

@@ -18,7 +18,7 @@ public class LikeQueryTypeStrategy extends BaseQueryTypeStrategy implements Quer
     private static final QueryType QUERY_TYPE = QueryType.LIKE;
 
     public LikeQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

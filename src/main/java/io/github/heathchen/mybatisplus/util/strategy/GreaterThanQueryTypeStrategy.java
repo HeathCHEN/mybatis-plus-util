@@ -17,7 +17,7 @@ public class GreaterThanQueryTypeStrategy extends BaseQueryTypeStrategy implemen
     private static final QueryType QUERY_TYPE = QueryType.GREATER_THAN;
 
     public GreaterThanQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

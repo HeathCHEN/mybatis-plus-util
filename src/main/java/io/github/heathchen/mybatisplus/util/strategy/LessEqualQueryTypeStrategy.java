@@ -23,7 +23,7 @@ public class LessEqualQueryTypeStrategy extends BaseQueryTypeStrategy implements
 
 
     public LessEqualQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

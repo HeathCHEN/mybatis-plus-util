@@ -19,7 +19,7 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
     private static final QueryType QUERY_TYPE = QueryType.NOT_BETWEEN;
 
     public NotBetweenQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
 

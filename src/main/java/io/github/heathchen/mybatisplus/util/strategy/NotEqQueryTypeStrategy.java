@@ -18,7 +18,7 @@ public class NotEqQueryTypeStrategy extends BaseQueryTypeStrategy implements Que
     private static final QueryType QUERY_TYPE = QueryType.NOT_EQUAL;
 
     public NotEqQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

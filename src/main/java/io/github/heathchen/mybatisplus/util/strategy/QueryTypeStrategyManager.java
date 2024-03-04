@@ -1,5 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 
@@ -54,7 +55,9 @@ public class QueryTypeStrategyManager {
      */
     public static <T> void invokeQueryStrategy(QueryField queryField, Class<?> clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
         BaseQueryTypeStrategy queryTypeStrategy = (BaseQueryTypeStrategy) getQueryTypeStrategyToManager(queryField.value().getCompareType());
-        queryTypeStrategy.constructQueryWrapper(queryField, clazz, field, queryWrapper, groupIds);
+        if (ObjectUtil.isNotNull(queryTypeStrategy)) {
+            queryTypeStrategy.constructQueryWrapper(queryField, clazz, field, queryWrapper, groupIds);
+        }
     }
 
 

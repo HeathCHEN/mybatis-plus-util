@@ -20,7 +20,7 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
     private static final QueryType QUERY_TYPE = QueryType.BETWEEN;
 
     public BetweenQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

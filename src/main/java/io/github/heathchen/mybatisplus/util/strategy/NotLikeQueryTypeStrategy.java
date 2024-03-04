@@ -17,7 +17,7 @@ public class NotLikeQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
     private static final QueryType QUERY_TYPE = QueryType.NOT_LIKE;
 
     public NotLikeQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

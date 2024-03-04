@@ -1,5 +1,6 @@
 package io.github.heathchen.mybatisplus.util.config;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.dialect.slf4j.Slf4jLogFactory;
 import io.github.heathchen.mybatisplus.util.strategy.*;
@@ -18,8 +19,19 @@ public class MyBatisPlusUtilConfig {
 
 
     public MyBatisPlusUtilConfig() {
+        super();
+        //初始化策略类
         initStrategy();
-        GlobalLogFactory.set(Slf4jLogFactory.class);
+        //设置全局的日志工厂
+        if (ObjectUtil.isNull(GlobalLogFactory.get())) {
+            GlobalLogFactory.set(Slf4jLogFactory.class);
+        }
+
+    }
+
+    public MyBatisPlusUtilConfig(String globalMatchMode) {
+        this();
+        this.globalMatchMode = globalMatchMode;
     }
 
     /**

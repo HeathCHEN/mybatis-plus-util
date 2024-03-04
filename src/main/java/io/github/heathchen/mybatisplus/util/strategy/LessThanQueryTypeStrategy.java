@@ -22,7 +22,7 @@ public class LessThanQueryTypeStrategy extends BaseQueryTypeStrategy implements 
     private static final QueryType QUERY_TYPE = QueryType.LESS_THAN;
 
     public LessThanQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

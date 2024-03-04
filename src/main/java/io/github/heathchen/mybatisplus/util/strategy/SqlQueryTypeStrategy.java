@@ -17,7 +17,7 @@ public class SqlQueryTypeStrategy extends BaseQueryTypeStrategy implements Query
     private static final QueryType QUERY_TYPE = QueryType.SQL;
 
     public SqlQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

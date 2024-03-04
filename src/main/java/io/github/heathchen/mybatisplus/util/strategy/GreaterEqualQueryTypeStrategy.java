@@ -18,7 +18,7 @@ public class GreaterEqualQueryTypeStrategy extends BaseQueryTypeStrategy impleme
     private static final QueryType QUERY_TYPE = QueryType.GREATER_EQUAL;
 
     public GreaterEqualQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

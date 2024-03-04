@@ -19,7 +19,7 @@ public class InQueryTypeStrategy extends BaseQueryTypeStrategy implements QueryT
     private static final QueryType QUERY_TYPE = QueryType.IN;
 
     public InQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

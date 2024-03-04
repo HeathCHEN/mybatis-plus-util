@@ -19,7 +19,7 @@ public class NotInQueryTypeStrategy extends BaseQueryTypeStrategy implements Que
     private static final QueryType QUERY_TYPE = QueryType.NOT_IN;
 
     public NotInQueryTypeStrategy() {
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        super(QUERY_TYPE);
     }
 
     /**

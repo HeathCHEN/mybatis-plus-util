@@ -36,7 +36,6 @@ public class QueryUtil {
      * @author HeathCHEN
      */
     public static <T> Boolean checkValue(T t) {
-
         if (ObjectUtil.isNull(t)) {
             return false;
         }
@@ -64,8 +63,6 @@ public class QueryUtil {
             Collection collection = (Collection) t;
             return CollectionUtil.isNotEmpty(collection);
         }
-
-
         return true;
     }
 
@@ -103,6 +100,7 @@ public class QueryUtil {
                     //根据查询类型构建查询
                     QueryTypeStrategyManager.invokeQueryStrategy(queryField, clazz, field, queryWrapper, groupIds);
                 } catch (Exception e) {
+                    log.error("构造查询异常,类名:{},字段名:{}", clazz.getName(), field.getName());
                     e.printStackTrace();
                 }
             }
