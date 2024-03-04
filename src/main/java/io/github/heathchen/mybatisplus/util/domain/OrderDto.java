@@ -43,7 +43,6 @@ public class OrderDto {
      */
     private Field field;
 
-
     public Integer getOrderPriority() {
         return orderPriority;
     }

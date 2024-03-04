@@ -3,7 +3,7 @@ package io.github.heathchen.mybatisplus.util.enums;
 /**
  * @author HeathCHEN
  * @version 1.0
- * @since 2024/02/29
+ * @since 2024/03/04
  */
 public enum MatchMode {
     /**
