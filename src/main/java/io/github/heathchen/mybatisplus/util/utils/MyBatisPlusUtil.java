@@ -9,8 +9,10 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.Log;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -22,9 +24,13 @@ import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingQueryTypeStrategy;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * MyBatisPlus工具类
@@ -138,6 +144,49 @@ public class MyBatisPlusUtil {
         return queryByReflect(queryBuilder.getE(), queryBuilder.getMatchMode(), queryBuilder.getClazz(), queryBuilder.getGroupIds(), queryBuilder.getConsumer(), queryBuilder.getIgnoreParams());
     }
 
+
+    public static <K, T> Map<K, T> listToDataMapping(List<T> list) {
+        Map<K, T> result = new HashMap<>();
+        if (CollectionUtil.isEmpty(list)) {
+            return result;
+        }
+        T t = list.get(0);
+        Class<?> clazz = t.getClass();
+        while (!clazz.isAnnotationPresent(TableName.class)) {
+            Class<?> superclass = clazz.getSuperclass();
+            if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
+                clazz = t.getClass();
+                break;
+            }
+            clazz = superclass;
+        }
+        Field field = null;
+        Field[] declaredFields = clazz.getDeclaredFields();
+        if (ArrayUtil.isNotEmpty(declaredFields)) {
+            for (Field declaredField : declaredFields) {
+                if (declaredField.isAnnotationPresent(TableId.class)) {
+                    field = declaredField;
+                    break;
+                }
+            }
+        }
+        if (ObjectUtil.isNull(field)) {
+            throw new IllegalArgumentException("仅支持MyBatisPlus实体类");
+        }
+        String fieldName = field.getName();
+        String methodName = "get" + StrUtil.upperFirst(fieldName);
+        Method getMethod = ReflectUtil.getMethodByName(clazz, methodName);
+        result = list.stream().collect(Collectors.toMap(t1 -> {
+            K k = null;
+            try {
+                k = (K) getMethod.invoke(t1);
+            } catch (Exception e) {
+            }
+            return k;
+        }, Function.identity()));
+        return result;
+    }
+
     /**
      * 反射构筑Query后获取Bean查询再转成对应类型
      *
@@ -156,8 +205,8 @@ public class MyBatisPlusUtil {
         if (ObjectUtil.isNull(clazz)) {
             return ((List<T>) queryByReflect(e, matchMode, groupIds, consumer, ignoreParams));
         }
-        while (!clazz.isAnnotationPresent(TableName.class)) {
-            Class<?> superclass = clazz.getSuperclass();
+        while (!tClazz.isAnnotationPresent(TableName.class)) {
+            Class<?> superclass = tClazz.getSuperclass();
             if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
                 tClazz = e.getClass();
                 break;
@@ -165,7 +214,8 @@ public class MyBatisPlusUtil {
                 tClazz = superclass;
             }
         }
-        if (tClazz.equals(clazz)) {
+
+        if (clazz.equals(tClazz)) {
             return ((List<T>) queryByReflect(e, matchMode, groupIds, consumer, ignoreParams));
         } else {
             List<E> list = queryByReflect(e);
