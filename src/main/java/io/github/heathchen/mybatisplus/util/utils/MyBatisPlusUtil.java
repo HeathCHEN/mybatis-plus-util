@@ -164,7 +164,7 @@ public class MyBatisPlusUtil {
      * 将结果集合转为Map结构
      *
      * @param list 查询结果集合
-     * @return {@link Map }<{@link K }, {@link T }>  key为id vaLue为实体类
+     * @return {@link Map }  key为id vaLue为实体类
      * @author HeathCHEN
      */
     public static <K, T> Map<K, T> listToDataMapping(List<T> list) {
