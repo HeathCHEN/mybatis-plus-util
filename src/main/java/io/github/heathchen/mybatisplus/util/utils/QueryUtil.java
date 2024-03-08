@@ -135,14 +135,17 @@ public class QueryUtil {
                 try {
                     if (field.isAnnotationPresent(UniqueValue.class)) {
                         UniqueValue uniqueValue = field.getAnnotation(UniqueValue.class);
-
-                        if (ArrayUtil.isNotEmpty(groupIds) && !ArrayUtil.contains(groupIds, uniqueValue.value())) {
+                        String groupId = uniqueValue.value();
+                        if (StrUtil.isBlank(groupId)) {
+                            groupId = field.getName();
+                        }
+                        if (ArrayUtil.isNotEmpty(groupIds) && !ArrayUtil.contains(groupIds, groupId)) {
                             continue;
                         }
-                        Map<String, Object> queryParamMap = queryGroupMap.get(uniqueValue.value());
+                        Map<String, Object> queryParamMap = queryGroupMap.get(groupId);
                         if (ObjectUtil.isNull(queryParamMap)) {
                             queryParamMap = new HashMap<>();
-                            queryGroupMap.put(uniqueValue.value(), queryParamMap);
+                            queryGroupMap.put(groupId, queryParamMap);
                         }
                         //查询属性名对应字段名
                         String tableColumnName = TableUtil.getTableColumnName(clazz, field);

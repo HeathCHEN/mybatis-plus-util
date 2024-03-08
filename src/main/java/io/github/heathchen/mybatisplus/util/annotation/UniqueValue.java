@@ -21,11 +21,12 @@ public @interface UniqueValue {
      * 同一个实体被标记多个@UniqueValue,
      * 分组id相同的@UniqueValue会构筑在同一个QueryWrapper查询是否唯一
      * 如果具有多组@UniqueValue,则会分别构筑多个QueryWrapper去查询是否每组都唯一
+     * 当value为空时,默认取字段名当作分组名
      *
      * @return {@link String }
      * @author HeathCHEN
      */
-    String value() default "default";
+    String value() default "";
 
 
 }

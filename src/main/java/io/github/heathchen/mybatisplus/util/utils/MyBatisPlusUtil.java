@@ -16,6 +16,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.github.heathchen.mybatisplus.util.domain.CacheGroup;
 import io.github.heathchen.mybatisplus.util.domain.CheckUniqueBuilder;
 import io.github.heathchen.mybatisplus.util.domain.CountBuilder;
@@ -74,6 +76,19 @@ public class MyBatisPlusUtil {
         dateTime.setField(DateField.MILLISECOND, 0);
         return dateTime.toJdkDate();
     }
+
+    /**
+     * 清除分页工具的排序
+     * 保留分页配置
+     */
+    public static void cleanPageHelperOrder() {
+        PageHelper.clearPage();
+        Page<Object> localPage = PageHelper.getLocalPage();
+        if (ObjectUtil.isNotNull(localPage)) {
+            PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
+        }
+    }
+
 
     /**
      * 反射构筑CountQuery后获取Bean查询再转成对应类型
@@ -145,6 +160,13 @@ public class MyBatisPlusUtil {
     }
 
 
+    /**
+     * 将结果集合转为Map结构
+     *
+     * @param list 查询结果集合
+     * @return {@link Map }<{@link K }, {@link T }>  key为id vaLue为实体类
+     * @author HeathCHEN
+     */
     public static <K, T> Map<K, T> listToDataMapping(List<T> list) {
         Map<K, T> result = new HashMap<>();
         if (CollectionUtil.isEmpty(list)) {
@@ -181,6 +203,7 @@ public class MyBatisPlusUtil {
             try {
                 k = (K) getMethod.invoke(t1);
             } catch (Exception e) {
+                e.printStackTrace();
             }
             return k;
         }, Function.identity()));
@@ -214,7 +237,6 @@ public class MyBatisPlusUtil {
                 tClazz = superclass;
             }
         }
-
         if (clazz.equals(tClazz)) {
             return ((List<T>) queryByReflect(e, matchMode, groupIds, consumer, ignoreParams));
         } else {
