@@ -37,6 +37,11 @@ public class CountBuilder<E> {
      */
     private String[] groupIds;
 
+    /**
+     * 排除模糊查询参数
+     */
+    private Boolean withoutLike;
+
     public E getE() {
         return e;
     }
@@ -64,6 +69,14 @@ public class CountBuilder<E> {
         return this;
     }
 
+    public Boolean getWithoutLike() {
+        return withoutLike;
+    }
+
+    public CountBuilder setWithoutLike(Boolean withoutLike) {
+        this.withoutLike = withoutLike;
+        return this;
+    }
     public MatchMode getMatchMode() {
         return matchMode;
     }

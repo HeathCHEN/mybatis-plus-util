@@ -98,7 +98,12 @@ public class MyBatisPlusUtil {
      * @return {@link Integer}
      */
     public static <E> Integer countByReflect(CountBuilder<E> countBuilder) {
-        return countByReflect(countBuilder.getE(), countBuilder.getMatchMode(), countBuilder.getGroupIds(), countBuilder.getConsumer(), countBuilder.getIgnoreParams());
+        QueryContextThreadLocal.setMatchMode(countBuilder.getMatchMode());
+        QueryContextThreadLocal.setGroupIds(countBuilder.getGroupIds());
+        QueryContextThreadLocal.setConsumer(countBuilder.getConsumer());
+        QueryContextThreadLocal.setIgnoreParams(countBuilder.getIgnoreParams());
+        QueryContextThreadLocal.setWithoutLike(countBuilder.getWithoutLike());
+        return countByReflect(countBuilder.getE());
     }
 
 
