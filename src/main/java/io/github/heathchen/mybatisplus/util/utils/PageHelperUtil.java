@@ -27,6 +27,7 @@ public class PageHelperUtil {
 
     /**
      * 获取分页参数
+     *
      * @author HeathCHEN
      */
     public static void getPageParamFromQueryParam() {

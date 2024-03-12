@@ -33,9 +33,15 @@ public class QueryBuilder<E, T> {
      */
     private Class<T> clazz;
     /**
-     * 返回结果类型
+     * 分组id
      */
     private String[] groupIds;
+
+    /**
+     * 排除模糊查询参数
+     */
+    private Boolean withoutLike;
+
     /**
      * 忽略参数名
      */
@@ -77,6 +83,15 @@ public class QueryBuilder<E, T> {
 
     public QueryBuilder setGroupIds(String... groupIds) {
         this.groupIds = groupIds;
+        return this;
+    }
+
+    public Boolean getWithoutLike() {
+        return withoutLike;
+    }
+
+    public QueryBuilder setWithoutLike(Boolean withoutLike) {
+        this.withoutLike = withoutLike;
         return this;
     }
 

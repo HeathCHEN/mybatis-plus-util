@@ -32,6 +32,11 @@ public class LikeQueryTypeStrategy extends BaseQueryTypeStrategy implements Quer
      */
     @Override
     public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
+
+        if (checkWithoutLike(queryField,value,tableColumnName,queryWrapper)) {
+            return;
+        }
+
         String[] orColumns = queryField.orColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {

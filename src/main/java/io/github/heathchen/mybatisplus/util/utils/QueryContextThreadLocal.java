@@ -56,18 +56,6 @@ public class QueryContextThreadLocal {
         return QUERY_CONFIG_LOCAL.get();
     }
 
-
-    /**
-     * 设置忽略参数
-     *
-     * @param ignoreParams 忽略参数
-     * @author HeathCHEN
-     */
-    public static void setIgnoreParams(String... ignoreParams) {
-        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.IGNORE_PARAMS, ignoreParams);
-    }
-
-
     /**
      * 获取忽略参数
      *
@@ -82,16 +70,14 @@ public class QueryContextThreadLocal {
         return ignoreParams;
     }
 
-
-
     /**
-     * 设置最大个数
+     * 设置忽略参数
      *
-     * @param limit 忽略参数
+     * @param ignoreParams 忽略参数
      * @author HeathCHEN
      */
-    public static void setLimitValue(Integer limit) {
-        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.LIMIT_VALUE, limit);
+    public static void setIgnoreParams(String... ignoreParams) {
+        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.IGNORE_PARAMS, ignoreParams);
     }
 
     /**
@@ -109,13 +95,13 @@ public class QueryContextThreadLocal {
     }
 
     /**
-     * 设置匹配模式
+     * 设置最大个数
      *
-     * @param matchMode 匹配模式
+     * @param limit 忽略参数
      * @author HeathCHEN
      */
-    public static void setMatchMode(MatchMode matchMode) {
-        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.MATCH_MODE, matchMode);
+    public static void setLimitValue(Integer limit) {
+        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.LIMIT_VALUE, limit);
     }
 
     /**
@@ -133,14 +119,15 @@ public class QueryContextThreadLocal {
     }
 
     /**
-     * 设置消费者
+     * 设置匹配模式
      *
-     * @param consumer QueryWrapper消费者
+     * @param matchMode 匹配模式
      * @author HeathCHEN
      */
-    public static void setConsumer(Consumer<QueryWrapper<?>> consumer) {
-        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.CONSUMER, consumer);
+    public static void setMatchMode(MatchMode matchMode) {
+        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.MATCH_MODE, matchMode);
     }
+
     /**
      * 获取匹配模式
      *
@@ -153,14 +140,15 @@ public class QueryContextThreadLocal {
     }
 
     /**
-     * 设置分组ID
+     * 设置消费者
      *
-     * @param groupIds 分组ID
+     * @param consumer QueryWrapper消费者
      * @author HeathCHEN
      */
-    public static void setGroupIds(String... groupIds) {
-        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.GROUP_IDS, groupIds);
+    public static void setConsumer(Consumer<QueryWrapper<?>> consumer) {
+        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.CONSUMER, consumer);
     }
+
     /**
      * 获取分组参数
      *
@@ -176,13 +164,37 @@ public class QueryContextThreadLocal {
     }
 
     /**
-     * 设置返回类型
+     * 设置分组ID
      *
-     * @param clazz 返回类型
+     * @param groupIds 分组ID
      * @author HeathCHEN
      */
-    public static <T> void setReturnClassType(Class<T> clazz) {
-        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.RETURN_CLASS_TYPE, clazz);
+    public static void setGroupIds(String... groupIds) {
+        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.GROUP_IDS, groupIds);
+    }
+
+    /**
+     * 获取排除模糊查询参数
+     *
+     * @author HeathCHEN
+     */
+    public static Boolean getWithoutLike() {
+        Map<String, Object> queryConfigMap = getQueryConfigMap();
+        Boolean withoutLike = (Boolean) queryConfigMap.get(MyBatisPlusUtilConst.WITHOUT_LIKE);
+        if (ObjectUtil.isNull(withoutLike)) {
+            withoutLike = Boolean.FALSE;
+        }
+        return withoutLike;
+    }
+
+    /**
+     * 设置排除模糊查询参数
+     *
+     * @param withoutLike 排除模糊查询参数
+     * @author HeathCHEN
+     */
+    public static void setWithoutLike(Boolean withoutLike) {
+        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.WITHOUT_LIKE, withoutLike);
     }
 
     /**
@@ -194,6 +206,16 @@ public class QueryContextThreadLocal {
         Map<String, Object> queryConfigMap = getQueryConfigMap();
         Class<?> clzz = (Class) queryConfigMap.get(MyBatisPlusUtilConst.RETURN_CLASS_TYPE);
         return clzz;
+    }
+
+    /**
+     * 设置返回类型
+     *
+     * @param clazz 返回类型
+     * @author HeathCHEN
+     */
+    public static <T> void setReturnClassType(Class<T> clazz) {
+        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.RETURN_CLASS_TYPE, clazz);
     }
 
     /**

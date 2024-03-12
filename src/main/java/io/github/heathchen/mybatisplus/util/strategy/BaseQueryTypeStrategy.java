@@ -143,4 +143,17 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
         }
     }
 
+
+    public <T> Boolean checkWithoutLike(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
+        Boolean withoutLike = QueryContextThreadLocal.getWithoutLike();
+
+        if (withoutLike) {
+            QueryTypeStrategy EqQueryTypeStrategy = QueryTypeStrategyManager.getQueryTypeStrategyToManager(QueryType.EQ.getCompareType());
+            EqQueryTypeStrategy.buildQueryWrapper(queryField,value,tableColumnName,queryWrapper);
+
+        }
+
+        return withoutLike;
+    }
+
 }
