@@ -94,7 +94,7 @@ public class QueryUtil {
                     QueryField queryField = field.getAnnotation(QueryField.class);
                     //剔除不参与的参数
                     if (!queryField.exist()) {
-                        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
+                        QueryContextThreadLocal.removeParamFromQueryParamMap(field.getName());
                         continue;
                     }
                     //根据查询类型构建查询
@@ -107,7 +107,7 @@ public class QueryUtil {
         }
 
         //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(QueryParamThreadLocal.getQueryParamMap())) {
+        if (CollectionUtil.isNotEmpty(QueryContextThreadLocal.getQueryParamMap())) {
             return buildQueryByReflect(clazz.getSuperclass(), queryWrapper, groupIds);
         } else {
             return queryWrapper;
@@ -149,7 +149,7 @@ public class QueryUtil {
                         }
                         //查询属性名对应字段名
                         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
-                        Object value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
+                        Object value = QueryContextThreadLocal.getValueFromQueryParamMap(field.getName());
                         //校验数据有效性
                         if (QueryUtil.checkValue(value)) {
                             queryParamMap.put(tableColumnName, value);
@@ -164,7 +164,7 @@ public class QueryUtil {
         }
 
         //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(QueryParamThreadLocal.getQueryParamMap())) {
+        if (CollectionUtil.isNotEmpty(QueryContextThreadLocal.getQueryParamMap())) {
             return buildUniqueCheckQueryByReflect(clazz.getSuperclass(), queryGroupMap, groupIds);
         } else {
             return queryGroupMap;
@@ -234,7 +234,7 @@ public class QueryUtil {
      * @author HeathCHEN
      */
     public static void cleanData() {
-        QueryParamThreadLocal.cleanData();
+        QueryContextThreadLocal.cleanData();
     }
 
 

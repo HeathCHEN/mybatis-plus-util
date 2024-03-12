@@ -25,7 +25,7 @@ public class CheckUniqueBuilder<E> {
     /**
      * 最多个数
      */
-    private Number limit;
+    private Integer limit;
     /**
      * 最多个数
      */
@@ -44,11 +44,11 @@ public class CheckUniqueBuilder<E> {
         return this;
     }
 
-    public Number getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 
-    public CheckUniqueBuilder setLimit(Number limit) {
+    public CheckUniqueBuilder setLimit(Integer limit) {
         this.limit = limit;
         return this;
     }

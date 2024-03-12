@@ -7,7 +7,7 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
@@ -59,7 +59,7 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
                 return;
             }
             //获取查询值
-            value = QueryParamThreadLocal.getValueFromQueryParamMap(field.getName());
+            value = QueryContextThreadLocal.getValueFromQueryParamMap(field.getName());
             //获取真实表字段名
             String tableColumnName = TableUtil.getTableColumnName(clazz, field);
             //BETWEEN和NOT_BETWEEN的查询不校验查询参数
@@ -123,7 +123,7 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
     @Override
     public void removeParam(QueryField queryField, Field field) {
         //从线程中移除参数
-        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(field.getName());
     }
 
     /**

@@ -9,7 +9,7 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
 import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.utils.ApplicationContextProvider;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
 import java.util.*;
@@ -130,7 +130,7 @@ public class AccurateMatchingQueryTypeStrategy {
      * @author HeathCHEN
      */
     public static <T> void buildQuery(QueryWrapper<T> queryWrapper) {
-        Map<String, Object> objectMap = QueryParamThreadLocal.getQueryParamMap();
+        Map<String, Object> objectMap = QueryContextThreadLocal.getQueryParamMap();
         if (CollectionUtil.isNotEmpty(objectMap)) {
             Set<Map.Entry<String, Object>> entries = objectMap.entrySet();
             for (Map.Entry<String, Object> entry : entries) {

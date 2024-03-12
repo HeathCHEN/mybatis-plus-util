@@ -3,7 +3,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
 import java.lang.reflect.Field;
@@ -47,8 +47,8 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
      */
     @Override
     public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
-        Object startValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.betweenStartVal());
-        Object endValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.betweenEndVal());
+        Object startValue = QueryContextThreadLocal.getValueFromQueryParamMap(queryField.betweenStartVal());
+        Object endValue = QueryContextThreadLocal.getValueFromQueryParamMap(queryField.betweenEndVal());
         if (QueryUtil.checkValue(startValue)) {
             queryWrapper.ge(tableColumnName, startValue);
 
@@ -56,8 +56,8 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
         if (QueryUtil.checkValue(endValue)) {
             queryWrapper.le(tableColumnName, endValue);
         }
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
 
     }
 
@@ -70,9 +70,9 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
      */
     @Override
     public void removeParam(QueryField queryField, Field field) {
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
-        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(queryField.betweenStartVal());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(queryField.betweenEndVal());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(field.getName());
     }
 
 

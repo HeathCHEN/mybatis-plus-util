@@ -3,7 +3,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.QueryParamThreadLocal;
+import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
 import java.lang.reflect.Field;
@@ -34,8 +34,8 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
      */
     @Override
     public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
-        Object notBetweenStartValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.notBetweenStartVal());
-        Object notBetweenEndValue = QueryParamThreadLocal.getValueFromQueryParamMap(queryField.notBetweenEndVal());
+        Object notBetweenStartValue = QueryContextThreadLocal.getValueFromQueryParamMap(queryField.notBetweenStartVal());
+        Object notBetweenEndValue = QueryContextThreadLocal.getValueFromQueryParamMap(queryField.notBetweenEndVal());
 
         if (QueryUtil.checkValue(notBetweenStartValue)) {
             queryWrapper.le(tableColumnName, notBetweenStartValue);
@@ -54,8 +54,8 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
      */
     @Override
     public void removeParam(QueryField queryField, Field field) {
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
-        QueryParamThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
-        QueryParamThreadLocal.removeParamFromQueryParamMap(field.getName());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
+        QueryContextThreadLocal.removeParamFromQueryParamMap(field.getName());
     }
 }
