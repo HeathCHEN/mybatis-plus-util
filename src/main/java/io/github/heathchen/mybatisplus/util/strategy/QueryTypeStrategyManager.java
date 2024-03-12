@@ -50,13 +50,12 @@ public class QueryTypeStrategyManager {
      * @param clazz        类
      * @param field        字段
      * @param queryWrapper 查询queryWrapper
-     * @param groupIds     传入组织Id
      * @author HeathCHEN
      */
-    public static <T> void invokeQueryStrategy(QueryField queryField, Class<?> clazz, Field field, QueryWrapper<T> queryWrapper, String[] groupIds) {
+    public static <T> void invokeQueryStrategy(QueryField queryField, Class<?> clazz, Field field, QueryWrapper<T> queryWrapper) {
         BaseQueryTypeStrategy queryTypeStrategy = (BaseQueryTypeStrategy) getQueryTypeStrategyToManager(queryField.value().getCompareType());
         if (ObjectUtil.isNotNull(queryTypeStrategy)) {
-            queryTypeStrategy.constructQueryWrapper(queryField, clazz, field, queryWrapper, groupIds);
+            queryTypeStrategy.constructQueryWrapper(queryField, clazz, field, queryWrapper);
         }
     }
 

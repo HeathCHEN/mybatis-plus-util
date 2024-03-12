@@ -31,12 +31,11 @@ public class AccurateMatchingQueryTypeStrategy {
      *
      * @param clazz        查询参数类
      * @param queryWrapper 查询queryWrapper
-     * @param matchMode    匹配模式
      * @author HeathCHEN
      */
-    public static <T> void buildQuery(Class<?> clazz, QueryWrapper<T> queryWrapper, MatchMode matchMode) {
+    public static <T> void buildQuery(Class<?> clazz, QueryWrapper<T> queryWrapper) {
 
-        if (matchByMethodParam(queryWrapper, matchMode)) {
+        if (matchByMethodParam(queryWrapper)) {
             return;
         }
         if (matchByAnnotationOnClass(clazz, queryWrapper)) {
@@ -53,11 +52,12 @@ public class AccurateMatchingQueryTypeStrategy {
      * 从方法参数获取匹配模式
      *
      * @param queryWrapper 查询queryWrapper
-     * @param matchMode    匹配模式
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    public static <T> Boolean matchByMethodParam(QueryWrapper<T> queryWrapper, MatchMode matchMode) {
+    public static <T> Boolean matchByMethodParam(QueryWrapper<T> queryWrapper) {
+        MatchMode matchMode = QueryContextThreadLocal.getMatchMode();
+
         if (ObjectUtil.isNotNull(matchMode) && MatchMode.ALL_MATCH_MODE.equals(matchMode)) {
             buildQuery(queryWrapper);
             return Boolean.TRUE;

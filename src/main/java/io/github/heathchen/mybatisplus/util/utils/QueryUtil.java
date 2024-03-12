@@ -76,11 +76,12 @@ public class QueryUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper, String[] groupIds) {
+    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper) {
         //如果父类为空,则不再递归
         if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
             return queryWrapper;
         }
+
         Field[] clazzDeclaredFields = clazz.getDeclaredFields();
         if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
             for (Field clazzDeclaredField : clazzDeclaredFields) {
@@ -98,7 +99,7 @@ public class QueryUtil {
                         continue;
                     }
                     //根据查询类型构建查询
-                    QueryTypeStrategyManager.invokeQueryStrategy(queryField, clazz, field, queryWrapper, groupIds);
+                    QueryTypeStrategyManager.invokeQueryStrategy(queryField, clazz, field, queryWrapper);
                 } catch (Exception e) {
                     log.error("构造查询异常,类名:{},字段名:{}", clazz.getName(), field.getName());
                     e.printStackTrace();
@@ -108,7 +109,7 @@ public class QueryUtil {
 
         //如果已匹配全部则直接返回查询,否则继续迭代
         if (CollectionUtil.isNotEmpty(QueryContextThreadLocal.getQueryParamMap())) {
-            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper, groupIds);
+            return buildQueryByReflect(clazz.getSuperclass(), queryWrapper);
         } else {
             return queryWrapper;
         }
@@ -123,11 +124,13 @@ public class QueryUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <T> Map<String, Map<String, Object>> buildUniqueCheckQueryByReflect(Class<?> clazz, Map<String, Map<String, Object>> queryGroupMap, String... groupIds) {
+    public static <T> Map<String, Map<String, Object>> buildUniqueCheckQueryByReflect(Class<?> clazz, Map<String, Map<String, Object>> queryGroupMap) {
         //如果父类为空,则不再递归
         if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
             return queryGroupMap;
         }
+
+        String[] groupIds = QueryContextThreadLocal.getGroupIds();
         Field[] clazzDeclaredFields = clazz.getDeclaredFields();
         if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
             for (Field clazzDeclaredField : clazzDeclaredFields) {
@@ -165,7 +168,7 @@ public class QueryUtil {
 
         //如果已匹配全部则直接返回查询,否则继续迭代
         if (CollectionUtil.isNotEmpty(QueryContextThreadLocal.getQueryParamMap())) {
-            return buildUniqueCheckQueryByReflect(clazz.getSuperclass(), queryGroupMap, groupIds);
+            return buildUniqueCheckQueryByReflect(clazz.getSuperclass(), queryGroupMap);
         } else {
             return queryGroupMap;
         }

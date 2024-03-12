@@ -172,36 +172,6 @@ public class MyBatisPlusUtil {
     }
 
 
-    /**
-     * 反射构筑排除所有模糊查询(忽略QueryField的QueryType.Like\QueryType.LikeLEFT\QueryType.LikeRight)的Query后获取Bean查询再转成对应类型
-     *
-     * @param <T>   查询结果的返回类型
-     * @param e     查询参数
-     * @param clazz 返回类型
-     * @return {@link List } 查询结果
-     * @author HeathCHEN
-     */
-    public static <T, E> List<T> queryByReflectWithoutLike(E e, Class<T> clazz) {
-        Class<?> tClazz = e.getClass();
-        if (ObjectUtil.isNull(clazz)) {
-            return ((List<T>) queryByReflect(e));
-        }
-        while (!tClazz.isAnnotationPresent(TableName.class)) {
-            Class<?> superclass = tClazz.getSuperclass();
-            if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
-                tClazz = e.getClass();
-                break;
-            } else {
-                tClazz = superclass;
-            }
-        }
-        if (clazz.equals(tClazz)) {
-            return ((List<T>) queryByReflect(e));
-        } else {
-            List<E> list = queryByReflect(e);
-            return BeanUtil.copyToList(list, clazz);
-        }
-    }
 
 
     /**
@@ -315,6 +285,33 @@ public class MyBatisPlusUtil {
         return queryByReflect(e, clazz);
     }
 
+    /**
+     * 反射构筑Query后获取Bean查询再转成对应类型
+     *
+     * @param e 查询参数
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <E> List<E> queryByReflect(E e, Boolean withoutLike) {
+        QueryContextThreadLocal.setWithoutLike(withoutLike);
+        return queryByReflect(e);
+    }
+
+
+    /**
+     * 反射构筑排除所有模糊查询(withoutLike为True时忽略QueryField的QueryType.Like\QueryType.LikeLEFT\QueryType.LikeRight)的Query后获取Bean查询再转成对应类型
+     *
+     * @param <T>         查询结果的返回类型
+     * @param withoutLike 排除模糊查询
+     * @param e           查询参数
+     * @param clazz       返回类型
+     * @return {@link List } 查询结果
+     * @author HeathCHEN
+     */
+    public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, Boolean withoutLike) {
+        QueryContextThreadLocal.setWithoutLike(withoutLike);
+        return queryByReflect(e, clazz);
+    }
 
     /**
      * 反射构筑Query后获取Bean查询
@@ -517,9 +514,6 @@ public class MyBatisPlusUtil {
      */
     public static <E> QueryWrapper<E> getQueryWrapper(E e) {
         String[] ignoreParams = QueryContextThreadLocal.getIgnoreParams();
-        Consumer<QueryWrapper<?>> consumer = QueryContextThreadLocal.getConsumer();
-        String[] groupIds = QueryContextThreadLocal.getGroupIds();
-        MatchMode matchMode = QueryContextThreadLocal.getMatchMode();
 
         QueryContextThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
         QueryContextThreadLocal.removeParamFromQueryParamMap(ignoreParams);
@@ -530,10 +524,10 @@ public class MyBatisPlusUtil {
         //从类上注解获取排序字段
         PageHelperUtil.checkColumnOrderOnClass(clazz);
         //遍历map然后从子级逐级反射获得注解判断比较类型
-        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper, groupIds);
+        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper);
         //获取不到注解的,默认做精确匹配
-        AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper, matchMode);
-
+        AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper);
+        Consumer<QueryWrapper<?>> consumer = QueryContextThreadLocal.getConsumer();
         if (ObjectUtil.isNotNull(consumer)) {
             consumer.accept(queryWrapper);
         }
@@ -556,18 +550,16 @@ public class MyBatisPlusUtil {
      */
     public static <E> QueryWrapper<E> getCountQueryWrapper(E e) {
         String[] ignoreParams = QueryContextThreadLocal.getIgnoreParams();
-        Consumer<QueryWrapper<?>> consumer = QueryContextThreadLocal.getConsumer();
-        String[] groupIds = QueryContextThreadLocal.getGroupIds();
-        MatchMode matchMode = QueryContextThreadLocal.getMatchMode();
         QueryContextThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
         QueryContextThreadLocal.removeParamFromQueryParamMap(ignoreParams);
         Class<?> clazz = e.getClass();
         QueryWrapper<E> queryWrapper = new QueryWrapper<E>();
         //遍历map然后从子级逐级反射获得注解判断比较类型
-        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper, groupIds);
+        queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper);
         //获取不到注解的,默认做精确匹配
-        AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper, matchMode);
+        AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper);
 
+        Consumer<QueryWrapper<?>> consumer = QueryContextThreadLocal.getConsumer();
         if (ObjectUtil.isNotNull(consumer)) {
             consumer.accept(queryWrapper);
         }
@@ -588,12 +580,12 @@ public class MyBatisPlusUtil {
     public static <E> QueryWrapper getCheckUniqueQueryWrapper(E e) {
         QueryContextThreadLocal.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
         Consumer<QueryWrapper<?>> consumer = QueryContextThreadLocal.getConsumer();
-        String[] groupIds = QueryContextThreadLocal.getGroupIds();
+
         Class<?> clazz = e.getClass();
 
         Map<String, Map<String, Object>> queryGroupMap = new HashMap<>();
         //遍历map然后从子级逐级反射获得注解判断比较类型
-        QueryUtil.buildUniqueCheckQueryByReflect(clazz, queryGroupMap, groupIds);
+        QueryUtil.buildUniqueCheckQueryByReflect(clazz, queryGroupMap);
 
         QueryWrapper queryWrapper = new QueryWrapper<>();
 

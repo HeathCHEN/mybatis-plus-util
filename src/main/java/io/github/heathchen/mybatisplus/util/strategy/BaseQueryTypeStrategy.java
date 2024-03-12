@@ -42,17 +42,15 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
      * @param clazz        类
      * @param field        字段
      * @param queryWrapper 查询queryWrapper
-     * @param groupIds     传入组织Id
      * @author HeathCHEN
      */
     <T> void constructQueryWrapper(QueryField queryField,
                                    Class clazz,
                                    Field field,
-                                   QueryWrapper<T> queryWrapper,
-                                   String[] groupIds) {
+                                   QueryWrapper<T> queryWrapper) {
 
         Object value = null;
-
+        String[] groupIds = QueryContextThreadLocal.getGroupIds();
         try {
             //检测是否分组
             if (checkIfNotInGroup(queryField, groupIds)) {
