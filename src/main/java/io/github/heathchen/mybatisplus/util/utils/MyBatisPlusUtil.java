@@ -217,18 +217,6 @@ public class MyBatisPlusUtil {
         }
     }
 
-    /**
-     * 反射构筑Query后获取Bean查询
-     *
-     * @param <E> 查询参数dto或实体类的类型
-     * @return {@link List } 查询结果
-     * @author HeathCHEN
-     */
-    public static <E> List<E> queryByReflect(E e) {
-        QueryWrapper query = getQueryWrapper(e);
-        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
-        return baseMapper.selectList(query);
-    }
 
     /**
      * 反射构筑Query后获取Bean查询
@@ -241,7 +229,7 @@ public class MyBatisPlusUtil {
      */
     public static <E> List<E> queryByReflect(E e, MatchMode matchMode) {
         QueryContextThreadLocal.setMatchMode(matchMode);
-        return queryByReflect(e);
+        return queryByReflect(e,null,null,null,null,null);
 
     }
 
@@ -257,7 +245,7 @@ public class MyBatisPlusUtil {
     public static <E> List<E> queryByReflect(E e, Collection<String> groupIds) {
         String[] groupIdArr = ArrayUtil.toArray(groupIds, String.class);
         QueryContextThreadLocal.setGroupIds(groupIdArr);
-        return queryByReflect(e);
+        return queryByReflect(e,null,null,null,null,null);
     }
 
     /**
@@ -271,7 +259,7 @@ public class MyBatisPlusUtil {
      */
     public static <E> List<E> queryByReflect(E e, String... ignoreParams) {
         QueryContextThreadLocal.setIgnoreParams(ignoreParams);
-        return queryByReflect(e);
+        return queryByReflect(e,null,null,null,null,null);
     }
 
 
@@ -297,7 +285,7 @@ public class MyBatisPlusUtil {
      */
     public static <E> List<E> queryByReflect(E e, Boolean withoutLike) {
         QueryContextThreadLocal.setWithoutLike(withoutLike);
-        return queryByReflect(e);
+        return queryByReflect(e,null,null,null,null,null);
     }
 
 
@@ -313,7 +301,7 @@ public class MyBatisPlusUtil {
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, Boolean withoutLike) {
         QueryContextThreadLocal.setWithoutLike(withoutLike);
-        return queryByReflect(e, clazz);
+        return queryByReflect(e, clazz,null,null,null,null);
     }
 
     /**
@@ -329,7 +317,7 @@ public class MyBatisPlusUtil {
     public static <E> List<E> queryByReflect(E e, String[] groupIds, String... ignoreParams) {
         QueryContextThreadLocal.setGroupIds(groupIds);
         QueryContextThreadLocal.setIgnoreParams(ignoreParams);
-        return queryByReflect(e);
+        return queryByReflect(e,null,null,null,null,null);
     }
 
     /**
@@ -344,7 +332,7 @@ public class MyBatisPlusUtil {
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, String... ignoreParams) {
         QueryContextThreadLocal.setIgnoreParams(ignoreParams);
-        return queryByReflect(e, clazz);
+        return queryByReflect(e, clazz,null,null,null,null);
     }
 
 
@@ -361,7 +349,7 @@ public class MyBatisPlusUtil {
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, Collection<String> groupIds) {
         String[] groupIdArr = ArrayUtil.toArray(groupIds, String.class);
         QueryContextThreadLocal.setGroupIds(groupIdArr);
-        return queryByReflect(e, clazz);
+        return queryByReflect(e, clazz,null,null,null,null);
     }
 
 
