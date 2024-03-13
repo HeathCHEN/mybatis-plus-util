@@ -77,6 +77,7 @@ public class CountBuilder<E> {
         this.withoutLike = withoutLike;
         return this;
     }
+
     public MatchMode getMatchMode() {
         return matchMode;
     }

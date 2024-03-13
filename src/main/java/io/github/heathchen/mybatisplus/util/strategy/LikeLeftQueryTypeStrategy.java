@@ -4,7 +4,6 @@ import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
 /**
@@ -34,7 +33,7 @@ public class LikeLeftQueryTypeStrategy extends BaseQueryTypeStrategy implements 
     @Override
     public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
 
-        if (checkWithoutLike(queryField,value,tableColumnName,queryWrapper)) {
+        if (checkWithoutLike(queryField, value, tableColumnName, queryWrapper)) {
             return;
         }
 

@@ -16,7 +16,9 @@ import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 查询工具类
@@ -36,34 +38,7 @@ public class QueryUtil {
      * @author HeathCHEN
      */
     public static <T> Boolean checkValue(T t) {
-        if (ObjectUtil.isNull(t)) {
-            return false;
-        }
-        //数字\日期\布尔
-        if (t instanceof Number || t instanceof Boolean || t instanceof Date) {
-            return true;
-        }
-        //文字
-        if (t instanceof CharSequence) {
-            CharSequence charSequence = (CharSequence) t;
-            return StrUtil.isNotBlank(charSequence);
-        }
-        //Map
-        if (t instanceof Map) {
-            Map map = (Map) t;
-            return !map.isEmpty();
-        }
-        //数组
-        if (t.getClass().isArray()) {
-            Object[] objectArray = (Object[]) t;
-            return ArrayUtil.isNotEmpty(objectArray);
-        }
-        //集合
-        if (t instanceof Collection) {
-            Collection collection = (Collection) t;
-            return CollectionUtil.isNotEmpty(collection);
-        }
-        return true;
+        return ObjectUtil.isNotEmpty(t);
     }
 
 

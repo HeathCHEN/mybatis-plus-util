@@ -1,6 +1,8 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.IterUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -12,7 +14,10 @@ import io.github.heathchen.mybatisplus.util.utils.ApplicationContextProvider;
 import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -138,33 +143,31 @@ public class AccurateMatchingQueryTypeStrategy {
                 if (!QueryUtil.checkValue(value)) {
                     continue;
                 }
-                if (value instanceof String
-                        || value instanceof Number
-                        || value instanceof Boolean
-                        || value instanceof Date) {
-                    queryWrapper.eq(StrUtil.toUnderlineCase(entry.getKey()), value);
+                String columnName = StrUtil.toUnderlineCase(entry.getKey());
+                if (value instanceof CharSequence || value instanceof Serializable) {
+                    queryWrapper.eq(columnName, value);
                     continue;
                 }
 
                 if (value instanceof Map) {
                     Map<Object, Object> map = (Map<Object, Object>) value;
                     List<Object> collect = map.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
-                    if (CollectionUtil.isNotEmpty(map)) {
-                        queryWrapper.in(StrUtil.toUnderlineCase(entry.getKey()), collect);
+                    if (MapUtil.isNotEmpty(map)) {
+                        queryWrapper.in(columnName, collect);
                         continue;
                     }
                 }
-                if (value instanceof Collection) {
-                    Collection<Object> collection = (Collection<Object>) value;
-                    if (CollectionUtil.isNotEmpty(collection)) {
-                        queryWrapper.in(StrUtil.toUnderlineCase(entry.getKey()), collection);
+                if (value instanceof Iterable) {
+                    Iterable<Object> iterable = (Iterable<Object>) value;
+                    if (IterUtil.isNotEmpty(iterable)) {
+                        queryWrapper.in(columnName, iterable);
                         continue;
                     }
                 }
                 if (value.getClass().isArray()) {
                     Object[] objectArray = (Object[]) value;
                     if (ArrayUtil.isNotEmpty(objectArray)) {
-                        queryWrapper.in(StrUtil.toUnderlineCase(entry.getKey()), objectArray);
+                        queryWrapper.in(columnName, objectArray);
                         continue;
                     }
                 }

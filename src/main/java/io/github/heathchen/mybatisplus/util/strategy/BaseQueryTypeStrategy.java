@@ -147,7 +147,7 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
 
         if (withoutLike) {
             QueryTypeStrategy EqQueryTypeStrategy = QueryTypeStrategyManager.getQueryTypeStrategyToManager(QueryType.EQ.getCompareType());
-            EqQueryTypeStrategy.buildQueryWrapper(queryField,value,tableColumnName,queryWrapper);
+            EqQueryTypeStrategy.buildQueryWrapper(queryField, value, tableColumnName, queryWrapper);
 
         }
 

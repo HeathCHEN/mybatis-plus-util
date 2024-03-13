@@ -32,7 +32,7 @@ public class NotLikeQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
     @Override
     public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
 
-        if (checkWithoutLike(queryField,value,tableColumnName,queryWrapper)) {
+        if (checkWithoutLike(queryField, value, tableColumnName, queryWrapper)) {
             return;
         }
 
