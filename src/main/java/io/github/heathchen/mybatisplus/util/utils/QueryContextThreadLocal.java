@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
 import io.github.heathchen.mybatisplus.util.consts.MyBatisPlusUtilConst;
 import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
 import io.github.heathchen.mybatisplus.util.domain.OrderDto;
@@ -25,9 +26,11 @@ public class QueryContextThreadLocal {
     private static final ThreadLocal<Map<String, Object>> QUERY_PARAM_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, Object>> ORDER_AND_PAGE_PARAM_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, Object>> QUERY_CONFIG_LOCAL = new ThreadLocal<>();
+    private static MyBatisPlusUtilConfig myBatisPlusUtilConfig;
 
 
-    private QueryContextThreadLocal() {
+    public QueryContextThreadLocal() {
+        myBatisPlusUtilConfig = ApplicationContextProvider.getBean(MyBatisPlusUtilConfig.class);
     }
 
     /**
@@ -226,7 +229,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void putDataIntoQueryConfigMap(String key, Object value) {
-        if (ObjectUtil.isNotNull(value)) {
+        if (ObjectUtil.isNotEmpty(value)) {
             Map<String, Object> queryConfigMap = getQueryConfigMap();
             if (value instanceof Map) {
                 Map<Object, Object> map = (Map<Object, Object>) value;
@@ -280,7 +283,9 @@ public class QueryContextThreadLocal {
         if (ObjectUtil.isNull(QUERY_PARAM_LOCAL.get())) {
             QUERY_PARAM_LOCAL.set(new HashMap<>());
         }
-        QUERY_PARAM_LOCAL.set(data);
+        if (ObjectUtil.isNotEmpty(data)) {
+            QUERY_PARAM_LOCAL.set(data);
+        }
     }
 
     /**
@@ -351,7 +356,10 @@ public class QueryContextThreadLocal {
         if (ObjectUtil.isNull(ORDER_AND_PAGE_PARAM_LOCAL.get())) {
             ORDER_AND_PAGE_PARAM_LOCAL.set(new HashMap<>());
         }
-        ORDER_AND_PAGE_PARAM_LOCAL.get().put(key, data);
+
+        if (ObjectUtil.isNotEmpty(data)) {
+            ORDER_AND_PAGE_PARAM_LOCAL.get().put(key, data);
+        }
     }
 
     /**
@@ -410,7 +418,7 @@ public class QueryContextThreadLocal {
     }
 
     public static Boolean getStartPage() {
-        Boolean startPage = (Boolean) getValueFromOrderAndPageParamMap(PageAndOrderConst.START_PAGE);
+        Boolean startPage = (Boolean) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName());
         if (ObjectUtil.isNull(startPage)) {
             startPage = Boolean.TRUE;
             setStartPage(startPage);
@@ -419,7 +427,7 @@ public class QueryContextThreadLocal {
     }
 
     public static void setStartPage(Boolean startPage) {
-        setValueToOrderAndPageParamMap(PageAndOrderConst.START_PAGE, startPage);
+        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
     }
 
 }

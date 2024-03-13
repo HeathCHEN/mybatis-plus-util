@@ -4,14 +4,17 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.Method;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
 import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
 import io.github.heathchen.mybatisplus.util.domain.OrderDto;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -25,24 +28,50 @@ import java.util.List;
 public class PageHelperUtil {
 
 
+    private static MyBatisPlusUtilConfig myBatisPlusUtilConfig;
+
+
+    public PageHelperUtil() {
+        myBatisPlusUtilConfig = ApplicationContextProvider.getBean(MyBatisPlusUtilConfig.class);
+    }
+
     /**
      * 获取分页参数
      *
      * @author HeathCHEN
      */
     public static void getPageParamFromQueryParam() {
-        QueryContextThreadLocal.setStartPage((Boolean) QueryContextThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.START_PAGE));
-        QueryContextThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.IS_ASC, QueryContextThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.IS_ASC));
-        QueryContextThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.PAGE_SIZE, QueryContextThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.PAGE_SIZE));
-        QueryContextThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.PAGE_NUM, QueryContextThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.PAGE_NUM));
-        QueryContextThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_BY_COLUMN, QueryContextThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.ORDER_BY_COLUMN));
-        QueryContextThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.REASONABLE, QueryContextThreadLocal.getValueFromQueryParamMap(PageAndOrderConst.REASONABLE));
-        QueryContextThreadLocal.removeParamFromQueryParamMap(PageAndOrderConst.START_PAGE,
-                PageAndOrderConst.IS_ASC,
-                PageAndOrderConst.PAGE_SIZE,
-                PageAndOrderConst.PAGE_NUM,
-                PageAndOrderConst.ORDER_BY_COLUMN,
-                PageAndOrderConst.REASONABLE);
+
+        HttpServletRequest request = ServletUtils.getRequest();
+
+        if (request.getMethod().equals(Method.GET.toString())) {
+            String startPage = ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName());
+            if (StrUtil.isNotBlank(startPage)) {
+                QueryContextThreadLocal.setStartPage(Boolean.valueOf(startPage));
+            }
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
+
+
+        } else {
+            QueryContextThreadLocal.setStartPage((Boolean) QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
+            QueryContextThreadLocal.removeParamFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(),
+                    myBatisPlusUtilConfig.getIsAscPropertyName(),
+                    myBatisPlusUtilConfig.getPageSizePropertyName(),
+                    myBatisPlusUtilConfig.getPageNumPropertyName(),
+                    myBatisPlusUtilConfig.getOrderByColumnPropertyName(),
+                    myBatisPlusUtilConfig.getStarPagePropertyName());
+        }
+
+
     }
 
 

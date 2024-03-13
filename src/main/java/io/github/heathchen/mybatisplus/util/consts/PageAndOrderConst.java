@@ -10,10 +10,6 @@ package io.github.heathchen.mybatisplus.util.consts;
 public class PageAndOrderConst {
 
     /**
-     * 开启分页
-     */
-    public static final String START_PAGE = "startPage";
-    /**
      * 排序列表名
      */
     public static final String ORDER_MAP = "orderMap";
