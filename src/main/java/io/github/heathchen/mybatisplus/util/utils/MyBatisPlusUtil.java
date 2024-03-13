@@ -285,7 +285,7 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz) {
-        return queryByReflect(e, clazz);
+        return queryByReflect(e, clazz,null,null,null,null);
     }
 
     /**
