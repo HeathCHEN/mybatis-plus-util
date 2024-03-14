@@ -103,7 +103,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * 只对本次查询生效
      */
     public static void closeOrder() {
-        QueryContextThreadLocal.setOrderByColumn(Boolean.FALSE);
+        QueryContextThreadLocal.setOrderColumn(Boolean.FALSE);
     }
 
     //===================================================================================================================================================================

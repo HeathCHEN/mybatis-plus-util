@@ -58,7 +58,7 @@ public class MyBatisPlusUtilConfig {
     /**
      * 分页参数:是否开启分页默认值 开启分页
      */
-    @Value("${myBatisPlusUtil.starPagePropertyDefaultValue:true}")
+    @Value("${myBatisPlusUtil.starPagePropertyDefaultValue:false}")
     public Boolean starPagePropertyDefaultValue;
 
 
@@ -85,6 +85,12 @@ public class MyBatisPlusUtilConfig {
     @Value("${myBatisPlusUtil.orderByColumnPropertyDefaultValue:create_time}")
     public String orderByColumnPropertyDefaultValue;
 
+
+    /**
+     * 分页参数:是否排序默认值
+     */
+    @Value("${myBatisPlusUtil.orderColumnPropertyDefaultValue:false}")
+    public Boolean orderColumnPropertyDefaultValue;
 
     /**
      * 分页参数:分页合理化默认值 开启分页合理化
@@ -235,5 +241,11 @@ public class MyBatisPlusUtilConfig {
         this.reasonablePropertyDefaultValue = reasonablePropertyDefaultValue;
     }
 
+    public Boolean getOrderColumnPropertyDefaultValue() {
+        return orderColumnPropertyDefaultValue;
+    }
 
+    public void setOrderColumnPropertyDefaultValue(Boolean orderColumnPropertyDefaultValue) {
+        this.orderColumnPropertyDefaultValue = orderColumnPropertyDefaultValue;
+    }
 }

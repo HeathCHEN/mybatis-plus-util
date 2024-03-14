@@ -651,4 +651,42 @@ public class QueryContextThreadLocal {
         }
     }
 
+    /**
+     * 获取是否排序
+     *
+     * @return {@link Boolean }
+     * @author HeathCHEN
+     */
+    public static Boolean getOrderColumn() {
+        Boolean orderColumn = (Boolean) getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN);
+        if (ObjectUtil.isNull(orderColumn)) {
+            orderColumn = myBatisPlusUtilConfig.getOrderColumnPropertyDefaultValue();
+        }
+        return orderColumn;
+    }
+
+    /**
+     * 设置是否排序
+     *
+     * @param orderColumn 是否排序
+     * @author HeathCHEN
+     */
+    public static void setOrderColumn(Object orderColumn) {
+        if (ObjectUtil.isNull(orderColumn)) {
+            return;
+        }
+        if (orderColumn instanceof Boolean) {
+            setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+        }
+        if (orderColumn instanceof String) {
+            try {
+                String orderColumnString = (String) orderColumn;
+                if (StrUtil.isNotBlank(orderColumnString)) {
+                    setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, Boolean.valueOf(orderColumnString));
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
 }

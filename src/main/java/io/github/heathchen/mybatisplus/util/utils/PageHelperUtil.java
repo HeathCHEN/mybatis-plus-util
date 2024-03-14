@@ -109,7 +109,7 @@ public class PageHelperUtil {
             OrderType[] orderTypes = QueryConfig.orderTypes();
             boolean orderColumn = QueryConfig.orderColumn();
 
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+            QueryContextThreadLocal.setOrderColumn(orderColumn);
 
             if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
                 for (int i = 0; i < columns.length; i++) {
@@ -163,9 +163,7 @@ public class PageHelperUtil {
      */
     public static void buildQueryOrder(QueryWrapper<?> queryWrapper) {
 
-
-        Boolean orderColumn = (Boolean) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN);
-
+        Boolean orderColumn = QueryContextThreadLocal.getOrderColumn();
         if (ObjectUtil.isNotNull(orderColumn) && !orderColumn) {
             return;
         }
