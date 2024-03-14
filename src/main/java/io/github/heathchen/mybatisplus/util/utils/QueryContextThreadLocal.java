@@ -231,27 +231,6 @@ public class QueryContextThreadLocal {
     public static void putDataIntoQueryConfigMap(String key, Object value) {
         if (ObjectUtil.isNotEmpty(value)) {
             Map<String, Object> queryConfigMap = getQueryConfigMap();
-            if (value instanceof Map) {
-                Map<Object, Object> map = (Map<Object, Object>) value;
-                if (CollectionUtil.isNotEmpty(map)) {
-                    queryConfigMap.put(key, value);
-                    return;
-                }
-            }
-            if (value instanceof Collection) {
-                Collection<Object> collection = (Collection<Object>) value;
-                if (CollectionUtil.isNotEmpty(collection)) {
-                    queryConfigMap.put(key, value);
-                    return;
-                }
-            }
-            if (value.getClass().isArray()) {
-                Object[] objectArray = (Object[]) value;
-                if (ArrayUtil.isNotEmpty(objectArray)) {
-                    queryConfigMap.put(key, value);
-                    return;
-                }
-            }
             queryConfigMap.put(key, value);
         }
 
@@ -361,6 +340,21 @@ public class QueryContextThreadLocal {
             ORDER_AND_PAGE_PARAM_LOCAL.get().put(key, data);
         }
     }
+    /**
+     * 设置排序参数,即便数据为空
+     *
+     * @param key  查询参数的属性名
+     * @param data 查询参数
+     * @author HeathCHEN
+     * @since 2024/02/26
+     */
+    public static void setValueToOrderAndPageParamMapEvenEmpty(String key, Object data) {
+        if (ObjectUtil.isNull(ORDER_AND_PAGE_PARAM_LOCAL.get())) {
+            ORDER_AND_PAGE_PARAM_LOCAL.set(new HashMap<>());
+        }
+
+        ORDER_AND_PAGE_PARAM_LOCAL.get().put(key, data);
+    }
 
     /**
      * 获取全部查询参数
@@ -383,7 +377,7 @@ public class QueryContextThreadLocal {
         Map<String, OrderDto> map = (Map<String, OrderDto>) getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_MAP);
         if (CollectionUtil.isEmpty(map)) {
             Map<String, OrderDto> newMap = new HashMap<>();
-            setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_MAP, newMap);
+            setValueToOrderAndPageParamMapEvenEmpty(PageAndOrderConst.ORDER_MAP, newMap);
             map = newMap;
         }
         return map;
