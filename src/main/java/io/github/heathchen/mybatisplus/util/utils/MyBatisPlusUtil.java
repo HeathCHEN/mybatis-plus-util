@@ -234,8 +234,8 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后获取Bean查询
      *
-     * @param e            查询参数
-     * @param <E>          查询参数dto或实体类的类型
+     * @param e   查询参数
+     * @param <E> 查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
@@ -447,8 +447,8 @@ public class MyBatisPlusUtil {
     /**
      * 反射构筑Query后校验被UniqueValue标注的字段是否唯一
      *
-     * @param e        查询参数
-     * @param <E>      查询参数dto或实体类的类型
+     * @param e   查询参数
+     * @param <E> 查询参数dto或实体类的类型
      * @return {@link List } 查询结果
      * @author HeathCHEN
      */
@@ -653,9 +653,9 @@ public class MyBatisPlusUtil {
     /**
      * 根据QueryField注解构筑单表通用查询
      *
-     * @param e 查询参数
+     * @param e           查询参数
      * @param withoutLike 是否排除模糊查询
-     * @return {@link QueryWrapper}<{@link E}>
+     * @return {@link QueryWrapper}
      */
     public static <E> QueryWrapper<E> getQueryWrapper(E e, Boolean withoutLike) {
         QueryContextThreadLocal.setWithoutLike(withoutLike);

@@ -393,7 +393,7 @@ public class QueryContextThreadLocal {
     /**
      * 获取排序List
      *
-     * @return {@link List }<{@link OrderDto }>
+     * @return {@link List }
      * @author HeathCHEN
      */
     public static List<OrderDto> getOrderList() {

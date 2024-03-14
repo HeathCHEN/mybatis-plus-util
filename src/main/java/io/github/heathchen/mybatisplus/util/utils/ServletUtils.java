@@ -15,14 +15,20 @@ import java.util.Map;
 
 
 /**
- *  Servlet工具类
+ * Servlet工具类
  *
- * @author Administrator
- * @date 2024/03/13
+ * @author HeathCHEN
+ * @version 1.0
+ * @since 2024/03/14
  */
 public class ServletUtils {
+
     /**
      * 获取String参数
+     *
+     * @param name 参数名
+     * @return {@link String }
+     * @author HeathCHEN
      */
     public static String getParameter(String name) {
         return getRequest().getParameter(name);
@@ -32,7 +38,7 @@ public class ServletUtils {
     /**
      * 获得所有请求参数
      *
-     * @param request 请求对象{@link ServletRequest}
+     * @param request 请求对象
      * @return Map
      */
     public static Map<String, String[]> getParams(ServletRequest request) {
@@ -43,7 +49,7 @@ public class ServletUtils {
     /**
      * 获得所有请求参数
      *
-     * @param request 请求对象{@link ServletRequest}
+     * @param request 请求对象
      * @return Map
      */
     public static Map<String, String> getParamMap(ServletRequest request) {
@@ -55,8 +61,12 @@ public class ServletUtils {
         return params;
     }
 
+
     /**
      * 获取request
+     *
+     * @return {@link HttpServletRequest }
+     * @author HeathCHEN
      */
     public static HttpServletRequest getRequest() {
         try {
@@ -66,8 +76,12 @@ public class ServletUtils {
         }
     }
 
+
     /**
      * 获取response
+     *
+     * @return {@link HttpServletResponse }
+     * @author HeathCHEN
      */
     public static HttpServletResponse getResponse() {
         try {
@@ -77,13 +91,23 @@ public class ServletUtils {
         }
     }
 
+
     /**
      * 获取session
+     *
+     * @return {@link HttpSession }
+     * @author HeathCHEN
      */
     public static HttpSession getSession() {
         return getRequest().getSession();
     }
 
+    /**
+     * 获取RequestAttributes
+     *
+     * @return {@link ServletRequestAttributes }
+     * @author HeathCHEN
+     */
     public static ServletRequestAttributes getRequestAttributes() {
         try {
             RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
