@@ -240,7 +240,9 @@ public class MyBatisPlusUtil {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e) {
-        return queryByReflect(e, null, null, null, null, null);
+        QueryWrapper query = getQueryWrapper(e);
+        BaseMapper<?> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
+        return baseMapper.selectList(query);
     }
 
     /**
