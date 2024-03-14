@@ -175,12 +175,12 @@ public class PageHelperUtil {
             return;
         }
 
-        String orderByColumn = (String) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName());
-        String isAsc = (String) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName());
+        String orderByColumn = QueryContextThreadLocal.getOrderByColumn();
+        Boolean isAsc = QueryContextThreadLocal.getIsAsc();
 
-        if (StrUtil.isNotBlank(orderByColumn) && StrUtil.isNotBlank(isAsc)) {
+        if (StrUtil.isNotBlank(orderByColumn)) {
             OrderDto OrderDto = new OrderDto();
-            if (isAsc.equals(Boolean.TRUE.toString())) {
+            if (isAsc) {
                 OrderDto.setOrderType(OrderType.ASC);
             } else {
                 OrderDto.setOrderType(OrderType.DESC);

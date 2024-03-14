@@ -69,9 +69,9 @@ public class MyBatisPlusUtilConfig {
     public Boolean isAscPropertyDefaultValue;
 
     /**
-     * 分页参数:页面大小默认值 10
+     * 分页参数:页面大小默认值 15
      */
-    @Value("${myBatisPlusUtil.pageSizePropertyName:10}")
+    @Value("${myBatisPlusUtil.pageSizePropertyName:15}")
     public Integer pageSizePropertyDefaultValue;
     /**
      * 分页参数:页码大小默认值 1
