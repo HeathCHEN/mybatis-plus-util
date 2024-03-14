@@ -28,11 +28,11 @@ import java.util.List;
 public class PageHelperUtil {
 
 
-    private static MyBatisPlusUtilConfig myBatisPlusUtilConfig;
+    private static MyBatisPlusUtilConfig myBatisPlusUtilConfig = ApplicationContextProvider.getBean(MyBatisPlusUtilConfig.class);
 
 
     public PageHelperUtil() {
-        myBatisPlusUtilConfig = ApplicationContextProvider.getBean(MyBatisPlusUtilConfig.class);
+
     }
 
     /**
