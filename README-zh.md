@@ -213,6 +213,13 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     private String specName;
     ```
 
+  查询参数
+
+    ```json
+    {
+      "specName": "小"
+    }
+    ```
   查询时执行 SQL
     ```sql
     SELECT * FROM pdt_spec
@@ -241,8 +248,8 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     		/**  
     		 * 创建时间 
     		 */
-    		@QueryField(orderType = OrderType.ASC)   
-    		@TableField(value = "create_time"，orderPriority = 100)   
+    		@QueryField(orderType = OrderType.ASC，orderPriority = 100)   
+    		@TableField(value = "create_time")   
     		private Date createTime;  
     		/**  
     		 * 商品状态（0正常 1停用 2 淘汰）  
@@ -256,7 +263,6 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
     
     ```json
     {
-      "specName": "11"，
     }
     ```
   
