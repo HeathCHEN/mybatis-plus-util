@@ -45,24 +45,20 @@ public class PageHelperUtil {
         HttpServletRequest request = ServletUtils.getRequest();
 
         if (request.getMethod().equals(Method.GET.toString())) {
-            String startPage = ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName());
-            if (StrUtil.isNotBlank(startPage)) {
-                QueryContextThreadLocal.setStartPage(Boolean.valueOf(startPage));
-            }
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
-
+            QueryContextThreadLocal.setStartPage(ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            QueryContextThreadLocal.setIsAsc(ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            QueryContextThreadLocal.setPageSize(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setPageNum(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setOrderByColumn(ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            QueryContextThreadLocal.setReasonable(ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
 
         } else {
-            QueryContextThreadLocal.setStartPage((Boolean) QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
-            QueryContextThreadLocal.setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
+            QueryContextThreadLocal.setStartPage(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            QueryContextThreadLocal.setIsAsc(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            QueryContextThreadLocal.setPageSize(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setPageNum(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
+            QueryContextThreadLocal.setOrderByColumn(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            QueryContextThreadLocal.setReasonable(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
             QueryContextThreadLocal.removeParamFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(),
                     myBatisPlusUtilConfig.getIsAscPropertyName(),
                     myBatisPlusUtilConfig.getPageSizePropertyName(),
@@ -90,47 +86,48 @@ public class PageHelperUtil {
             if (ObjectUtil.isNotNull(localPage)) {
                 PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
             } else {
-                Integer pageSize = (Integer) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.PAGE_SIZE);
-                Integer pageNum = (Integer) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.PAGE_NUM);
+                Integer pageSize = QueryContextThreadLocal.getPageSize();
+                Integer pageNum = QueryContextThreadLocal.getPageNum();
                 if (ObjectUtil.isNotNull(pageSize) && ObjectUtil.isNotNull(pageNum)) {
                     PageHelper.startPage(pageNum, pageSize);
                 }
             }
-        }
-        while (!clazz.isAnnotationPresent(QueryConfig.class)) {
-            Class<?> superclass = clazz.getSuperclass();
-            if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
-                break;
-            } else {
-                clazz = superclass;
-            }
-        }
-        if (!clazz.isAnnotationPresent(QueryConfig.class)) {
-            return;
-        }
-        QueryConfig QueryConfig = clazz.getDeclaredAnnotation(QueryConfig.class);
-        String[] columns = QueryConfig.orderColumnNames();
-        OrderType[] orderTypes = QueryConfig.orderTypes();
-        boolean orderColumn = QueryConfig.orderColumn();
 
-        QueryContextThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
-
-        if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
-            for (int i = 0; i < columns.length; i++) {
-                OrderDto OrderDto = new OrderDto();
-                if (StrUtil.isBlank(columns[i])) {
-                    continue;
+            while (!clazz.isAnnotationPresent(QueryConfig.class)) {
+                Class<?> superclass = clazz.getSuperclass();
+                if (ObjectUtil.isNull(superclass) || ObjectUtil.equals(superclass, Object.class)) {
+                    break;
+                } else {
+                    clazz = superclass;
                 }
-                OrderDto.setTableColumnName(columns[i].toUpperCase());
-                if (ObjectUtil.isNull(orderTypes[i])) {
-                    continue;
+            }
+            if (!clazz.isAnnotationPresent(QueryConfig.class)) {
+                return;
+            }
+            QueryConfig QueryConfig = clazz.getDeclaredAnnotation(QueryConfig.class);
+            String[] columns = QueryConfig.orderColumnNames();
+            OrderType[] orderTypes = QueryConfig.orderTypes();
+            boolean orderColumn = QueryConfig.orderColumn();
+
+            QueryContextThreadLocal.setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+
+            if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
+                for (int i = 0; i < columns.length; i++) {
+                    OrderDto OrderDto = new OrderDto();
+                    if (StrUtil.isBlank(columns[i])) {
+                        continue;
+                    }
+                    OrderDto.setTableColumnName(columns[i].toUpperCase());
+                    if (ObjectUtil.isNull(orderTypes[i])) {
+                        continue;
+                    }
+
+                    OrderDto.setOrderType(orderTypes[i]);
+                    OrderDto.setOrderPriority(i + 1);
+                    QueryContextThreadLocal.putOrderDtoIntoOrderList(OrderDto);
                 }
 
-                OrderDto.setOrderType(orderTypes[i]);
-                OrderDto.setOrderPriority(i + 1);
-                QueryContextThreadLocal.putOrderDtoIntoOrderList(OrderDto);
             }
-
         }
     }
 
@@ -166,14 +163,20 @@ public class PageHelperUtil {
      */
     public static void buildQueryOrder(QueryWrapper<?> queryWrapper) {
 
+        Boolean startPage = QueryContextThreadLocal.getStartPage();
+
+        if (!startPage) {
+            return;
+        }
+
         Boolean orderColumn = (Boolean) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN);
 
         if (ObjectUtil.isNotNull(orderColumn) && !orderColumn) {
             return;
         }
 
-        String orderByColumn = (String) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_BY_COLUMN);
-        String isAsc = (String) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.IS_ASC);
+        String orderByColumn = (String) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName());
+        String isAsc = (String) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName());
 
         if (StrUtil.isNotBlank(orderByColumn) && StrUtil.isNotBlank(isAsc)) {
             OrderDto OrderDto = new OrderDto();

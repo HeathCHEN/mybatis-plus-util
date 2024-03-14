@@ -3,6 +3,7 @@ package io.github.heathchen.mybatisplus.util.utils;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
 import io.github.heathchen.mybatisplus.util.consts.MyBatisPlusUtilConst;
@@ -373,6 +374,12 @@ public class QueryContextThreadLocal {
         return ORDER_AND_PAGE_PARAM_LOCAL.get();
     }
 
+    /**
+     * 获取排序Map
+     *
+     * @return {@link Map }
+     * @author HeathCHEN
+     */
     public static Map<String, OrderDto> getOrderMap() {
         Map<String, OrderDto> map = (Map<String, OrderDto>) getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_MAP);
         if (CollectionUtil.isEmpty(map)) {
@@ -383,6 +390,12 @@ public class QueryContextThreadLocal {
         return map;
     }
 
+    /**
+     * 获取排序List
+     *
+     * @return {@link List }<{@link OrderDto }>
+     * @author HeathCHEN
+     */
     public static List<OrderDto> getOrderList() {
 
         return getOrderMap().
@@ -417,17 +430,214 @@ public class QueryContextThreadLocal {
         orderMap.putIfAbsent(orderDto.getTableColumnName(), orderDto);
     }
 
+    /**
+     * 获取是否开启分页参数
+     *
+     * @return {@link Boolean }
+     * @author HeathCHEN
+     */
     public static Boolean getStartPage() {
         Boolean startPage = (Boolean) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName());
         if (ObjectUtil.isNull(startPage)) {
-            startPage = Boolean.TRUE;
-            setStartPage(startPage);
+            startPage = myBatisPlusUtilConfig.getStarPagePropertyDefaultValue();
         }
         return startPage;
     }
 
-    public static void setStartPage(Boolean startPage) {
-        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
+    /**
+     * 设置是否分页参数
+     *
+     * @param startPage 是否开启分页
+     * @author HeathCHEN
+     */
+    public static void setStartPage(Object startPage) {
+        if (startPage instanceof Boolean) {
+            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
+        }
+        if (startPage instanceof String) {
+            try {
+                String startPageString = (String) startPage;
+                if (StrUtil.isNotBlank(startPageString)) {
+                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), Boolean.valueOf(startPageString));
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+
+    /**
+     * 获取排序顺序参数
+     *
+     * @return {@link Boolean }
+     * @author HeathCHEN
+     */
+    public static Boolean getIsAsc() {
+        Boolean isAsc = (Boolean) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName());
+        if (ObjectUtil.isNull(isAsc)) {
+            isAsc = myBatisPlusUtilConfig.getAscPropertyDefaultValue();
+        }
+        return isAsc;
+    }
+
+    /**
+     * 设置排序顺序参数
+     *
+     * @param isAsc 排序顺序
+     * @author HeathCHEN
+     */
+    public static void setIsAsc(Object isAsc) {
+        if (isAsc instanceof Boolean) {
+            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), isAsc);
+        }
+        if (isAsc instanceof String) {
+            try {
+                String isAscString = (String) isAsc;
+                if (StrUtil.isNotBlank(isAscString)) {
+                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), Boolean.valueOf(isAscString));
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+
+    /**
+     * 获取页面大小参数
+     *
+     * @return {@link Integer }
+     * @author HeathCHEN
+     */
+    public static Integer getPageSize() {
+        Integer pageSize = (Integer) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName());
+        if (ObjectUtil.isNull(pageSize)) {
+            pageSize = myBatisPlusUtilConfig.getPageSizePropertyDefaultValue();
+        }
+        return pageSize;
+    }
+
+    /**
+     * 设置页面大小参数
+     *
+     * @param pageSize 页面大小
+     * @author HeathCHEN
+     */
+    public static void setPageSize(Object pageSize) {
+        if (pageSize instanceof Integer) {
+            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), pageSize);
+        }
+        if (pageSize instanceof String) {
+            try {
+                String pageSizeString = (String) pageSize;
+                if (StrUtil.isNotBlank(pageSizeString)) {
+                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), Integer.valueOf(pageSizeString));
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+
+    /**
+     * 获取分页页码参数
+     *
+     * @return {@link Integer }
+     * @author HeathCHEN
+     */
+    public static Integer getPageNum() {
+        Integer pageNum = (Integer) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName());
+        if (ObjectUtil.isNull(pageNum)) {
+            pageNum = myBatisPlusUtilConfig.getPageNumPropertyDefaultValue();
+        }
+        return pageNum;
+    }
+
+
+    /**
+     * 设置分页页码参数
+     *
+     * @param pageNum 分页页码
+     * @author HeathCHEN
+     */
+    public static void setPageNum(Object pageNum) {
+        if (pageNum instanceof Integer) {
+            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), pageNum);
+        }
+        if (pageNum instanceof String) {
+            try {
+                String pageNumString = (String) pageNum;
+                if (StrUtil.isNotBlank(pageNumString)) {
+                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), Integer.valueOf(pageNumString));
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+
+    /**
+     * 获取排序字段参数
+     *
+     * @return {@link String }
+     * @author HeathCHEN
+     */
+    public static String getOrderByColumn() {
+        String orderByColumn = (String) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName());
+        if (StrUtil.isBlank(orderByColumn)) {
+            orderByColumn = myBatisPlusUtilConfig.getOrderByColumnPropertyDefaultValue();
+        }
+        return orderByColumn;
+    }
+
+
+    /**
+     * 设置排序字段参数
+     *
+     * @param orderByColumn 排序字段
+     * @author HeathCHEN
+     */
+    public static void setOrderByColumn(Object orderByColumn) {
+        String orderByColumnString = orderByColumn.toString();
+        if (StrUtil.isNotBlank(orderByColumnString)) {
+            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), orderByColumnString);
+        }
+
+    }
+
+
+    /**
+     * 获取是否分页合理参数
+     *
+     * @return {@link Boolean }
+     * @author HeathCHEN
+     */
+    public static Boolean getReasonable() {
+        Boolean reasonable = (Boolean) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName());
+        if (ObjectUtil.isNull(reasonable)) {
+            reasonable = myBatisPlusUtilConfig.getReasonablePropertyDefaultValue();
+        }
+        return reasonable;
+    }
+
+    /**
+     * 设置是否分页合理参数
+     *
+     * @param reasonable 是否分页合理
+     * @author HeathCHEN
+     */
+    public static void setReasonable(Object reasonable) {
+        if (reasonable instanceof Boolean) {
+            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), reasonable);
+        }
+        if (reasonable instanceof String) {
+            try {
+                String reasonableString = (String) reasonable;
+                if (StrUtil.isNotBlank(reasonableString)) {
+                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), Boolean.valueOf(reasonableString));
+                }
+            } catch (Exception e) {
+            }
+        }
     }
 
 }

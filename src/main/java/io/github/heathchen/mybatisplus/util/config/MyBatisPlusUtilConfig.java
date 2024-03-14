@@ -49,12 +49,48 @@ public class MyBatisPlusUtilConfig {
     @Value("${myBatisPlusUtil.orderByColumnPropertyName:orderByColumn}")
     public String orderByColumnPropertyName;
 
-
     /**
      * 分页参数:分页合理化默认属性名
      */
     @Value("${myBatisPlusUtil.reasonablePropertyName:reasonable}")
     public String reasonablePropertyName;
+
+    /**
+     * 分页参数:是否开启分页默认值 开启分页
+     */
+    @Value("${myBatisPlusUtil.starPagePropertyDefaultValue:true}")
+    public Boolean starPagePropertyDefaultValue;
+
+
+    /**
+     * 分页参数:是否升序(自然排序)默认值 自然排序
+     */
+    @Value("${myBatisPlusUtil.isAscPropertyDefaultValue:true}")
+    public Boolean isAscPropertyDefaultValue;
+
+    /**
+     * 分页参数:页面大小默认值 10
+     */
+    @Value("${myBatisPlusUtil.pageSizePropertyName:10}")
+    public Integer pageSizePropertyDefaultValue;
+    /**
+     * 分页参数:页码大小默认值 1
+     */
+    @Value("${myBatisPlusUtil.pageNumPropertyDefaultValue:1}")
+    public Integer pageNumPropertyDefaultValue;
+
+    /**
+     * 分页参数:排序字段默认值
+     */
+    @Value("${myBatisPlusUtil.orderByColumnPropertyDefaultValue:create_time}")
+    public String orderByColumnPropertyDefaultValue;
+
+
+    /**
+     * 分页参数:分页合理化默认值 开启分页合理化
+     */
+    @Value("${myBatisPlusUtil.reasonablePropertyDefaultValue:true}")
+    public Boolean reasonablePropertyDefaultValue;
 
     public MyBatisPlusUtilConfig() {
         super();
@@ -150,4 +186,54 @@ public class MyBatisPlusUtilConfig {
     public void setOrderByColumnPropertyName(String orderByColumnPropertyName) {
         this.orderByColumnPropertyName = orderByColumnPropertyName;
     }
+
+    public Boolean getStarPagePropertyDefaultValue() {
+        return starPagePropertyDefaultValue;
+    }
+
+    public void setStarPagePropertyDefaultValue(Boolean starPagePropertyDefaultValue) {
+        this.starPagePropertyDefaultValue = starPagePropertyDefaultValue;
+    }
+
+    public Boolean getAscPropertyDefaultValue() {
+        return isAscPropertyDefaultValue;
+    }
+
+    public void setAscPropertyDefaultValue(Boolean ascPropertyDefaultValue) {
+        isAscPropertyDefaultValue = ascPropertyDefaultValue;
+    }
+
+    public Integer getPageSizePropertyDefaultValue() {
+        return pageSizePropertyDefaultValue;
+    }
+
+    public void setPageSizePropertyDefaultValue(Integer pageSizePropertyDefaultValue) {
+        this.pageSizePropertyDefaultValue = pageSizePropertyDefaultValue;
+    }
+
+    public Integer getPageNumPropertyDefaultValue() {
+        return pageNumPropertyDefaultValue;
+    }
+
+    public void setPageNumPropertyDefaultValue(Integer pageNumPropertyDefaultValue) {
+        this.pageNumPropertyDefaultValue = pageNumPropertyDefaultValue;
+    }
+
+    public String getOrderByColumnPropertyDefaultValue() {
+        return orderByColumnPropertyDefaultValue;
+    }
+
+    public void setOrderByColumnPropertyDefaultValue(String orderByColumnPropertyDefaultValue) {
+        this.orderByColumnPropertyDefaultValue = orderByColumnPropertyDefaultValue;
+    }
+
+    public Boolean getReasonablePropertyDefaultValue() {
+        return reasonablePropertyDefaultValue;
+    }
+
+    public void setReasonablePropertyDefaultValue(Boolean reasonablePropertyDefaultValue) {
+        this.reasonablePropertyDefaultValue = reasonablePropertyDefaultValue;
+    }
+
+
 }
