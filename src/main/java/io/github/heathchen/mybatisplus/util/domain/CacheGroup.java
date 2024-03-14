@@ -96,7 +96,7 @@ public class CacheGroup {
     }
 
     public void checkGroupConfig() throws Exception {
-        if (StringUtil.isEmpty(tableColumnIdName) || StringUtil.isEmpty(tableColumnFieldName)) {
+        if (StringUtil.isEmpty(tableColumnIdName) || StringUtil.isEmpty(propertyFieldName)) {
             throw new Exception("注解配置异常!");
         }
 
