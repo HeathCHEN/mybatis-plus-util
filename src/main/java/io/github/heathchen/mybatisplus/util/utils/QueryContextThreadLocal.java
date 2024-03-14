@@ -450,6 +450,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setStartPage(Object startPage) {
+        if (ObjectUtil.isNull(startPage)) {
+            return;
+        }
         if (startPage instanceof Boolean) {
             setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
         }
@@ -486,6 +489,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setIsAsc(Object isAsc) {
+        if (ObjectUtil.isNull(isAsc)) {
+            return;
+        }
         if (isAsc instanceof Boolean) {
             setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), isAsc);
         }
@@ -522,6 +528,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setPageSize(Object pageSize) {
+        if (ObjectUtil.isNull(pageSize)) {
+            return;
+        }
         if (pageSize instanceof Integer) {
             setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), pageSize);
         }
@@ -559,6 +568,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setPageNum(Object pageNum) {
+        if (ObjectUtil.isNull(pageNum)) {
+            return;
+        }
         if (pageNum instanceof Integer) {
             setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), pageNum);
         }
@@ -596,6 +608,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setOrderByColumn(Object orderByColumn) {
+        if (ObjectUtil.isNull(orderByColumn)) {
+            return;
+        }
         String orderByColumnString = orderByColumn.toString();
         if (StrUtil.isNotBlank(orderByColumnString)) {
             setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), orderByColumnString);
@@ -625,6 +640,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setReasonable(Object reasonable) {
+        if (ObjectUtil.isNull(reasonable)) {
+            return;
+        }
         if (reasonable instanceof Boolean) {
             setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), reasonable);
         }
