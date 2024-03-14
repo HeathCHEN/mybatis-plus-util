@@ -699,27 +699,28 @@ public class MyBatisPlusUtil {
     /**
      * 利用注解标注字段更新冗余字段
      *
-     * @param clazz               类
+     * @param clazz               需要刚更新冗余值的类
+     * @param groupId             分组id
      * @param associationKeyValue 关联键值
      * @param newCacheFieldValue  新的冗余值
      * @author HeathCHEN
      */
-    public static <T> void updateCacheField(Class<T> clazz, Object associationKeyValue, Object newCacheFieldValue) {
+    public static <T> void updateCacheField(Class<T> clazz, Object associationKeyValue, Object newCacheFieldValue, String groupId) {
         try {
 
             List<CacheGroup> cacheGroups = new ArrayList<>();
-            QueryUtil.constructCacheGroup(clazz, cacheGroups);
+            QueryUtil.constructCacheGroup(clazz, cacheGroups, groupId);
 
             if (CollectionUtil.isNotEmpty(cacheGroups)) {
                 for (CacheGroup cacheGroup : cacheGroups) {
                     cacheGroup.checkGroupConfig();
                     BaseMapper mapperBean = ApplicationContextUtil.getMapperBean(clazz);
                     QueryWrapper<?> queryWrapper = new QueryWrapper();
-                    queryWrapper.eq(cacheGroup.getTableId(), associationKeyValue);
+                    queryWrapper.eq(cacheGroup.getTableColumnIdName(), associationKeyValue);
 
                     Constructor<?> constructor = clazz.getConstructor();
                     Object o = constructor.newInstance();
-                    ReflectUtil.setFieldValue(o, cacheGroup.getTableFields().get(0), newCacheFieldValue);
+                    ReflectUtil.setFieldValue(o, cacheGroup.getPropertyFieldName(), newCacheFieldValue);
 
                     mapperBean.update(o, queryWrapper);
 
@@ -730,19 +731,31 @@ public class MyBatisPlusUtil {
         }
     }
 
+    /**
+     * 利用注解标注字段更新冗余字段
+     *
+     * @param clazz               需要刚更新冗余值的类
+     * @param associationKeyValue 关联键值
+     * @param newCacheFieldValue  新的冗余值
+     * @author HeathCHEN
+     */
+    public static <T> void updateCacheField(Class<T> clazz, Object associationKeyValue, Object newCacheFieldValue) {
+        updateCacheField(clazz, associationKeyValue, newCacheFieldValue);
+    }
 
     /**
      * 批量更新
      *
-     * @param clazzArr           类Array
+     * @param clazzArr           需要刚更新冗余值的类Array
+     * @param groupId            分组id
      * @param associationKey     关联键
      * @param newCacheFieldValue 新的冗余值
      * @author HeathCHEN
      */
-    public static void updateCacheField(Object associationKey, Object newCacheFieldValue, Class<?>... clazzArr) {
+    public static void updateCacheField(Object associationKey, Object newCacheFieldValue, String groupId, Class<?>... clazzArr) {
         if (ArrayUtil.isNotEmpty(clazzArr)) {
             for (Class<?> clazz : clazzArr) {
-                updateCacheField(clazz, associationKey, newCacheFieldValue);
+                updateCacheField(clazz, associationKey, newCacheFieldValue, groupId);
             }
 
         }

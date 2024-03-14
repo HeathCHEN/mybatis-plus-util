@@ -158,7 +158,7 @@ public class QueryUtil {
      * @param cacheGroups 冗余组对象List
      * @author HeathCHEN
      */
-    public static <T> void constructCacheGroup(Class<T> clazz, List<CacheGroup> cacheGroups) {
+    public static <T> void constructCacheGroup(Class<T> clazz, List<CacheGroup> cacheGroups, String groupId) {
         Map<String, CacheGroup> cacheGroupHashMap = new HashMap<>();
         Field[] declaredFields = clazz.getDeclaredFields();
 
@@ -166,17 +166,31 @@ public class QueryUtil {
             for (Field field : declaredFields) {
                 if (field.isAnnotationPresent(CachedTableField.class)) {
                     CachedTableField CachedTableField = field.getAnnotation(CachedTableField.class);
-                    String groupId = CachedTableField.value();
-                    CacheGroup cacheGroup = getCachedGroupFromMap(groupId, cacheGroupHashMap);
-                    cacheGroup.addCachedTableFields(CachedTableField);
-                    cacheGroup.addTableFields(TableUtil.getTableColumnName(clazz, field));
+                    String cachedTableFieldGroupId = CachedTableField.value();
+                    if (StrUtil.isNotBlank(groupId) && !cachedTableFieldGroupId.equals(groupId)) {
+                        continue;
+                    }
+                    CacheGroup cacheGroup = getCachedGroupFromMap(cachedTableFieldGroupId, cacheGroupHashMap);
+                    cacheGroup.setGroupId(cachedTableFieldGroupId);
+                    cacheGroup.setCachedTableField(CachedTableField);
+                    cacheGroup.setPropertyFieldName(field.getName());
                 }
                 if (field.isAnnotationPresent(CachedTableId.class)) {
                     CachedTableId CachedTableId = field.getAnnotation(CachedTableId.class);
-                    String groupId = CachedTableId.value();
-                    CacheGroup cacheGroup = getCachedGroupFromMap(groupId, cacheGroupHashMap);
-                    cacheGroup.setCachedTableId(CachedTableId);
-                    cacheGroup.setTableId(TableUtil.getTableColumnName(clazz, field));
+                    String[] groupIds = CachedTableId.value();
+                    if (ArrayUtil.isNotEmpty(groupIds)) {
+                        for (String cachedTableIdGroupId : groupIds) {
+                            if (StrUtil.isNotBlank(groupId) && !cachedTableIdGroupId.equals(groupId)) {
+                                continue;
+                            }
+                            CacheGroup cacheGroup = getCachedGroupFromMap(cachedTableIdGroupId, cacheGroupHashMap);
+                            cacheGroup.setGroupId(cachedTableIdGroupId);
+                            cacheGroup.setCachedTableId(CachedTableId);
+                            cacheGroup.setTableColumnIdName(TableUtil.getTableColumnName(clazz, field));
+                        }
+
+                    }
+
                 }
 
             }

@@ -23,6 +23,6 @@ public @interface CachedTableId {
      * @return {@link String }
      * @author HeathCHEN
      */
-    String value() default "default";
+    String[] value() default "default";
 
 }

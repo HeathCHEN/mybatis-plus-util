@@ -1,12 +1,8 @@
 package io.github.heathchen.mybatisplus.util.domain;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.github.pagehelper.util.StringUtil;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableField;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 冗余字段组
@@ -27,19 +23,22 @@ public class CacheGroup {
     /**
      * 自定义冗余字段注解List
      */
-    List<CachedTableField> CachedTableFields;
+    CachedTableField cachedTableField;
 
 
     /**
-     * 关联键
+     * 关联键对应表字段名
      */
-    String tableId;
+    String tableColumnIdName;
 
     /**
-     * 冗余字段List
+     * 冗余值对应表字段名
      */
-    List<String> tableFields;
-
+    String tableColumnFieldName;
+    /**
+     * 冗余值对应属性名
+     */
+    String propertyFieldName;
 
     /**
      * 组id
@@ -51,47 +50,25 @@ public class CacheGroup {
         return CachedTableId;
     }
 
-    public void setCachedTableId(CachedTableId CachedTableId) {
-        this.CachedTableId = CachedTableId;
+    public void setCachedTableId(CachedTableId cachedTableId) {
+        this.CachedTableId = cachedTableId;
     }
 
-    public List<CachedTableField> getCachedTableFields() {
-        if (CollectionUtil.isEmpty(CachedTableFields)) {
-            CachedTableFields = new ArrayList<>();
-        }
-        return CachedTableFields;
+    public CachedTableField getCachedTableField() {
+        return cachedTableField;
     }
 
-    public void setCachedTableFields(List<CachedTableField> CachedTableFields) {
-        this.CachedTableFields = CachedTableFields;
+    public void setCachedTableField(CachedTableField cachedTableField) {
+        this.cachedTableField = cachedTableField;
     }
 
-    public void addCachedTableFields(CachedTableField CachedTableField) {
 
-        CachedTableFields.add(CachedTableField);
+    public String getTableColumnIdName() {
+        return tableColumnIdName;
     }
 
-    public String getTableId() {
-        return tableId;
-    }
-
-    public void setTableId(String tableId) {
-        this.tableId = tableId;
-    }
-
-    public List<String> getTableFields() {
-        if (CollectionUtil.isEmpty(tableFields)) {
-            tableFields = new ArrayList<>();
-        }
-        return tableFields;
-    }
-
-    public void setTableFields(List<String> tableFields) {
-        this.tableFields = tableFields;
-    }
-
-    public void addTableFields(String tableField) {
-        tableFields.add(tableField);
+    public void setTableColumnIdName(String tableColumnIdName) {
+        this.tableColumnIdName = tableColumnIdName;
     }
 
     public String getGroupId() {
@@ -102,8 +79,24 @@ public class CacheGroup {
         this.groupId = groupId;
     }
 
+    public String getTableColumnFieldName() {
+        return tableColumnFieldName;
+    }
+
+    public void setTableColumnFieldName(String tableColumnFieldName) {
+        this.tableColumnFieldName = tableColumnFieldName;
+    }
+
+    public String getPropertyFieldName() {
+        return propertyFieldName;
+    }
+
+    public void setPropertyFieldName(String propertyFieldName) {
+        this.propertyFieldName = propertyFieldName;
+    }
+
     public void checkGroupConfig() throws Exception {
-        if (StringUtil.isEmpty(tableId) || CollectionUtil.isEmpty(tableFields)) {
+        if (StringUtil.isEmpty(tableColumnIdName) || StringUtil.isEmpty(tableColumnFieldName)) {
             throw new Exception("注解配置异常!");
         }
 
