@@ -163,11 +163,6 @@ public class PageHelperUtil {
      */
     public static void buildQueryOrder(QueryWrapper<?> queryWrapper) {
 
-        Boolean startPage = QueryContextThreadLocal.getStartPage();
-
-        if (!startPage) {
-            return;
-        }
 
         Boolean orderColumn = (Boolean) QueryContextThreadLocal.getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN);
 

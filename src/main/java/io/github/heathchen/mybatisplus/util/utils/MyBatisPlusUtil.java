@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 2024/02/26
  */
-public class MyBatisPlusUtil {
+public class MyBatisPlusUtil extends QueryContextThreadLocal {
 
     private static final Log log = GlobalLogFactory.get().getLog(MyBatisPlusUtil.class);
 
@@ -87,6 +87,23 @@ public class MyBatisPlusUtil {
         if (ObjectUtil.isNotNull(localPage)) {
             PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
         }
+    }
+
+
+    /**
+     * 关闭分页
+     * 只对本次查询生效
+     */
+    public static void closeStartPage() {
+        QueryContextThreadLocal.setStartPage(Boolean.FALSE);
+    }
+
+    /**
+     * 关闭排序
+     * 只对本次查询生效
+     */
+    public static void closeOrder() {
+        QueryContextThreadLocal.setOrderByColumn(Boolean.FALSE);
     }
 
     //===================================================================================================================================================================

@@ -535,6 +535,137 @@ MyBatis Plus Util是MyBatis-Plus的增强工具类，主要通过注解标注实
 #### 3.4.1. value
 - 分组 id，用于区分其他分组的@CachedTableId 和@CachedTableField
 
+
+
+## 4. 全局配置
+
+  具体请参考 MyBatisPlusUtilConfig.class 该类中读取的参数,后续会完善文档。
+
+## 5. 使用方法
+
+### 5.1. 查询
+
+#### 5.1.1 MyBatisPlusUtil.queryByReflect(E e, Class<T> clazz, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<?>> consumer, String... ignoreParams)方法
+该方法通过递归查询参数的类根据配置构建查询的QueryWrapper,
+在递归反射从查询参数的类中获取@TableName()注解,从而找到对应BaseMapper的Bean调用list()由MyBatisPlus生成SQL获取结果。
+##### 5.1.1.1 E e
+查询的参数类,实体类或者Dto类(最好是实体类,如果是Dto类需要在类上标记@TableName("table_name"))。
+
+##### 5.1.1.2 Class<T> clazz
+返回的类型,默认返回类型与查询参数类一致,可以指定对应类以排除需要返回的字段。
+
+##### 5.1.1.3 MatchMode matchMode
+匹配模式,分精确匹配模式和模糊匹配模式。
+精确模式:只过滤标记了@QueryField的参数。
+模糊匹配模式: 除了@QueryField的参数,没有标记的参数也会使用EQ类型过滤。
+默认按照全局设置匹配模式,默认是模糊匹配模式。
+
+##### 5.1.1.3 String[] groupIds
+分组id,构建的查询只对对应分组的@QueryField生效。
+@QueryField中可以设置查询类型的分组。
+
+##### 5.1.1.4 Consumer<QueryWrapper<?>> consumer
+QueryWrapper消费者,可以获取QueryWrapper并自定义。
+
+##### 5.1.1.5 String... ignoreParams
+可以指定忽略哪些参数的过滤
+
+##### 5.1.1.6 Boolean withOutLike
+将查询LIKE相关类型的查询全部改为EQ查询
+
+#### 5.1.2 QueryBuilder.doQuery()方法
+与queryByReflect()方法相同,但是可以链式构建查询配置
+
+
+### 5.2. 校验唯一性
+
+#### 5.2.1 MyBatisPlusUtil.checkUniqueByReflect(E e, Integer limit, String... groupIds) 方法
+配合@UniqueValue注解可以查询对应是否某字段唯一或小于指定个数,可以指定limit最大个数。
+groupIds用于指定由哪些字段组合唯一型。
+
+示例1
+
+```java
+    @Override
+    @Transactional
+    public Boolean editSave(BaseDevice baseDevice) {
+        String deviceId = baseDevice.getDeviceId();
+
+        if (!MyBatisPlusUtil.checkUniqueByReflect(baseDevice, 0,
+                queryWrapper -> queryWrapper.ne("device_id", deviceId), "device_name")) {
+            throw new GsException("已存在相同设备名称!");
+        }
+     
+        boolean result = updateById(baseDevice);
+
+        return result;
+    }
+
+```
+
+示例2
+
+```java
+
+    @Override
+    @Transactional
+    public Boolean addSave(BaseDevice baseDevice){
+        if(!MyBatisPlusUtil.checkUniqueByReflect(baseDevice,0,"device_name")){
+            throw new GsException("已存在相同设备名称!");
+        }
+    }
+```
+
+### 5.3. 更新冗余字段
+
+#### 5.3.1 MyBatisPlusUtil.updateCacheField(Object associationKey, Object newCacheFieldValue, String groupId, Class<?>... clazzArr)方法
+配合@CachedTableField和@CachedTableId注解更新冗余值。
+@CachedTableField标记在冗余值上,@CachedTableId标记在关联键上。
+Object associationKey表示需要更新的关联键。
+Object newCacheFieldValue表示冗余值的新值。
+String groupId表述需要更新的冗余分组
+Class<?>... clazzArr表示需要更新类
+
+示例
+实体类
+```java
+@TableName(value = "base_device_branch")
+@Data
+@Accessors(chain = true)
+public class BaseDeviceBranch{
+  /**
+   * 设备绑定id
+   */
+  @TableId(value = "device_branch_id")
+  private Long deviceBranchId;
+
+  /**
+   * 设备号
+   */
+  @TableField(value = "device_id")
+  @NotBlank(message = "设备号不能为空")
+  @CachedTableId(value = "deviceName")
+  private String deviceId;
+  /**
+   * 设备名称
+   */
+  @TableField(value = "device_name")
+  @NotBlank(message = "设备名称不能为空")
+  @CachedTableField(value = "deviceName")
+  private String deviceName;
+
+}
+```
+
+```
+
+调用
+```java
+       MyBatisPlusUtil.updateCacheField(baseDevice.getDeviceId(), baseDevice.getDeviceName(),
+                    "deviceName",
+                    BaseDeviceBranch.class, BasePosBranchUser.class);
+```
+
 # License
 
 MyBatis Plus Util is under the Apache 2.0 license. See the Apache License 2.0 file for details.
