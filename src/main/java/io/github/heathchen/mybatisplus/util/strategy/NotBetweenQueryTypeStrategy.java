@@ -2,8 +2,8 @@ package io.github.heathchen.mybatisplus.util.strategy;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
 import java.lang.reflect.Field;
@@ -26,16 +26,18 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
     /**
      * 构造查询
      *
-     * @param queryField      QueryField注解
-     * @param value           类
-     * @param tableColumnName 字段
-     * @param queryWrapper    查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
-        Object notBetweenStartValue = QueryContextThreadLocal.getValueFromQueryParamMap(queryField.notBetweenStartVal());
-        Object notBetweenEndValue = QueryContextThreadLocal.getValueFromQueryParamMap(queryField.notBetweenEndVal());
+    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
+
+        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
+        String tableColumnName = queryContext.getTableColumnName();
+        QueryField queryField = queryContext.getQueryField();
+
+        Object notBetweenStartValue = QueryContext.getValueFromQueryParamMap(queryField.notBetweenStartVal());
+        Object notBetweenEndValue = QueryContext.getValueFromQueryParamMap(queryField.notBetweenEndVal());
 
         if (QueryUtil.checkValue(notBetweenStartValue)) {
             queryWrapper.le(tableColumnName, notBetweenStartValue);
@@ -49,13 +51,15 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
     /**
      * 清除查询参数
      *
-     * @param queryField QueryField注解
-     * @param field      字段
+     * @param queryContext 查询上下文
+     * @author HeathCHEN
      */
     @Override
-    public void removeParam(QueryField queryField, Field field) {
-        QueryContextThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
-        QueryContextThreadLocal.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
-        QueryContextThreadLocal.removeParamFromQueryParamMap(field.getName());
+    public <T, E> void removeParam(QueryContext<T, E> queryContext) {
+        QueryField queryField = queryContext.getQueryField();
+        Field field = queryContext.getField();
+        QueryContext.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
+        QueryContext.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
+        QueryContext.removeParamFromQueryParamMap(field.getName());
     }
 }

@@ -1,9 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
-
-import java.lang.reflect.Field;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 
 /**
  * 查询策略类接口
@@ -18,62 +15,43 @@ public interface QueryTypeStrategy {
     /**
      * 检测分组
      *
-     * @param queryField QueryField注解
-     * @param groupIds   传入的分组Ids
+     * @param queryContext 查询上下文
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    Boolean checkIfNotInGroup(QueryField queryField,
-                              String[] groupIds);
+    <T, E> Boolean checkIfNotInGroup(QueryContext<T, E> queryContext);
 
     /**
      * 构造查询
      *
-     * @param <T>             查询条件适用的实体类型
-     * @param queryField      QueryField注解
-     * @param value           类
-     * @param tableColumnName 字段
-     * @param queryWrapper    查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
-    <T> void buildQueryWrapper(QueryField queryField,
-                               Object value,
-                               String tableColumnName,
-                               QueryWrapper<T> queryWrapper);
+    <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext);
 
     /**
      * 检查字段值状态
      *
-     * @param queryField   QueryField注解
-     * @param queryWrapper 查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
-    <T> void checkConditionType(QueryField queryField,
-                                QueryWrapper<T> queryWrapper,
-                                String tableColumnName);
+    <T, E> void checkConditionType(QueryContext<T, E> queryContext);
 
     /**
      * 清除查询参数
      *
-     * @param queryField QueryField注解
-     * @param field      字段
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
-    void removeParam(QueryField queryField, Field field);
+    <T, E> void removeParam(QueryContext<T, E> queryContext);
 
 
     /**
      * 检查排序
      *
-     * @param queryField      QueryField注解
-     * @param clazz           类
-     * @param field           字段
-     * @param tableColumnName 表字段名
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
-    void checkOrder(QueryField queryField,
-                    Class clazz,
-                    Field field,
-                    String tableColumnName);
+    <T, E> void checkOrder(QueryContext<T, E> queryContext);
 
 }

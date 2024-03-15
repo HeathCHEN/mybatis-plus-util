@@ -3,6 +3,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
@@ -24,31 +25,33 @@ public class LikeLeftQueryTypeStrategy extends BaseQueryTypeStrategy implements 
     /**
      * 构造查询
      *
-     * @param queryField      QueryField注解
-     * @param value           类
-     * @param tableColumnName 字段
-     * @param queryWrapper    查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
+    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
 
-        if (checkWithoutLike(queryField, value, tableColumnName, queryWrapper)) {
+        QueryField queryField = queryContext.getQueryField();
+        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
+        String tableColumnName = queryContext.getTableColumnName();
+        Object queryParam = queryContext.getQueryParam();
+
+        if (checkWithoutLike(queryContext)) {
             return;
         }
 
         String[] orColumns = queryField.orColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
-                        tQueryWrapper.likeLeft(tableColumnName, value);
+                        tQueryWrapper.likeLeft(tableColumnName, queryParam);
                         for (String orColumn : orColumns) {
                             tQueryWrapper.or();
-                            tQueryWrapper.likeLeft(TableUtil.checkOrColumnName(orColumn), value);
+                            tQueryWrapper.likeLeft(TableUtil.checkOrColumnName(orColumn), queryParam);
                         }
                     }
             );
         } else {
-            queryWrapper.likeLeft(tableColumnName, value);
+            queryWrapper.likeLeft(tableColumnName, queryParam);
         }
     }
 

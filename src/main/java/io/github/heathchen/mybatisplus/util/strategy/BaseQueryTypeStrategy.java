@@ -4,10 +4,10 @@ import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.Log;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
-import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
@@ -38,101 +38,106 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
     /**
      * 校验参数配置和构建查询
      *
-     * @param queryField   QueryField注解
-     * @param clazz        类
-     * @param field        字段
-     * @param queryWrapper 查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
-    <T> void constructQueryWrapper(QueryField queryField,
-                                   Class clazz,
-                                   Field field,
-                                   QueryWrapper<T> queryWrapper) {
+    <T, E> void constructQueryWrapper(QueryContext<T, E> queryContext) {
 
         Object value = null;
-        String[] groupIds = QueryContextThreadLocal.getGroupIds();
+        QueryField queryField = queryContext.getQueryField();
+
         try {
             //检测是否分组
-            if (checkIfNotInGroup(queryField, groupIds)) {
+            if (checkIfNotInGroup(queryContext)) {
                 return;
             }
-            //获取查询值
-            value = QueryContextThreadLocal.getValueFromQueryParamMap(field.getName());
-            //获取真实表字段名
-            String tableColumnName = TableUtil.getTableColumnName(clazz, field);
+            //准备参数
+            prepareContext(queryContext);
             //BETWEEN和NOT_BETWEEN的查询不校验查询参数
             if (queryField.value().equals(QueryType.BETWEEN) || queryField.value().equals(QueryType.NOT_BETWEEN)) {
-                buildQueryWrapper(queryField, value, tableColumnName, queryWrapper);
+                buildQueryWrapper(queryContext);
             } else {
                 //校验参数是否为空
                 if (QueryUtil.checkValue(value)) {
                     //构建QueryWrapper
-                    buildQueryWrapper(queryField, value, tableColumnName, queryWrapper);
+                    buildQueryWrapper(queryContext);
                 } else {
                     //检查值空时是否查询
-                    checkConditionType(queryField, queryWrapper, tableColumnName);
+                    checkConditionType(queryContext);
                 }
             }
             //检查是否排序
-            checkOrder(queryField, clazz, field, tableColumnName);
+            checkOrder(queryContext);
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw, true));
-            log.error("构造查询异常,类名:{},字段名:{},值:{},异常原因:{}", clazz.getName(), field.getName(), value, sw.toString());
+            log.error("构造查询异常,类名:{},字段名:{},值:{},异常原因:{}", queryContext.getClazz().getName(), queryContext.getField().getName(), value, sw.toString());
         } finally {
             //清除已匹配的查询参数
-            removeParam(queryField, field);
+            removeParam(queryContext);
         }
     }
 
     /**
      * 检测分组
      *
-     * @param queryField QueryField注解
-     * @param groupIds   传入的分组Ids
+     * @param queryContext 查询上下文
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    public Boolean checkIfNotInGroup(QueryField queryField, String[] groupIds) {
-        return !QueryUtil.checkIfInGroup(queryField, groupIds);
+    public <T, E> Boolean checkIfNotInGroup(QueryContext<T, E> queryContext) {
+        return !QueryUtil.checkIfInGroup(queryContext);
     }
 
     /**
      * 检查排序
      *
-     * @param queryField      QueryField注解
-     * @param clazz           类
-     * @param field           字段
-     * @param tableColumnName 表字段名
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
-    public void checkOrder(QueryField queryField, Class clazz, Field field, String tableColumnName) {
+    public <T, E> void checkOrder(QueryContext<T, E> queryContext) {
         //检查是否使用排序
-        PageHelperUtil.checkColumnOrderOnField(queryField, clazz, field, tableColumnName);
+        PageHelperUtil.checkColumnOrderOnField(queryContext);
     }
 
+    /**
+     * 准备参数
+     *
+     * @param queryContext 查询上下文
+     * @author HeathCHEN
+     */
+    public <T, E> void prepareContext(QueryContext<T, E> queryContext) {
+        //获取查询值
+        queryContext.setQueryParam(QueryContext.getValueFromQueryParamMap(queryContext.getField().getName()));
+        //获取真实表字段名
+        queryContext.setTableColumnName(TableUtil.getTableColumnName(queryContext.getClazz(), queryContext.getField()));
+    }
 
     /**
      * 清除查询参数
      *
-     * @param queryField QueryField注解
-     * @param field      字段
+     * @param queryContext 查询上下文
+     * @author HeathCHEN
      */
     @Override
-    public void removeParam(QueryField queryField, Field field) {
+    public <T, E> void removeParam(QueryContext<T, E> queryContext) {
+        Field field = queryContext.getField();
         //从线程中移除参数
-        QueryContextThreadLocal.removeParamFromQueryParamMap(field.getName());
+        QueryContext.removeParamFromQueryParamMap(field.getName());
     }
 
     /**
      * 检查查询值状态
      *
-     * @param queryField   QueryField注解
-     * @param queryWrapper 查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
 
-    public <T> void checkConditionType(QueryField queryField, QueryWrapper<T> queryWrapper, String tableColumnName) {
+    public <T, E> void checkConditionType(QueryContext<T, E> queryContext) {
+        QueryField queryField = queryContext.getQueryField();
+        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
+        String tableColumnName = queryContext.getTableColumnName();
+
         if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NULL)) {
             queryWrapper.isNull(tableColumnName);
         }
@@ -142,12 +147,18 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
     }
 
 
-    public <T> Boolean checkWithoutLike(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
-        Boolean withoutLike = QueryContextThreadLocal.getWithoutLike();
-
+    /**
+     * 检查是否排除模糊查询
+     *
+     * @param queryContext 查询上下文
+     * @return {@link Boolean }
+     * @author HeathCHEN
+     */
+    public <T, E> Boolean checkWithoutLike(QueryContext<T, E> queryContext) {
+        Boolean withoutLike = QueryContext.getWithoutLike();
         if (withoutLike) {
             QueryTypeStrategy EqQueryTypeStrategy = QueryTypeStrategyManager.getQueryTypeStrategyToManager(QueryType.EQ.getCompareType());
-            EqQueryTypeStrategy.buildQueryWrapper(queryField, value, tableColumnName, queryWrapper);
+            EqQueryTypeStrategy.buildQueryWrapper(queryContext);
 
         }
 

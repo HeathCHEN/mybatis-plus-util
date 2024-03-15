@@ -1,10 +1,9 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,16 +45,14 @@ public class QueryTypeStrategyManager {
     /**
      * 获取对应策略类并执行
      *
-     * @param queryField   QueryField注解
-     * @param clazz        类
-     * @param field        字段
-     * @param queryWrapper 查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
-    public static <T> void invokeQueryStrategy(QueryField queryField, Class<?> clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public static <T, E> void invokeQueryStrategy(QueryContext<T, E> queryContext) {
+        QueryField queryField = queryContext.getQueryField();
         BaseQueryTypeStrategy queryTypeStrategy = (BaseQueryTypeStrategy) getQueryTypeStrategyToManager(queryField.value().getCompareType());
         if (ObjectUtil.isNotNull(queryTypeStrategy)) {
-            queryTypeStrategy.constructQueryWrapper(queryField, clazz, field, queryWrapper);
+            queryTypeStrategy.constructQueryWrapper(queryContext);
         }
     }
 

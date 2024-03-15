@@ -3,6 +3,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 
 /**
@@ -23,16 +24,16 @@ public class SqlQueryTypeStrategy extends BaseQueryTypeStrategy implements Query
     /**
      * 构造查询
      *
-     * @param queryField      QueryField注解
-     * @param value           类
-     * @param tableColumnName 字段
-     * @param queryWrapper    查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
+    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
+        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
+        QueryField queryField = queryContext.getQueryField();
+        Object queryParam = queryContext.getQueryParam();
         if (StrUtil.isNotBlank(queryField.sql())) {
-            queryWrapper.apply(queryField.sql(), value);
+            queryWrapper.apply(queryField.sql(), queryParam);
         }
     }
 }

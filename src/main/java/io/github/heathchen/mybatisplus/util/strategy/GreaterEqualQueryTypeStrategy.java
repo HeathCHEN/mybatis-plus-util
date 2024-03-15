@@ -3,8 +3,8 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
 /**
@@ -21,42 +21,32 @@ public class GreaterEqualQueryTypeStrategy extends BaseQueryTypeStrategy impleme
         super(QUERY_TYPE);
     }
 
-    /**
-     * 检测分组
-     *
-     * @param queryField QueryField注解
-     * @param groupIds   传入的分组Ids
-     * @return {@link Boolean }
-     * @author HeathCHEN
-     */
-    @Override
-    public Boolean checkIfNotInGroup(QueryField queryField, String[] groupIds) {
-        return !QueryUtil.checkIfInGroup(queryField, groupIds);
-    }
 
     /**
      * 构造查询
      *
-     * @param queryField      QueryField注解
-     * @param value           类
-     * @param tableColumnName 字段
-     * @param queryWrapper    查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
+    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
+        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
+        String tableColumnName = queryContext.getTableColumnName();
+        QueryField queryField = queryContext.getQueryField();
+        Object queryParam = queryContext.getQueryParam();
+
         String[] orColumns = queryField.orColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
-                        tQueryWrapper.ge(tableColumnName, value);
+                        tQueryWrapper.ge(tableColumnName, queryParam);
                         for (String orColumn : orColumns) {
                             tQueryWrapper.or();
-                            tQueryWrapper.ge(TableUtil.checkOrColumnName(orColumn), value);
+                            tQueryWrapper.ge(TableUtil.checkOrColumnName(orColumn), queryParam);
                         }
                     }
             );
         } else {
-            queryWrapper.ge(tableColumnName, value);
+            queryWrapper.ge(tableColumnName, queryParam);
         }
     }
 

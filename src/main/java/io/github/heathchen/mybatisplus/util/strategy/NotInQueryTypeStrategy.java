@@ -3,7 +3,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 
 import java.util.Collection;
@@ -25,23 +25,25 @@ public class NotInQueryTypeStrategy extends BaseQueryTypeStrategy implements Que
     /**
      * 构造查询
      *
-     * @param queryField      QueryField注解
-     * @param value           类
-     * @param tableColumnName 字段
-     * @param queryWrapper    查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
-        if (value instanceof Collection) {
-            Collection<?> values = (Collection<?>) value;
+    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
+        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
+        String tableColumnName = queryContext.getTableColumnName();
+        Object queryParam = queryContext.getQueryParam();
+
+
+        if (queryParam instanceof Collection) {
+            Collection<?> values = (Collection<?>) queryParam;
             if (CollectionUtil.isNotEmpty(values)) {
                 queryWrapper.notIn(tableColumnName, values);
             }
         }
 
-        if (value.getClass().isArray()) {
-            Object[] values = (Object[]) value;
+        if (queryParam.getClass().isArray()) {
+            Object[] values = (Object[]) queryParam;
             if (ArrayUtil.isNotEmpty(values)) {
                 queryWrapper.notIn(tableColumnName, values);
             }

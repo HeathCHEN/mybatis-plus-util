@@ -12,6 +12,7 @@ import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.annotation.UniqueValue;
 import io.github.heathchen.mybatisplus.util.domain.CacheGroup;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Field;
@@ -33,12 +34,12 @@ public class QueryUtil {
     /**
      * 校验参数是否有意义
      *
-     * @param t 查询参数
+     * @param queryParam 查询参数
      * @return {@link Boolean } 有意义返回true,否则false
      * @author HeathCHEN
      */
-    public static <T> Boolean checkValue(T t) {
-        return ObjectUtil.isNotEmpty(t);
+    public static <T> Boolean checkValue(T queryParam) {
+        return ObjectUtil.isNotEmpty(queryParam);
     }
 
 
@@ -51,7 +52,7 @@ public class QueryUtil {
      * @return {@link QueryWrapper } 查询queryWrapper
      * @author HeathCHEN
      */
-    public static <T> QueryWrapper<T> buildQueryByReflect(Class<?> clazz, QueryWrapper<T> queryWrapper) {
+    public static <T, E> QueryWrapper<T> buildQueryByReflect(Class<E> clazz, QueryWrapper<T> queryWrapper) {
         //如果父类为空,则不再递归
         if (ObjectUtil.isNull(clazz) || ObjectUtil.equals(clazz, Object.class)) {
             return queryWrapper;
@@ -70,11 +71,13 @@ public class QueryUtil {
                     QueryField queryField = field.getAnnotation(QueryField.class);
                     //剔除不参与的参数
                     if (!queryField.exist()) {
-                        QueryContextThreadLocal.removeParamFromQueryParamMap(field.getName());
+                        QueryContext.removeParamFromQueryParamMap(field.getName());
                         continue;
                     }
+                    QueryContext<T, E> queryContext = new QueryContext<T, E>(queryField, clazz, field, queryWrapper);
+
                     //根据查询类型构建查询
-                    QueryTypeStrategyManager.invokeQueryStrategy(queryField, clazz, field, queryWrapper);
+                    QueryTypeStrategyManager.invokeQueryStrategy(queryContext);
                 } catch (Exception e) {
                     log.error("构造查询异常,类名:{},字段名:{}", clazz.getName(), field.getName());
                     e.printStackTrace();
@@ -83,7 +86,7 @@ public class QueryUtil {
         }
 
         //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(QueryContextThreadLocal.getQueryParamMap())) {
+        if (CollectionUtil.isNotEmpty(QueryContext.getQueryParamMap())) {
             return buildQueryByReflect(clazz.getSuperclass(), queryWrapper);
         } else {
             return queryWrapper;
@@ -105,7 +108,7 @@ public class QueryUtil {
             return queryGroupMap;
         }
 
-        String[] groupIds = QueryContextThreadLocal.getGroupIds();
+        String[] groupIds = QueryContext.getGroupIds();
         Field[] clazzDeclaredFields = clazz.getDeclaredFields();
         if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
             for (Field clazzDeclaredField : clazzDeclaredFields) {
@@ -127,7 +130,7 @@ public class QueryUtil {
                         }
                         //查询属性名对应字段名
                         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
-                        Object value = QueryContextThreadLocal.getValueFromQueryParamMap(field.getName());
+                        Object value = QueryContext.getValueFromQueryParamMap(field.getName());
                         //校验数据有效性
                         if (QueryUtil.checkValue(value)) {
                             queryParamMap.put(tableColumnName, value);
@@ -142,7 +145,7 @@ public class QueryUtil {
         }
 
         //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(QueryContextThreadLocal.getQueryParamMap())) {
+        if (CollectionUtil.isNotEmpty(QueryContext.getQueryParamMap())) {
             return buildUniqueCheckQueryByReflect(clazz.getSuperclass(), queryGroupMap);
         } else {
             return queryGroupMap;
@@ -226,7 +229,7 @@ public class QueryUtil {
      * @author HeathCHEN
      */
     public static void cleanData() {
-        QueryContextThreadLocal.cleanData();
+        QueryContext.cleanData();
     }
 
 
@@ -266,7 +269,9 @@ public class QueryUtil {
     }
 
 
-    public static Boolean checkIfInGroup(QueryField queryField, String[] groupIds) {
+    public static <T, E> Boolean checkIfInGroup(QueryContext<T, E> queryContext) {
+        QueryField queryField = queryContext.getQueryField();
+        String[] groupIds = QueryContext.getGroupIds();
         String[] groupIdsOnQueryField = queryField.groupId();
         boolean inGroup = Boolean.FALSE;
         if (ArrayUtil.isNotEmpty(groupIds)) {

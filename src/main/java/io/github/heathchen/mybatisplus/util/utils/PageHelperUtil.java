@@ -11,6 +11,7 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
 import io.github.heathchen.mybatisplus.util.domain.OrderDto;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,21 +45,21 @@ public class PageHelperUtil {
         HttpServletRequest request = ServletUtils.getRequest();
 
         if (request.getMethod().equals(Method.GET.toString())) {
-            QueryContextThreadLocal.setStartPageIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName()));
-            QueryContextThreadLocal.setIsAscIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
-            QueryContextThreadLocal.setPageSizeIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setPageNumIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setOrderByColumnIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
-            QueryContextThreadLocal.setReasonableIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
+            QueryContext.setStartPageIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            QueryContext.setIsAscIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            QueryContext.setPageSizeIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContext.setPageNumIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContext.setOrderByColumnIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            QueryContext.setReasonableIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
 
         } else {
-            QueryContextThreadLocal.setStartPageIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
-            QueryContextThreadLocal.setIsAscIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
-            QueryContextThreadLocal.setPageSizeIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setPageNumIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
-            QueryContextThreadLocal.setOrderByColumnIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
-            QueryContextThreadLocal.setReasonableIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
-            QueryContextThreadLocal.removeParamFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(),
+            QueryContext.setStartPageIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            QueryContext.setIsAscIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            QueryContext.setPageSizeIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContext.setPageNumIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
+            QueryContext.setOrderByColumnIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            QueryContext.setReasonableIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
+            QueryContext.removeParamFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(),
                     myBatisPlusUtilConfig.getIsAscPropertyName(),
                     myBatisPlusUtilConfig.getPageSizePropertyName(),
                     myBatisPlusUtilConfig.getPageNumPropertyName(),
@@ -78,15 +79,15 @@ public class PageHelperUtil {
      */
     public static void checkColumnOrderOnClass(Class<?> clazz) {
         //清除分页插件的排序参数 使用该注解分页
-        Boolean startPage = QueryContextThreadLocal.getStartPage();
+        Boolean startPage = QueryContext.getStartPage();
         PageHelper.clearPage();
         if (startPage) {
             com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
             if (ObjectUtil.isNotNull(localPage)) {
                 PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
             } else {
-                Integer pageSize = QueryContextThreadLocal.getPageSize();
-                Integer pageNum = QueryContextThreadLocal.getPageNum();
+                Integer pageSize = QueryContext.getPageSize();
+                Integer pageNum = QueryContext.getPageNum();
                 if (ObjectUtil.isNotNull(pageSize) && ObjectUtil.isNotNull(pageNum)) {
                     PageHelper.startPage(pageNum, pageSize);
                 }
@@ -108,7 +109,7 @@ public class PageHelperUtil {
             OrderType[] orderTypes = QueryConfig.orderTypes();
             boolean orderColumn = QueryConfig.orderColumn();
 
-            QueryContextThreadLocal.setOrderColumnIfAbsent(orderColumn);
+            QueryContext.setOrderColumnIfAbsent(orderColumn);
 
             if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
                 for (int i = 0; i < columns.length; i++) {
@@ -123,7 +124,7 @@ public class PageHelperUtil {
 
                     OrderDto.setOrderType(orderTypes[i]);
                     OrderDto.setOrderPriority(i + 1);
-                    QueryContextThreadLocal.putOrderDtoIntoOrderList(OrderDto);
+                    QueryContext.putOrderDtoIntoOrderList(OrderDto);
                 }
 
             }
@@ -134,11 +135,14 @@ public class PageHelperUtil {
     /**
      * 检查是否使用排序
      *
-     * @param queryField 注解QueryField
-     * @param field      字段
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
-    public static void checkColumnOrderOnField(QueryField queryField, Class<?> clazz, Field field, String tableColumnName) {
+    public static <T, E> void checkColumnOrderOnField(QueryContext<T, E> queryContext) {
+        QueryField queryField = queryContext.getQueryField();
+        String tableColumnName = queryContext.getTableColumnName();
+        Class<E> clazz = queryContext.getClazz();
+        Field field = queryContext.getField();
 
         if (queryField.orderType().equals(OrderType.NONE)) {
             return;
@@ -149,7 +153,7 @@ public class PageHelperUtil {
         OrderDto.setOrderType(queryField.orderType());
         OrderDto.setField(field);
         OrderDto.setClazz(clazz);
-        QueryContextThreadLocal.putIntoOrderListIfOrderDtoAbsent(OrderDto);
+        QueryContext.putIntoOrderListIfOrderDtoAbsent(OrderDto);
 
 
     }
@@ -162,13 +166,13 @@ public class PageHelperUtil {
      */
     public static void buildQueryOrder(QueryWrapper<?> queryWrapper) {
 
-        Boolean orderColumn = QueryContextThreadLocal.getOrderColumn();
+        Boolean orderColumn = QueryContext.getOrderColumn();
         if (!orderColumn) {
             return;
         }
 
-        String orderByColumn = QueryContextThreadLocal.getOrderByColumn();
-        Boolean isAsc = QueryContextThreadLocal.getIsAsc();
+        String orderByColumn = QueryContext.getOrderByColumn();
+        Boolean isAsc = QueryContext.getIsAsc();
 
         if (StrUtil.isNotBlank(orderByColumn)) {
             OrderDto OrderDto = new OrderDto();
@@ -179,10 +183,10 @@ public class PageHelperUtil {
             }
             OrderDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn).toUpperCase());
             OrderDto.setOrderPriority(-1);
-            QueryContextThreadLocal.putOrderDtoIntoOrderList(OrderDto);
+            QueryContext.putOrderDtoIntoOrderList(OrderDto);
         }
 
-        List<OrderDto> orderList = QueryContextThreadLocal.getOrderList();
+        List<OrderDto> orderList = QueryContext.getOrderList();
 
         //对查询进行排序
         if (CollectionUtil.isNotEmpty(orderList)) {

@@ -27,14 +27,22 @@ import java.util.stream.Collectors;
  */
 public class QueryContextThreadLocal {
 
+    /**
+     * 查询参数MAP
+     */
     private static final ThreadLocal<Map<String, Object>> QUERY_PARAM_LOCAL = new ThreadLocal<>();
+    /**
+     * 分页参数MAP
+     */
     private static final ThreadLocal<Map<String, Object>> ORDER_AND_PAGE_PARAM_LOCAL = new ThreadLocal<>();
+    /**
+     * 查询配置MAP
+     */
     private static final ThreadLocal<Map<String, Object>> QUERY_CONFIG_LOCAL = new ThreadLocal<>();
-    private static final MyBatisPlusUtilConfig myBatisPlusUtilConfig = ApplicationContextProvider.getBean(MyBatisPlusUtilConfig.class);
-
-
-    public QueryContextThreadLocal() {
-    }
+    /**
+     * 全局配置
+     */
+    private static final MyBatisPlusUtilConfig GLOBAL_CONFIG = ApplicationContextProvider.getBean(MyBatisPlusUtilConfig.class);
 
     /**
      * 清空数据,防止内存溢出
@@ -299,6 +307,21 @@ public class QueryContextThreadLocal {
         }
     }
 
+    /**
+     * 移除查询参数
+     *
+     * @author HeathCHEN
+     * @since 2024/02/26
+     */
+    public static void removeParamFromQueryParamMap() {
+        String[] ignoreParams = getIgnoreParams();
+        if (ArrayUtil.isNotEmpty(ignoreParams)) {
+            Map<String, Object> objectMap = getQueryParamMap();
+            for (String key : ignoreParams) {
+                objectMap.remove(key);
+            }
+        }
+    }
 
     /**
      * 设置排序参数到线程中
@@ -452,9 +475,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static Boolean getStartPage() {
-        Boolean startPage = (Boolean) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName());
+        Boolean startPage = (Boolean) getValueFromOrderAndPageParamMap(GLOBAL_CONFIG.getStarPagePropertyName());
         if (ObjectUtil.isNull(startPage)) {
-            startPage = myBatisPlusUtilConfig.getStarPagePropertyDefaultValue();
+            startPage = GLOBAL_CONFIG.getStarPagePropertyDefaultValue();
         }
         return startPage;
     }
@@ -466,7 +489,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setStartPage(Boolean startPage) {
-        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
+        setValueToOrderAndPageParamMap(GLOBAL_CONFIG.getStarPagePropertyName(), startPage);
     }
 
     /**
@@ -480,13 +503,13 @@ public class QueryContextThreadLocal {
             return;
         }
         if (startPage instanceof Boolean) {
-            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
+            setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getStarPagePropertyName(), startPage);
         }
         if (startPage instanceof String) {
             try {
                 String startPageString = (String) startPage;
                 if (StrUtil.isNotBlank(startPageString)) {
-                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getStarPagePropertyName(), Boolean.valueOf(startPageString));
+                    setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getStarPagePropertyName(), Boolean.valueOf(startPageString));
                 }
             } catch (Exception e) {
             }
@@ -500,9 +523,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static Boolean getIsAsc() {
-        Boolean isAsc = (Boolean) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName());
+        Boolean isAsc = (Boolean) getValueFromOrderAndPageParamMap(GLOBAL_CONFIG.getIsAscPropertyName());
         if (ObjectUtil.isNull(isAsc)) {
-            isAsc = myBatisPlusUtilConfig.getAscPropertyDefaultValue();
+            isAsc = GLOBAL_CONFIG.getAscPropertyDefaultValue();
         }
         return isAsc;
     }
@@ -514,7 +537,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setIsAsc(Boolean isAsc) {
-        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), isAsc);
+        setValueToOrderAndPageParamMap(GLOBAL_CONFIG.getIsAscPropertyName(), isAsc);
     }
 
     /**
@@ -528,13 +551,13 @@ public class QueryContextThreadLocal {
             return;
         }
         if (isAsc instanceof Boolean) {
-            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getIsAscPropertyName(), isAsc);
+            setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getIsAscPropertyName(), isAsc);
         }
         if (isAsc instanceof String) {
             try {
                 String isAscString = (String) isAsc;
                 if (StrUtil.isNotBlank(isAscString)) {
-                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getIsAscPropertyName(), Boolean.valueOf(isAscString));
+                    setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getIsAscPropertyName(), Boolean.valueOf(isAscString));
                 }
             } catch (Exception e) {
             }
@@ -548,9 +571,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static Integer getPageSize() {
-        Integer pageSize = (Integer) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName());
+        Integer pageSize = (Integer) getValueFromOrderAndPageParamMap(GLOBAL_CONFIG.getPageSizePropertyName());
         if (ObjectUtil.isNull(pageSize)) {
-            pageSize = myBatisPlusUtilConfig.getPageSizePropertyDefaultValue();
+            pageSize = GLOBAL_CONFIG.getPageSizePropertyDefaultValue();
         }
         return pageSize;
     }
@@ -562,7 +585,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setPageSize(Integer pageSize) {
-        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), pageSize);
+        setValueToOrderAndPageParamMap(GLOBAL_CONFIG.getPageSizePropertyName(), pageSize);
     }
 
     /**
@@ -576,13 +599,13 @@ public class QueryContextThreadLocal {
             return;
         }
         if (pageSize instanceof Integer) {
-            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getPageSizePropertyName(), pageSize);
+            setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getPageSizePropertyName(), pageSize);
         }
         if (pageSize instanceof String) {
             try {
                 String pageSizeString = (String) pageSize;
                 if (StrUtil.isNotBlank(pageSizeString)) {
-                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getPageSizePropertyName(), Integer.valueOf(pageSizeString));
+                    setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getPageSizePropertyName(), Integer.valueOf(pageSizeString));
                 }
             } catch (Exception e) {
             }
@@ -596,9 +619,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static Integer getPageNum() {
-        Integer pageNum = (Integer) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName());
+        Integer pageNum = (Integer) getValueFromOrderAndPageParamMap(GLOBAL_CONFIG.getPageNumPropertyName());
         if (ObjectUtil.isNull(pageNum)) {
-            pageNum = myBatisPlusUtilConfig.getPageNumPropertyDefaultValue();
+            pageNum = GLOBAL_CONFIG.getPageNumPropertyDefaultValue();
         }
         return pageNum;
     }
@@ -610,7 +633,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setPageNum(Integer pageNum) {
-        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), pageNum);
+        setValueToOrderAndPageParamMap(GLOBAL_CONFIG.getPageNumPropertyName(), pageNum);
     }
 
     /**
@@ -624,13 +647,13 @@ public class QueryContextThreadLocal {
             return;
         }
         if (pageNum instanceof Integer) {
-            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getPageNumPropertyName(), pageNum);
+            setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getPageNumPropertyName(), pageNum);
         }
         if (pageNum instanceof String) {
             try {
                 String pageNumString = (String) pageNum;
                 if (StrUtil.isNotBlank(pageNumString)) {
-                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getPageNumPropertyName(), Integer.valueOf(pageNumString));
+                    setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getPageNumPropertyName(), Integer.valueOf(pageNumString));
                 }
             } catch (Exception e) {
             }
@@ -644,9 +667,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static String getOrderByColumn() {
-        String orderByColumn = (String) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName());
+        String orderByColumn = (String) getValueFromOrderAndPageParamMap(GLOBAL_CONFIG.getOrderByColumnPropertyName());
         if (StrUtil.isBlank(orderByColumn)) {
-            orderByColumn = myBatisPlusUtilConfig.getOrderByColumnPropertyDefaultValue();
+            orderByColumn = GLOBAL_CONFIG.getOrderByColumnPropertyDefaultValue();
         }
         return orderByColumn;
     }
@@ -658,7 +681,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setOrderByColumn(String orderByColumn) {
-        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), orderByColumn);
+        setValueToOrderAndPageParamMap(GLOBAL_CONFIG.getOrderByColumnPropertyName(), orderByColumn);
     }
 
     /**
@@ -673,7 +696,7 @@ public class QueryContextThreadLocal {
         }
         String orderByColumnString = orderByColumn.toString();
         if (StrUtil.isNotBlank(orderByColumnString)) {
-            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), orderByColumnString);
+            setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getOrderByColumnPropertyName(), orderByColumnString);
         }
 
     }
@@ -685,9 +708,9 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static Boolean getReasonable() {
-        Boolean reasonable = (Boolean) getValueFromOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName());
+        Boolean reasonable = (Boolean) getValueFromOrderAndPageParamMap(GLOBAL_CONFIG.getReasonablePropertyName());
         if (ObjectUtil.isNull(reasonable)) {
-            reasonable = myBatisPlusUtilConfig.getReasonablePropertyDefaultValue();
+            reasonable = GLOBAL_CONFIG.getReasonablePropertyDefaultValue();
         }
         return reasonable;
     }
@@ -699,7 +722,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setReasonable(Boolean reasonable) {
-        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), reasonable);
+        setValueToOrderAndPageParamMap(GLOBAL_CONFIG.getReasonablePropertyName(), reasonable);
     }
 
     /**
@@ -713,13 +736,13 @@ public class QueryContextThreadLocal {
             return;
         }
         if (reasonable instanceof Boolean) {
-            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getReasonablePropertyName(), reasonable);
+            setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getReasonablePropertyName(), reasonable);
         }
         if (reasonable instanceof String) {
             try {
                 String reasonableString = (String) reasonable;
                 if (StrUtil.isNotBlank(reasonableString)) {
-                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getReasonablePropertyName(), Boolean.valueOf(reasonableString));
+                    setValueToOrderAndPageParamMapIfAbsent(GLOBAL_CONFIG.getReasonablePropertyName(), Boolean.valueOf(reasonableString));
                 }
             } catch (Exception e) {
             }
@@ -735,7 +758,7 @@ public class QueryContextThreadLocal {
     public static Boolean getOrderColumn() {
         Boolean orderColumn = (Boolean) getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN);
         if (ObjectUtil.isNull(orderColumn)) {
-            orderColumn = myBatisPlusUtilConfig.getOrderColumnPropertyDefaultValue();
+            orderColumn = GLOBAL_CONFIG.getOrderColumnPropertyDefaultValue();
         }
         return orderColumn;
     }

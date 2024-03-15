@@ -3,6 +3,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
@@ -24,26 +25,30 @@ public class NotEqQueryTypeStrategy extends BaseQueryTypeStrategy implements Que
     /**
      * 构造查询
      *
-     * @param queryField      QueryField注解
-     * @param value           类
-     * @param tableColumnName 字段
-     * @param queryWrapper    查询queryWrapper
+     * @param queryContext 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T> void buildQueryWrapper(QueryField queryField, Object value, String tableColumnName, QueryWrapper<T> queryWrapper) {
+    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
+
+        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
+        String tableColumnName = queryContext.getTableColumnName();
+        QueryField queryField = queryContext.getQueryField();
+        Object queryParam = queryContext.getQueryParam();
+
+
         String[] orColumns = queryField.orColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
-                        tQueryWrapper.ne(tableColumnName, value);
+                        tQueryWrapper.ne(tableColumnName, queryParam);
                         for (String orColumn : orColumns) {
                             tQueryWrapper.or();
-                            tQueryWrapper.ne(TableUtil.checkOrColumnName(orColumn), value);
+                            tQueryWrapper.ne(TableUtil.checkOrColumnName(orColumn), queryParam);
                         }
                     }
             );
         } else {
-            queryWrapper.ne(tableColumnName, value);
+            queryWrapper.ne(tableColumnName, queryParam);
         }
     }
 }
