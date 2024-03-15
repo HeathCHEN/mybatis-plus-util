@@ -94,7 +94,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * 关闭分页
      * 只对本次查询生效
      */
-    public static void closeStartPage() {
+    public static void closePage() {
         QueryContextThreadLocal.setStartPage(Boolean.FALSE);
     }
 
@@ -103,7 +103,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * 只对本次查询生效
      */
     public static void closeOrder() {
-        QueryContextThreadLocal.setOrderColumnIfAbsent(Boolean.FALSE);
+        QueryContextThreadLocal.setOrderColumn(Boolean.FALSE);
     }
 
     //===================================================================================================================================================================

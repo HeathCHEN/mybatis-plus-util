@@ -163,7 +163,7 @@ public class PageHelperUtil {
     public static void buildQueryOrder(QueryWrapper<?> queryWrapper) {
 
         Boolean orderColumn = QueryContextThreadLocal.getOrderColumn();
-        if (ObjectUtil.isNotNull(orderColumn) && !orderColumn) {
+        if (!orderColumn) {
             return;
         }
 
