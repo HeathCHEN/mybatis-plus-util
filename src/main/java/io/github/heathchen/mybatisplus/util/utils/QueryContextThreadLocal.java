@@ -11,7 +11,10 @@ import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
 import io.github.heathchen.mybatisplus.util.domain.OrderDto;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -340,6 +343,25 @@ public class QueryContextThreadLocal {
             ORDER_AND_PAGE_PARAM_LOCAL.get().put(key, data);
         }
     }
+
+    /**
+     * 设置排序参数
+     *
+     * @param key  查询参数的属性名
+     * @param data 查询参数
+     * @author HeathCHEN
+     * @since 2024/02/26
+     */
+    public static void setValueToOrderAndPageParamMapIfAbsent(String key, Object data) {
+        if (ObjectUtil.isNull(ORDER_AND_PAGE_PARAM_LOCAL.get())) {
+            ORDER_AND_PAGE_PARAM_LOCAL.set(new HashMap<>());
+        }
+
+        if (ObjectUtil.isNotEmpty(data)) {
+            ORDER_AND_PAGE_PARAM_LOCAL.get().putIfAbsent(key, data);
+        }
+    }
+
     /**
      * 设置排序参数,即便数据为空
      *
@@ -443,24 +465,33 @@ public class QueryContextThreadLocal {
      * @param startPage 是否开启分页
      * @author HeathCHEN
      */
-    public static void setStartPage(Object startPage) {
+    public static void setStartPage(Boolean startPage) {
+        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
+    }
+
+    /**
+     * 设置是否分页参数
+     *
+     * @param startPage 是否开启分页
+     * @author HeathCHEN
+     */
+    public static void setStartPageIfAbsent(Object startPage) {
         if (ObjectUtil.isNull(startPage)) {
             return;
         }
         if (startPage instanceof Boolean) {
-            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
+            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getStarPagePropertyName(), startPage);
         }
         if (startPage instanceof String) {
             try {
                 String startPageString = (String) startPage;
                 if (StrUtil.isNotBlank(startPageString)) {
-                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(), Boolean.valueOf(startPageString));
+                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getStarPagePropertyName(), Boolean.valueOf(startPageString));
                 }
             } catch (Exception e) {
             }
         }
     }
-
 
     /**
      * 获取排序顺序参数
@@ -482,24 +513,33 @@ public class QueryContextThreadLocal {
      * @param isAsc 排序顺序
      * @author HeathCHEN
      */
-    public static void setIsAsc(Object isAsc) {
+    public static void setIsAsc(Boolean isAsc) {
+        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), isAsc);
+    }
+
+    /**
+     * 设置排序顺序参数
+     *
+     * @param isAsc 排序顺序
+     * @author HeathCHEN
+     */
+    public static void setIsAscIfAbsent(Object isAsc) {
         if (ObjectUtil.isNull(isAsc)) {
             return;
         }
         if (isAsc instanceof Boolean) {
-            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), isAsc);
+            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getIsAscPropertyName(), isAsc);
         }
         if (isAsc instanceof String) {
             try {
                 String isAscString = (String) isAsc;
                 if (StrUtil.isNotBlank(isAscString)) {
-                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getIsAscPropertyName(), Boolean.valueOf(isAscString));
+                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getIsAscPropertyName(), Boolean.valueOf(isAscString));
                 }
             } catch (Exception e) {
             }
         }
     }
-
 
     /**
      * 获取页面大小参数
@@ -521,24 +561,33 @@ public class QueryContextThreadLocal {
      * @param pageSize 页面大小
      * @author HeathCHEN
      */
-    public static void setPageSize(Object pageSize) {
+    public static void setPageSize(Integer pageSize) {
+        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), pageSize);
+    }
+
+    /**
+     * 设置页面大小参数
+     *
+     * @param pageSize 页面大小
+     * @author HeathCHEN
+     */
+    public static void setPageSizeIfAbsent(Object pageSize) {
         if (ObjectUtil.isNull(pageSize)) {
             return;
         }
         if (pageSize instanceof Integer) {
-            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), pageSize);
+            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getPageSizePropertyName(), pageSize);
         }
         if (pageSize instanceof String) {
             try {
                 String pageSizeString = (String) pageSize;
                 if (StrUtil.isNotBlank(pageSizeString)) {
-                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageSizePropertyName(), Integer.valueOf(pageSizeString));
+                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getPageSizePropertyName(), Integer.valueOf(pageSizeString));
                 }
             } catch (Exception e) {
             }
         }
     }
-
 
     /**
      * 获取分页页码参数
@@ -554,6 +603,15 @@ public class QueryContextThreadLocal {
         return pageNum;
     }
 
+    /**
+     * 设置分页页码参数
+     *
+     * @param pageNum 分页页码
+     * @author HeathCHEN
+     */
+    public static void setPageNum(Integer pageNum) {
+        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), pageNum);
+    }
 
     /**
      * 设置分页页码参数
@@ -561,24 +619,23 @@ public class QueryContextThreadLocal {
      * @param pageNum 分页页码
      * @author HeathCHEN
      */
-    public static void setPageNum(Object pageNum) {
+    public static void setPageNumIfAbsent(Object pageNum) {
         if (ObjectUtil.isNull(pageNum)) {
             return;
         }
         if (pageNum instanceof Integer) {
-            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), pageNum);
+            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getPageNumPropertyName(), pageNum);
         }
         if (pageNum instanceof String) {
             try {
                 String pageNumString = (String) pageNum;
                 if (StrUtil.isNotBlank(pageNumString)) {
-                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getPageNumPropertyName(), Integer.valueOf(pageNumString));
+                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getPageNumPropertyName(), Integer.valueOf(pageNumString));
                 }
             } catch (Exception e) {
             }
         }
     }
-
 
     /**
      * 获取排序字段参数
@@ -594,6 +651,15 @@ public class QueryContextThreadLocal {
         return orderByColumn;
     }
 
+    /**
+     * 设置排序字段参数
+     *
+     * @param orderByColumn 排序字段
+     * @author HeathCHEN
+     */
+    public static void setOrderByColumn(String orderByColumn) {
+        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), orderByColumn);
+    }
 
     /**
      * 设置排序字段参数
@@ -601,17 +667,16 @@ public class QueryContextThreadLocal {
      * @param orderByColumn 排序字段
      * @author HeathCHEN
      */
-    public static void setOrderByColumn(Object orderByColumn) {
+    public static void setOrderByColumnIfAbsent(Object orderByColumn) {
         if (ObjectUtil.isNull(orderByColumn)) {
             return;
         }
         String orderByColumnString = orderByColumn.toString();
         if (StrUtil.isNotBlank(orderByColumnString)) {
-            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), orderByColumnString);
+            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getOrderByColumnPropertyName(), orderByColumnString);
         }
 
     }
-
 
     /**
      * 获取是否分页合理参数
@@ -633,18 +698,28 @@ public class QueryContextThreadLocal {
      * @param reasonable 是否分页合理
      * @author HeathCHEN
      */
-    public static void setReasonable(Object reasonable) {
+    public static void setReasonable(Boolean reasonable) {
+        setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), reasonable);
+    }
+
+    /**
+     * 设置是否分页合理参数
+     *
+     * @param reasonable 是否分页合理
+     * @author HeathCHEN
+     */
+    public static void setReasonableIfAbsent(Object reasonable) {
         if (ObjectUtil.isNull(reasonable)) {
             return;
         }
         if (reasonable instanceof Boolean) {
-            setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), reasonable);
+            setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getReasonablePropertyName(), reasonable);
         }
         if (reasonable instanceof String) {
             try {
                 String reasonableString = (String) reasonable;
                 if (StrUtil.isNotBlank(reasonableString)) {
-                    setValueToOrderAndPageParamMap(myBatisPlusUtilConfig.getReasonablePropertyName(), Boolean.valueOf(reasonableString));
+                    setValueToOrderAndPageParamMapIfAbsent(myBatisPlusUtilConfig.getReasonablePropertyName(), Boolean.valueOf(reasonableString));
                 }
             } catch (Exception e) {
             }
@@ -671,22 +746,31 @@ public class QueryContextThreadLocal {
      * @param orderColumn 是否排序
      * @author HeathCHEN
      */
-    public static void setOrderColumn(Object orderColumn) {
+    public static void setOrderColumn(Boolean orderColumn) {
+        setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+    }
+
+    /**
+     * 设置是否排序
+     *
+     * @param orderColumn 是否排序
+     * @author HeathCHEN
+     */
+    public static void setOrderColumnIfAbsent(Object orderColumn) {
         if (ObjectUtil.isNull(orderColumn)) {
             return;
         }
         if (orderColumn instanceof Boolean) {
-            setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+            setValueToOrderAndPageParamMapIfAbsent(PageAndOrderConst.ORDER_COLUMN, orderColumn);
         }
         if (orderColumn instanceof String) {
             try {
                 String orderColumnString = (String) orderColumn;
                 if (StrUtil.isNotBlank(orderColumnString)) {
-                    setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, Boolean.valueOf(orderColumnString));
+                    setValueToOrderAndPageParamMapIfAbsent(PageAndOrderConst.ORDER_COLUMN, Boolean.valueOf(orderColumnString));
                 }
             } catch (Exception e) {
             }
         }
     }
-
 }

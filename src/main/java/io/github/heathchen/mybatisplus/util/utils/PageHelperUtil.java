@@ -10,7 +10,6 @@ import com.github.pagehelper.PageHelper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
-import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
 import io.github.heathchen.mybatisplus.util.domain.OrderDto;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 
@@ -45,20 +44,20 @@ public class PageHelperUtil {
         HttpServletRequest request = ServletUtils.getRequest();
 
         if (request.getMethod().equals(Method.GET.toString())) {
-            QueryContextThreadLocal.setStartPage(ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName()));
-            QueryContextThreadLocal.setIsAsc(ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
-            QueryContextThreadLocal.setPageSize(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setPageNum(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setOrderByColumn(ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
-            QueryContextThreadLocal.setReasonable(ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
+            QueryContextThreadLocal.setStartPageIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            QueryContextThreadLocal.setIsAscIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            QueryContextThreadLocal.setPageSizeIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setPageNumIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setOrderByColumnIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            QueryContextThreadLocal.setReasonableIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
 
         } else {
-            QueryContextThreadLocal.setStartPage(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
-            QueryContextThreadLocal.setIsAsc(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
-            QueryContextThreadLocal.setPageSize(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContextThreadLocal.setPageNum(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
-            QueryContextThreadLocal.setOrderByColumn(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
-            QueryContextThreadLocal.setReasonable(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
+            QueryContextThreadLocal.setStartPageIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            QueryContextThreadLocal.setIsAscIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            QueryContextThreadLocal.setPageSizeIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            QueryContextThreadLocal.setPageNumIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
+            QueryContextThreadLocal.setOrderByColumnIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            QueryContextThreadLocal.setReasonableIfAbsent(QueryContextThreadLocal.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
             QueryContextThreadLocal.removeParamFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(),
                     myBatisPlusUtilConfig.getIsAscPropertyName(),
                     myBatisPlusUtilConfig.getPageSizePropertyName(),
@@ -109,7 +108,7 @@ public class PageHelperUtil {
             OrderType[] orderTypes = QueryConfig.orderTypes();
             boolean orderColumn = QueryConfig.orderColumn();
 
-            QueryContextThreadLocal.setOrderColumn(orderColumn);
+            QueryContextThreadLocal.setOrderColumnIfAbsent(orderColumn);
 
             if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
                 for (int i = 0; i < columns.length; i++) {
