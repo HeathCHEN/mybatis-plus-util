@@ -1,8 +1,11 @@
 package io.github.heathchen.mybatisplus.util.config;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.dialect.slf4j.Slf4jLogFactory;
+import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
+import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.strategy.*;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -17,85 +20,85 @@ public class MyBatisPlusUtilConfig {
     /**
      * 全局匹配模式
      */
-    @Value("${myBatisPlusUtil.globalMatchMode:allMatchMode}")
+    @Value("${myBatisPlusUtil.globalMatchMode:}")
     public String globalMatchMode;
 
     /**
      * 分页参数:是否开启分页默认属性名
      */
-    @Value("${myBatisPlusUtil.starPagePropertyName:starPage}")
+    @Value("${myBatisPlusUtil.starPagePropertyName:}")
     public String starPagePropertyName;
 
     /**
      * 分页参数:是否升序(自然排序)默认属性名
      */
-    @Value("${myBatisPlusUtil.isAscPropertyName:isAsc}")
+    @Value("${myBatisPlusUtil.isAscPropertyName:}")
     public String isAscPropertyName;
 
     /**
      * 分页参数:页面大小默认属性名
      */
-    @Value("${myBatisPlusUtil.pageSizePropertyName:pageSize}")
+    @Value("${myBatisPlusUtil.pageSizePropertyName:}")
     public String pageSizePropertyName;
     /**
      * 分页参数:页码大小默认属性名
      */
-    @Value("${myBatisPlusUtil.pageNumPropertyName:pageNum}")
+    @Value("${myBatisPlusUtil.pageNumPropertyName:}")
     public String pageNumPropertyName;
 
     /**
      * 分页参数:排序字段默认属性名
      */
-    @Value("${myBatisPlusUtil.orderByColumnPropertyName:orderByColumn}")
+    @Value("${myBatisPlusUtil.orderByColumnPropertyName:}")
     public String orderByColumnPropertyName;
 
     /**
      * 分页参数:分页合理化默认属性名
      */
-    @Value("${myBatisPlusUtil.reasonablePropertyName:reasonable}")
+    @Value("${myBatisPlusUtil.reasonablePropertyName:}")
     public String reasonablePropertyName;
 
     /**
      * 分页参数:是否开启分页默认值 开启分页
      */
-    @Value("${myBatisPlusUtil.starPagePropertyDefaultValue:false}")
+    @Value("${myBatisPlusUtil.starPagePropertyDefaultValue:}")
     public Boolean starPagePropertyDefaultValue;
 
 
     /**
      * 分页参数:是否升序(自然排序)默认值 自然排序
      */
-    @Value("${myBatisPlusUtil.isAscPropertyDefaultValue:true}")
+    @Value("${myBatisPlusUtil.isAscPropertyDefaultValue:}")
     public Boolean isAscPropertyDefaultValue;
 
     /**
      * 分页参数:页面大小默认值 15
      */
-    @Value("${myBatisPlusUtil.pageSizePropertyName:15}")
+    @Value("${myBatisPlusUtil.pageSizePropertyName:}")
     public Integer pageSizePropertyDefaultValue;
     /**
      * 分页参数:页码大小默认值 1
      */
-    @Value("${myBatisPlusUtil.pageNumPropertyDefaultValue:1}")
+    @Value("${myBatisPlusUtil.pageNumPropertyDefaultValue:}")
     public Integer pageNumPropertyDefaultValue;
 
     /**
      * 分页参数:排序字段默认值
      */
-    @Value("${myBatisPlusUtil.orderByColumnPropertyDefaultValue:create_time}")
+    @Value("${myBatisPlusUtil.orderByColumnPropertyDefaultValue:}")
     public String orderByColumnPropertyDefaultValue;
 
 
     /**
      * 分页参数:是否排序默认值
      */
-    @Value("${myBatisPlusUtil.orderColumnPropertyDefaultValue:false}")
+    @Value("${myBatisPlusUtil.orderColumnPropertyDefaultValue:}")
     public Boolean orderColumnPropertyDefaultValue;
 
     /**
      * 分页参数:分页合理化默认值 开启分页合理化
      */
-    @Value("${myBatisPlusUtil.reasonablePropertyDefaultValue:true}")
+    @Value("${myBatisPlusUtil.reasonablePropertyDefaultValue:}")
     public Boolean reasonablePropertyDefaultValue;
 
     public MyBatisPlusUtilConfig() {
@@ -107,11 +110,6 @@ public class MyBatisPlusUtilConfig {
             GlobalLogFactory.set(Slf4jLogFactory.class);
         }
 
-    }
-
-    public MyBatisPlusUtilConfig(String globalMatchMode) {
-        this();
-        this.globalMatchMode = globalMatchMode;
     }
 
     /**
@@ -138,6 +136,10 @@ public class MyBatisPlusUtilConfig {
     }
 
     public String getGlobalMatchMode() {
+
+        if (StrUtil.isBlank(globalMatchMode)) {
+            return MatchMode.ALL_MATCH_MODE.getName();
+        }
         return globalMatchMode;
     }
 
@@ -146,6 +148,11 @@ public class MyBatisPlusUtilConfig {
     }
 
     public String getStarPagePropertyName() {
+
+        if (StrUtil.isBlank(starPagePropertyName)) {
+            return PageAndOrderConst.START_PAGE_DEFAULT_NAME;
+        }
+
         return starPagePropertyName;
     }
 
@@ -154,6 +161,12 @@ public class MyBatisPlusUtilConfig {
     }
 
     public String getIsAscPropertyName() {
+
+
+        if (StrUtil.isBlank(isAscPropertyName)) {
+            return PageAndOrderConst.IS_ASC_DEFAULT_NAME;
+        }
+
         return isAscPropertyName;
     }
 
@@ -162,6 +175,11 @@ public class MyBatisPlusUtilConfig {
     }
 
     public String getPageSizePropertyName() {
+
+        if (StrUtil.isBlank(pageSizePropertyName)) {
+            return PageAndOrderConst.PAGE_SIZE_DEFAULT_NAME;
+        }
+
         return pageSizePropertyName;
     }
 
@@ -170,6 +188,12 @@ public class MyBatisPlusUtilConfig {
     }
 
     public String getPageNumPropertyName() {
+
+
+        if (StrUtil.isBlank(pageNumPropertyName)) {
+            return PageAndOrderConst.PAGE_NUM_DEFAULT_NAME;
+        }
+
         return pageNumPropertyName;
     }
 
@@ -178,6 +202,10 @@ public class MyBatisPlusUtilConfig {
     }
 
     public String getReasonablePropertyName() {
+
+        if (StrUtil.isBlank(reasonablePropertyName)) {
+            return PageAndOrderConst.REASONABLE_DEFAULT_NAME;
+        }
         return reasonablePropertyName;
     }
 
@@ -186,6 +214,11 @@ public class MyBatisPlusUtilConfig {
     }
 
     public String getOrderByColumnPropertyName() {
+
+
+        if (StrUtil.isBlank(orderByColumnPropertyName)) {
+            return PageAndOrderConst.ORDER_BY_COLUMN_DEFAULT_NAME;
+        }
         return orderByColumnPropertyName;
     }
 
@@ -194,6 +227,10 @@ public class MyBatisPlusUtilConfig {
     }
 
     public Boolean getStarPagePropertyDefaultValue() {
+        if (ObjectUtil.isNull(starPagePropertyDefaultValue)) {
+            return PageAndOrderConst.START_PAGE_DEFAULT_VALUE;
+        }
+
         return starPagePropertyDefaultValue;
     }
 
@@ -202,6 +239,11 @@ public class MyBatisPlusUtilConfig {
     }
 
     public Boolean getAscPropertyDefaultValue() {
+
+        if (ObjectUtil.isNull(isAscPropertyDefaultValue)) {
+            return PageAndOrderConst.IS_ASC_DEFAULT_VALUE;
+        }
+
         return isAscPropertyDefaultValue;
     }
 
@@ -210,6 +252,9 @@ public class MyBatisPlusUtilConfig {
     }
 
     public Integer getPageSizePropertyDefaultValue() {
+        if (ObjectUtil.isNull(pageSizePropertyDefaultValue)) {
+            return PageAndOrderConst.PAGE_SIZE_DEFAULT_VALUE;
+        }
         return pageSizePropertyDefaultValue;
     }
 
@@ -218,6 +263,9 @@ public class MyBatisPlusUtilConfig {
     }
 
     public Integer getPageNumPropertyDefaultValue() {
+        if (ObjectUtil.isNull(pageNumPropertyDefaultValue)) {
+            return PageAndOrderConst.PAGE_NUM_DEFAULT_VALUE;
+        }
         return pageNumPropertyDefaultValue;
     }
 
@@ -226,6 +274,10 @@ public class MyBatisPlusUtilConfig {
     }
 
     public String getOrderByColumnPropertyDefaultValue() {
+
+        if (StrUtil.isBlank(orderByColumnPropertyDefaultValue)) {
+            return PageAndOrderConst.ORDER_BY_COLUMN_DEFAULT_VALUE;
+        }
         return orderByColumnPropertyDefaultValue;
     }
 
@@ -234,6 +286,10 @@ public class MyBatisPlusUtilConfig {
     }
 
     public Boolean getReasonablePropertyDefaultValue() {
+
+        if (ObjectUtil.isNull(reasonablePropertyDefaultValue)) {
+            return PageAndOrderConst.REASONABLE_DEFAULT_VALUE;
+        }
         return reasonablePropertyDefaultValue;
     }
 
@@ -242,6 +298,10 @@ public class MyBatisPlusUtilConfig {
     }
 
     public Boolean getOrderColumnPropertyDefaultValue() {
+
+        if (ObjectUtil.isNull(orderColumnPropertyDefaultValue)) {
+            return PageAndOrderConst.ORDER_COLUMN_DEFAULT_VALUE;
+        }
         return orderColumnPropertyDefaultValue;
     }
 

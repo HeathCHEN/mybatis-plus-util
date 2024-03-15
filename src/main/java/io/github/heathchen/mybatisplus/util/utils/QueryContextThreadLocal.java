@@ -419,10 +419,10 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static Map<String, OrderDto> getOrderMap() {
-        Map<String, OrderDto> map = (Map<String, OrderDto>) getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_MAP);
+        Map<String, OrderDto> map = (Map<String, OrderDto>) getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_MAP_DEFAULT_NAME);
         if (CollectionUtil.isEmpty(map)) {
             Map<String, OrderDto> newMap = new HashMap<>();
-            setValueToOrderAndPageParamMapEvenEmpty(PageAndOrderConst.ORDER_MAP, newMap);
+            setValueToOrderAndPageParamMapEvenEmpty(PageAndOrderConst.ORDER_MAP_DEFAULT_NAME, newMap);
             map = newMap;
         }
         return map;
@@ -756,7 +756,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static Boolean getOrderColumn() {
-        Boolean orderColumn = (Boolean) getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN);
+        Boolean orderColumn = (Boolean) getValueFromOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN_DEFAULT_NAME);
         if (ObjectUtil.isNull(orderColumn)) {
             orderColumn = GLOBAL_CONFIG.getOrderColumnPropertyDefaultValue();
         }
@@ -770,7 +770,7 @@ public class QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static void setOrderColumn(Boolean orderColumn) {
-        setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+        setValueToOrderAndPageParamMap(PageAndOrderConst.ORDER_COLUMN_DEFAULT_NAME, orderColumn);
     }
 
     /**
@@ -784,13 +784,13 @@ public class QueryContextThreadLocal {
             return;
         }
         if (orderColumn instanceof Boolean) {
-            setValueToOrderAndPageParamMapIfAbsent(PageAndOrderConst.ORDER_COLUMN, orderColumn);
+            setValueToOrderAndPageParamMapIfAbsent(PageAndOrderConst.ORDER_COLUMN_DEFAULT_NAME, orderColumn);
         }
         if (orderColumn instanceof String) {
             try {
                 String orderColumnString = (String) orderColumn;
                 if (StrUtil.isNotBlank(orderColumnString)) {
-                    setValueToOrderAndPageParamMapIfAbsent(PageAndOrderConst.ORDER_COLUMN, Boolean.valueOf(orderColumnString));
+                    setValueToOrderAndPageParamMapIfAbsent(PageAndOrderConst.ORDER_COLUMN_DEFAULT_NAME, Boolean.valueOf(orderColumnString));
                 }
             } catch (Exception e) {
             }
