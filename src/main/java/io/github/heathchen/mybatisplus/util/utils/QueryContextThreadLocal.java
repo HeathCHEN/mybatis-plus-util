@@ -111,7 +111,7 @@ public class QueryContextThreadLocal {
     /**
      * 设置最大个数
      *
-     * @param limit 忽略参数
+     * @param limit 最大个数
      * @author HeathCHEN
      */
     public static void setLimitValue(Integer limit) {
@@ -211,26 +211,6 @@ public class QueryContextThreadLocal {
         putDataIntoQueryConfigMap(MyBatisPlusUtilConst.WITHOUT_LIKE, withoutLike);
     }
 
-    /**
-     * 获取返回类型
-     *
-     * @author HeathCHEN
-     */
-    public static Class<?> getReturnClassType() {
-        Map<String, Object> queryConfigMap = getQueryConfigMap();
-        Class<?> clzz = (Class) queryConfigMap.get(MyBatisPlusUtilConst.RETURN_CLASS_TYPE);
-        return clzz;
-    }
-
-    /**
-     * 设置返回类型
-     *
-     * @param clazz 返回类型
-     * @author HeathCHEN
-     */
-    public static <T> void setReturnClassType(Class<T> clazz) {
-        putDataIntoQueryConfigMap(MyBatisPlusUtilConst.RETURN_CLASS_TYPE, clazz);
-    }
 
     /**
      * 将参数放入配置Map
@@ -274,9 +254,26 @@ public class QueryContextThreadLocal {
             QUERY_PARAM_LOCAL.set(new HashMap<>());
         }
         if (ObjectUtil.isNotEmpty(data)) {
-            QUERY_PARAM_LOCAL.set(data);
+            Map<String, Object> map = QUERY_PARAM_LOCAL.get();
+            data.forEach((key, value) -> map.putIfAbsent(key, value));
         }
     }
+
+    /**
+     * 设置查询参数到线程中
+     *
+     * @param value 查询参数的值
+     * @param key 查询参数的名
+     * @author HeathCHEN
+     * @since 2024/02/23
+     */
+    public static void setQueryParam(String key,Object value) {
+        if (ObjectUtil.isNull(QUERY_PARAM_LOCAL.get())) {
+            QUERY_PARAM_LOCAL.set(new HashMap<>());
+        }
+        QUERY_PARAM_LOCAL.get().put(key, value);
+    }
+
 
     /**
      * 获取查询参数

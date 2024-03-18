@@ -77,7 +77,7 @@ public class MyBatisPlusUtilConfig {
     @Value("${myBatisPlusUtil.pageSizePropertyName:}")
     public Integer pageSizePropertyDefaultValue;
     /**
-     * 分页参数:页码大小默认值 1
+     * 分页参数:页码默认值 1
      */
     @Value("${myBatisPlusUtil.pageNumPropertyDefaultValue:}")
     public Integer pageNumPropertyDefaultValue;
