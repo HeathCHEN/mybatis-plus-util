@@ -575,6 +575,13 @@ myBatisPlusUtil:
   pageNumPropertyName: pageNum #页码名
   orderByColumnPropertyName: orderByColumn #排序字段名
   reasonablePropertyName: reasonable #分页合理化名
+  starPagePropertyDefaultValue: true #默认开启分页
+  isAscPropertyDefaultValue: false #默认倒叙
+  pageSizePropertyDefaultValue: 15 #默认页面大小
+  pageNumPropertyDefaultValue: 1 #默认页码
+  orderByColumnPropertyDefaultValue: create_time #默认排序字段
+  reasonablePropertyDefaultValue: true #默认分页合理
+
 ```
 ### 4.1 全局匹配模式(globalMatchMode)
 <a id="4.1"></a>
@@ -628,7 +635,7 @@ myBatisPlusUtil:
 是否自然排序默认值,当无法从RequestBody\RequestParam中获取参数值时,取该默认值。
 默认为倒叙。
 
-### 4.10 页面大小默认值(pageSizePropertyName)
+### 4.10 页面大小默认值(pageSizePropertyDefaultValue)
 页面大小的默认值,当无法从RequestBody\RequestParam中获取参数值时,取该默认值。
 默认为15。
 
