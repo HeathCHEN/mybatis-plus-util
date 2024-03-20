@@ -13,7 +13,6 @@ import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.annotation.UniqueValue;
 import io.github.heathchen.mybatisplus.util.domain.CacheGroup;
 import io.github.heathchen.mybatisplus.util.domain.QueryContext;
-import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Field;
@@ -75,9 +74,7 @@ public class QueryUtil {
                         QueryContext.removeParamFromQueryParamMap(field.getName());
                         continue;
                     }
-                    QueryType value = queryField.value();
                     QueryContext<T, E> queryContext = new QueryContext<T, E>(queryField, clazz, field, queryWrapper);
-
                     //根据查询类型构建查询
                     QueryTypeStrategyManager.invokeQueryStrategy(queryContext);
                 } catch (Exception e) {

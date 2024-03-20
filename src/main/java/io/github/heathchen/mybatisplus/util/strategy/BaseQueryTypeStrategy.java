@@ -3,7 +3,6 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.Log;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
@@ -43,7 +42,6 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
      */
     <T, E> void constructQueryWrapper(QueryContext<T, E> queryContext) {
 
-        Object value = null;
         QueryType queryType = queryContext.getQueryType();
 
         try {
@@ -58,7 +56,7 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
                 buildQueryWrapper(queryContext);
             } else {
                 //校验参数是否为空
-                if (QueryUtil.checkValue(value)) {
+                if (QueryUtil.checkValue(queryContext.getQueryParam())) {
                     //构建QueryWrapper
                     buildQueryWrapper(queryContext);
                 } else {
@@ -71,7 +69,7 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw, true));
-            log.error("构造查询异常,类名:{},字段名:{},值:{},异常原因:{}", queryContext.getClazz().getName(), queryContext.getField().getName(), value, sw.toString());
+            log.error("构造查询异常,类名:{},字段名:{},值:{},异常原因:{},构筑上下文:{}", queryContext.getClazz().getName(), queryContext.getField().getName(), queryContext.getQueryParam(), sw.toString(), queryContext.toString());
         } finally {
             //清除已匹配的查询参数
             removeParam(queryContext);

@@ -61,7 +61,7 @@ public class PageAndOrderConst {
     /**
      * 默认页面大小值
      */
-    public static final Integer PAGE_SIZE_DEFAULT_VALUE =  15;
+    public static final Integer PAGE_SIZE_DEFAULT_VALUE = 15;
 
     /**
      * 默认页码值

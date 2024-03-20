@@ -1,7 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
 import cn.hutool.core.util.ObjectUtil;
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 
 import java.util.HashMap;

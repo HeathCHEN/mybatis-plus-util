@@ -263,11 +263,11 @@ public class QueryContextThreadLocal {
      * 设置查询参数到线程中
      *
      * @param value 查询参数的值
-     * @param key 查询参数的名
+     * @param key   查询参数的名
      * @author HeathCHEN
      * @since 2024/02/23
      */
-    public static void setQueryParam(String key,Object value) {
+    public static void setQueryParam(String key, Object value) {
         if (ObjectUtil.isNull(QUERY_PARAM_LOCAL.get())) {
             QUERY_PARAM_LOCAL.set(new HashMap<>());
         }
