@@ -33,10 +33,9 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
     public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
         String tableColumnName = queryContext.getTableColumnName();
-        QueryField queryField = queryContext.getQueryField();
 
-        Object startValue = QueryContext.getValueFromQueryParamMap(queryField.betweenStartVal());
-        Object endValue = QueryContext.getValueFromQueryParamMap(queryField.betweenEndVal());
+        Object startValue = QueryContext.getValueFromQueryParamMap(queryContext.getBetweenStartVal());
+        Object endValue = QueryContext.getValueFromQueryParamMap(queryContext.getBetweenEndVal());
         if (QueryUtil.checkValue(startValue)) {
             queryWrapper.ge(tableColumnName, startValue);
 
@@ -55,10 +54,9 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
      */
     @Override
     public <T, E> void removeParam(QueryContext<T, E> queryContext) {
-        QueryField queryField = queryContext.getQueryField();
         Field field = queryContext.getField();
-        QueryContext.removeParamFromQueryParamMap(queryField.betweenStartVal());
-        QueryContext.removeParamFromQueryParamMap(queryField.betweenEndVal());
+        QueryContext.removeParamFromQueryParamMap(queryContext.getBetweenStartVal());
+        QueryContext.removeParamFromQueryParamMap(queryContext.getBetweenEndVal());
         QueryContext.removeParamFromQueryParamMap(field.getName());
     }
 

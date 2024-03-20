@@ -49,8 +49,7 @@ public class QueryTypeStrategyManager {
      * @author HeathCHEN
      */
     public static <T, E> void invokeQueryStrategy(QueryContext<T, E> queryContext) {
-        QueryField queryField = queryContext.getQueryField();
-        BaseQueryTypeStrategy queryTypeStrategy = (BaseQueryTypeStrategy) getQueryTypeStrategyToManager(queryField.value().getCompareType());
+        BaseQueryTypeStrategy queryTypeStrategy = (BaseQueryTypeStrategy) getQueryTypeStrategyToManager(queryContext.getQueryType().getCompareType());
         if (ObjectUtil.isNotNull(queryTypeStrategy)) {
             queryTypeStrategy.constructQueryWrapper(queryContext);
         }

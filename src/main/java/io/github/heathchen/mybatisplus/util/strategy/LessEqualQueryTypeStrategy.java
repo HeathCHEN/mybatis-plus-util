@@ -33,10 +33,9 @@ public class LessEqualQueryTypeStrategy extends BaseQueryTypeStrategy implements
     public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
         String tableColumnName = queryContext.getTableColumnName();
-        QueryField queryField = queryContext.getQueryField();
         Object queryParam = queryContext.getQueryParam();
 
-        String[] orColumns = queryField.orColumns();
+        String[] orColumns = queryContext.getOrColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
                         tQueryWrapper.le(tableColumnName, queryParam);

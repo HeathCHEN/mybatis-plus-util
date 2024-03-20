@@ -33,11 +33,10 @@ public class NotEqQueryTypeStrategy extends BaseQueryTypeStrategy implements Que
 
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
         String tableColumnName = queryContext.getTableColumnName();
-        QueryField queryField = queryContext.getQueryField();
         Object queryParam = queryContext.getQueryParam();
 
 
-        String[] orColumns = queryField.orColumns();
+        String[] orColumns = queryContext.getOrColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
                         tQueryWrapper.ne(tableColumnName, queryParam);

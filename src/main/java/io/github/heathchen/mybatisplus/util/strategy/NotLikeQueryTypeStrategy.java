@@ -33,14 +33,13 @@ public class NotLikeQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
 
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
         String tableColumnName = queryContext.getTableColumnName();
-        QueryField queryField = queryContext.getQueryField();
         Object queryParam = queryContext.getQueryParam();
 
         if (checkWithoutLike(queryContext)) {
             return;
         }
 
-        String[] orColumns = queryField.orColumns();
+        String[] orColumns = queryContext.getOrColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
                         tQueryWrapper.notLike(tableColumnName, queryParam);

@@ -2,6 +2,10 @@ package io.github.heathchen.mybatisplus.util.domain;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
+import io.github.heathchen.mybatisplus.util.enums.ConditionType;
+import io.github.heathchen.mybatisplus.util.enums.JoinType;
+import io.github.heathchen.mybatisplus.util.enums.OrderType;
+import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 
 import java.lang.reflect.Field;
@@ -21,10 +25,67 @@ public class QueryContext<T, E> extends QueryContextThreadLocal {
     private QueryWrapper<T> queryWrapper;
 
     /**
-     * 查询QueryField注解
+     * 查询类型
      */
-    private QueryField queryField;
+    private QueryType queryType;
 
+    /**
+     * or 查询, 用于匹配多个字段
+     */
+    private String[] orColumns;
+    /**
+     * 数据库表中实际的字段名
+     */
+    private String columnName;
+    /**
+     * 排序顺序
+     */
+    private OrderType orderType;
+    /**
+     * 排序优先级
+     */
+    private int orderPriority;
+    /**
+     * 用于between查询的字段名
+     */
+    private String betweenStartVal;
+    /**
+     * 用于between查询的字段名
+     */
+    private String betweenEndVal;
+    /**
+     * 用于between查询的字段名
+     */
+    private String notBetweenStartVal;
+    /**
+     * 用于between查询的字段名
+     */
+    private String notBetweenEndVal;
+    /**
+     * 是否数据库字段参与查询或排序
+     */
+    private boolean exist;
+    /**
+     * 字段值类型
+     */
+    private ConditionType conditionType;
+    /**
+     * 表连接类型
+     */
+    private JoinType joinType;
+    /**
+     * 表连接实体类
+     */
+    private Class<?> joinEntityClass;
+    /**
+     * 自动义SQL
+     */
+    private String sql;
+
+    /**
+     * 分组id 用于分组查询
+     */
+    private String[] groupId;
     /**
      * 查询参数类
      */
@@ -47,7 +108,23 @@ public class QueryContext<T, E> extends QueryContextThreadLocal {
 
     public QueryContext(QueryField queryField, Class<E> clazz, Field field, QueryWrapper<T> queryWrapper) {
         this.queryWrapper = queryWrapper;
-        this.queryField = queryField;
+        this.queryType = queryField.value();
+        this.orColumns = queryField.orColumns();
+        this.columnName = queryField.columnName();
+        this.orderType = queryField.orderType();
+        this.orderPriority = queryField.orderPriority();
+        this.orColumns = queryField.orColumns();
+        this.betweenStartVal = queryField.betweenStartVal();
+        this.betweenEndVal = queryField.betweenEndVal();
+        this.notBetweenStartVal = queryField.notBetweenStartVal();
+        this.notBetweenEndVal = queryField.notBetweenEndVal();
+        this.exist = queryField.exist();
+        this.conditionType = queryField.conditionType();
+        this.joinType = queryField.joinType();
+        this.joinEntityClass = queryField.joinEntityClass();
+        this.orColumns = queryField.orColumns();
+        this.sql = queryField.sql();
+        this.groupId = queryField.groupId();
         this.clazz = clazz;
         this.field = field;
     }
@@ -60,12 +137,117 @@ public class QueryContext<T, E> extends QueryContextThreadLocal {
         this.queryWrapper = queryWrapper;
     }
 
-    public QueryField getQueryField() {
-        return queryField;
+
+    public String[] getOrColumns() {
+        return orColumns;
     }
 
-    public void setQueryField(QueryField queryField) {
-        this.queryField = queryField;
+    public void setOrColumns(String[] orColumns) {
+        this.orColumns = orColumns;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+
+    public OrderType getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(OrderType orderType) {
+        this.orderType = orderType;
+    }
+
+    public int getOrderPriority() {
+        return orderPriority;
+    }
+
+    public void setOrderPriority(int orderPriority) {
+        this.orderPriority = orderPriority;
+    }
+
+    public String getBetweenStartVal() {
+        return betweenStartVal;
+    }
+
+    public void setBetweenStartVal(String betweenStartVal) {
+        this.betweenStartVal = betweenStartVal;
+    }
+
+    public String getBetweenEndVal() {
+        return betweenEndVal;
+    }
+
+    public void setBetweenEndVal(String betweenEndVal) {
+        this.betweenEndVal = betweenEndVal;
+    }
+
+    public String getNotBetweenStartVal() {
+        return notBetweenStartVal;
+    }
+
+    public void setNotBetweenStartVal(String notBetweenStartVal) {
+        this.notBetweenStartVal = notBetweenStartVal;
+    }
+
+    public String getNotBetweenEndVal() {
+        return notBetweenEndVal;
+    }
+
+    public void setNotBetweenEndVal(String notBetweenEndVal) {
+        this.notBetweenEndVal = notBetweenEndVal;
+    }
+
+    public boolean isExist() {
+        return exist;
+    }
+
+    public void setExist(boolean exist) {
+        this.exist = exist;
+    }
+
+    public ConditionType getConditionType() {
+        return conditionType;
+    }
+
+    public void setConditionType(ConditionType conditionType) {
+        this.conditionType = conditionType;
+    }
+
+    public JoinType getJoinType() {
+        return joinType;
+    }
+
+    public void setJoinType(JoinType joinType) {
+        this.joinType = joinType;
+    }
+
+    public Class<?> getJoinEntityClass() {
+        return joinEntityClass;
+    }
+
+    public void setJoinEntityClass(Class<?> joinEntityClass) {
+        this.joinEntityClass = joinEntityClass;
+    }
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
+
+    public String[] getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String[] groupId) {
+        this.groupId = groupId;
     }
 
     public Object getQueryParam() {
@@ -98,5 +280,13 @@ public class QueryContext<T, E> extends QueryContextThreadLocal {
 
     public void setClazz(Class<E> clazz) {
         this.clazz = clazz;
+    }
+
+    public QueryType getQueryType() {
+        return queryType;
+    }
+
+    public void setQueryType(QueryType queryType) {
+        this.queryType = queryType;
     }
 }

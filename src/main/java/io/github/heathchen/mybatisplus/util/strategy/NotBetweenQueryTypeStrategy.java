@@ -34,10 +34,9 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
 
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
         String tableColumnName = queryContext.getTableColumnName();
-        QueryField queryField = queryContext.getQueryField();
 
-        Object notBetweenStartValue = QueryContext.getValueFromQueryParamMap(queryField.notBetweenStartVal());
-        Object notBetweenEndValue = QueryContext.getValueFromQueryParamMap(queryField.notBetweenEndVal());
+        Object notBetweenStartValue = QueryContext.getValueFromQueryParamMap(queryContext.getNotBetweenStartVal());
+        Object notBetweenEndValue = QueryContext.getValueFromQueryParamMap(queryContext.getNotBetweenEndVal());
 
         if (QueryUtil.checkValue(notBetweenStartValue)) {
             queryWrapper.le(tableColumnName, notBetweenStartValue);
@@ -56,10 +55,9 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
      */
     @Override
     public <T, E> void removeParam(QueryContext<T, E> queryContext) {
-        QueryField queryField = queryContext.getQueryField();
         Field field = queryContext.getField();
-        QueryContext.removeParamFromQueryParamMap(queryField.notBetweenStartVal());
-        QueryContext.removeParamFromQueryParamMap(queryField.notBetweenEndVal());
+        QueryContext.removeParamFromQueryParamMap(queryContext.getNotBetweenStartVal());
+        QueryContext.removeParamFromQueryParamMap(queryContext.getNotBetweenEndVal());
         QueryContext.removeParamFromQueryParamMap(field.getName());
     }
 }

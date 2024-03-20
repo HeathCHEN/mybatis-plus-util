@@ -8,7 +8,6 @@ import cn.hutool.http.Method;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
-import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
 import io.github.heathchen.mybatisplus.util.domain.OrderDto;
 import io.github.heathchen.mybatisplus.util.domain.QueryContext;
@@ -139,18 +138,17 @@ public class PageHelperUtil {
      * @author HeathCHEN
      */
     public static <T, E> void checkColumnOrderOnField(QueryContext<T, E> queryContext) {
-        QueryField queryField = queryContext.getQueryField();
         String tableColumnName = queryContext.getTableColumnName();
         Class<E> clazz = queryContext.getClazz();
         Field field = queryContext.getField();
 
-        if (queryField.orderType().equals(OrderType.NONE)) {
+        if (OrderType.NONE.equals(queryContext.getOrderType())) {
             return;
         }
         OrderDto OrderDto = new OrderDto();
         OrderDto.setTableColumnName(tableColumnName.toUpperCase());
-        OrderDto.setOrderPriority(queryField.orderPriority());
-        OrderDto.setOrderType(queryField.orderType());
+        OrderDto.setOrderPriority(queryContext.getOrderPriority());
+        OrderDto.setOrderType(queryContext.getOrderType());
         OrderDto.setField(field);
         OrderDto.setClazz(clazz);
         QueryContext.putIntoOrderListIfOrderDtoAbsent(OrderDto);

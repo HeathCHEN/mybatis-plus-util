@@ -6,7 +6,7 @@
 
     <groupId>io.github.heathchen</groupId>
     <artifactId>mybatis-plus-util</artifactId>
-    <version>1.6</version>
+    <version>1.6.1</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>

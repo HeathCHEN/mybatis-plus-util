@@ -30,10 +30,9 @@ public class SqlQueryTypeStrategy extends BaseQueryTypeStrategy implements Query
     @Override
     public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
-        QueryField queryField = queryContext.getQueryField();
         Object queryParam = queryContext.getQueryParam();
-        if (StrUtil.isNotBlank(queryField.sql())) {
-            queryWrapper.apply(queryField.sql(), queryParam);
+        if (StrUtil.isNotBlank(queryContext.getSql())) {
+            queryWrapper.apply(queryContext.getSql(), queryParam);
         }
     }
 }

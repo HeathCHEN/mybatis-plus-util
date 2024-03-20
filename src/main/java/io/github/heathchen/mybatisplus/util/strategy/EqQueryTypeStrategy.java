@@ -33,10 +33,9 @@ public class EqQueryTypeStrategy extends BaseQueryTypeStrategy implements QueryT
 
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
         String tableColumnName = queryContext.getTableColumnName();
-        QueryField queryField = queryContext.getQueryField();
         Object queryParam = queryContext.getQueryParam();
 
-        String[] orColumns = queryField.orColumns();
+        String[] orColumns = queryContext.getOrColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
                         tQueryWrapper.eq(tableColumnName, queryParam);

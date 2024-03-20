@@ -44,7 +44,7 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
     <T, E> void constructQueryWrapper(QueryContext<T, E> queryContext) {
 
         Object value = null;
-        QueryField queryField = queryContext.getQueryField();
+        QueryType queryType = queryContext.getQueryType();
 
         try {
             //检测是否分组
@@ -54,7 +54,7 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
             //准备参数
             prepareContext(queryContext);
             //BETWEEN和NOT_BETWEEN的查询不校验查询参数
-            if (queryField.value().equals(QueryType.BETWEEN) || queryField.value().equals(QueryType.NOT_BETWEEN)) {
+            if (queryType.equals(QueryType.BETWEEN) || queryType.equals(QueryType.NOT_BETWEEN)) {
                 buildQueryWrapper(queryContext);
             } else {
                 //校验参数是否为空
@@ -134,14 +134,14 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
      */
 
     public <T, E> void checkConditionType(QueryContext<T, E> queryContext) {
-        QueryField queryField = queryContext.getQueryField();
+        ConditionType conditionType = queryContext.getConditionType();
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
         String tableColumnName = queryContext.getTableColumnName();
 
-        if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NULL)) {
+        if (conditionType.equals(ConditionType.TABLE_COLUMN_IS_NULL)) {
             queryWrapper.isNull(tableColumnName);
         }
-        if (queryField.conditionType().equals(ConditionType.TABLE_COLUMN_IS_NOT_NULL)) {
+        if (conditionType.equals(ConditionType.TABLE_COLUMN_IS_NOT_NULL)) {
             queryWrapper.isNotNull(tableColumnName);
         }
     }

@@ -31,7 +31,7 @@ public class LikeLeftQueryTypeStrategy extends BaseQueryTypeStrategy implements 
     @Override
     public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
 
-        QueryField queryField = queryContext.getQueryField();
+
         QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
         String tableColumnName = queryContext.getTableColumnName();
         Object queryParam = queryContext.getQueryParam();
@@ -40,7 +40,7 @@ public class LikeLeftQueryTypeStrategy extends BaseQueryTypeStrategy implements 
             return;
         }
 
-        String[] orColumns = queryField.orColumns();
+        String[] orColumns = queryContext.getOrColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
                         tQueryWrapper.likeLeft(tableColumnName, queryParam);
