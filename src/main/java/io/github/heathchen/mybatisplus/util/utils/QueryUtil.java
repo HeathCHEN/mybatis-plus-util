@@ -11,8 +11,8 @@ import io.github.heathchen.mybatisplus.util.annotation.CachedTableField;
 import io.github.heathchen.mybatisplus.util.annotation.CachedTableId;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
 import io.github.heathchen.mybatisplus.util.annotation.UniqueValue;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
 import io.github.heathchen.mybatisplus.util.domain.CacheGroup;
-import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.strategy.QueryTypeStrategyManager;
 
 import java.lang.reflect.Field;
@@ -71,12 +71,12 @@ public class QueryUtil {
                     QueryField queryField = field.getAnnotation(QueryField.class);
                     //剔除不参与的参数
                     if (!queryField.exist()) {
-                        QueryContext.removeParamFromQueryParamMap(field.getName());
+                        EntityGernericDefinition.removeParamFromQueryParamMap(field.getName());
                         continue;
                     }
-                    QueryContext<T, E> queryContext = new QueryContext<T, E>(queryField, clazz, field, queryWrapper);
+                    EntityGernericDefinition<T, E> entityGernericDefinition = new EntityGernericDefinition<T, E>(queryField, clazz, field, queryWrapper);
                     //根据查询类型构建查询
-                    QueryTypeStrategyManager.invokeQueryStrategy(queryContext);
+                    QueryTypeStrategyManager.invokeQueryStrategy(entityGernericDefinition);
                 } catch (Exception e) {
                     log.error("构造查询异常,类名:{},字段名:{}", clazz.getName(), field.getName());
                     e.printStackTrace();
@@ -85,7 +85,7 @@ public class QueryUtil {
         }
 
         //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(QueryContext.getQueryParamMap())) {
+        if (CollectionUtil.isNotEmpty(EntityGernericDefinition.getQueryParamMap())) {
             return buildQueryByReflect(clazz.getSuperclass(), queryWrapper);
         } else {
             return queryWrapper;
@@ -107,7 +107,7 @@ public class QueryUtil {
             return queryGroupMap;
         }
 
-        String[] groupIds = QueryContext.getGroupIds();
+        String[] groupIds = EntityGernericDefinition.getGroupIds();
         Field[] clazzDeclaredFields = clazz.getDeclaredFields();
         if (ArrayUtil.isNotEmpty(clazzDeclaredFields)) {
             for (Field clazzDeclaredField : clazzDeclaredFields) {
@@ -129,7 +129,7 @@ public class QueryUtil {
                         }
                         //查询属性名对应字段名
                         String tableColumnName = TableUtil.getTableColumnName(clazz, field);
-                        Object value = QueryContext.getValueFromQueryParamMap(field.getName());
+                        Object value = EntityGernericDefinition.getValueFromQueryParamMap(field.getName());
                         //校验数据有效性
                         if (QueryUtil.checkValue(value)) {
                             queryParamMap.put(tableColumnName, value);
@@ -144,7 +144,7 @@ public class QueryUtil {
         }
 
         //如果已匹配全部则直接返回查询,否则继续迭代
-        if (CollectionUtil.isNotEmpty(QueryContext.getQueryParamMap())) {
+        if (CollectionUtil.isNotEmpty(EntityGernericDefinition.getQueryParamMap())) {
             return buildUniqueCheckQueryByReflect(clazz.getSuperclass(), queryGroupMap);
         } else {
             return queryGroupMap;
@@ -228,7 +228,7 @@ public class QueryUtil {
      * @author HeathCHEN
      */
     public static void cleanData() {
-        QueryContext.cleanData();
+        EntityGernericDefinition.cleanData();
     }
 
 
@@ -268,9 +268,9 @@ public class QueryUtil {
     }
 
 
-    public static <T, E> Boolean checkIfInGroup(QueryContext<T, E> queryContext) {
-        String[] groupIds = QueryContext.getGroupIds();
-        String[] groupIdsOnQueryField = queryContext.getGroupId();
+    public static <T, E> Boolean checkIfInGroup(EntityGernericDefinition<T, E> entityGernericDefinition) {
+        String[] groupIds = EntityGernericDefinition.getGroupIds();
+        String[] groupIdsOnQueryField = entityGernericDefinition.getGroupId();
         boolean inGroup = Boolean.FALSE;
         if (ArrayUtil.isNotEmpty(groupIds)) {
             for (String groupId : groupIds) {

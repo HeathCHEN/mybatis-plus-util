@@ -2,7 +2,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.domain.QueryContext;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
 
@@ -23,16 +23,16 @@ public class LessThanQueryTypeStrategy extends BaseQueryTypeStrategy implements 
     /**
      * 构造查询
      *
-     * @param queryContext 查询上下文
+     * @param entityGernericDefinition 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
-        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
-        String tableColumnName = queryContext.getTableColumnName();
-        Object queryParam = queryContext.getQueryParam();
+    public <T, E> void buildQueryWrapper(EntityGernericDefinition<T, E> entityGernericDefinition) {
+        QueryWrapper<T> queryWrapper = entityGernericDefinition.getQueryWrapper();
+        String tableColumnName = entityGernericDefinition.getTableColumnName();
+        Object queryParam = entityGernericDefinition.getQueryParam();
 
-        String[] orColumns = queryContext.getOrColumns();
+        String[] orColumns = entityGernericDefinition.getOrColumns();
         if (ArrayUtil.isNotEmpty(orColumns)) {
             queryWrapper.and(tQueryWrapper -> {
                         tQueryWrapper.lt(tableColumnName, queryParam);

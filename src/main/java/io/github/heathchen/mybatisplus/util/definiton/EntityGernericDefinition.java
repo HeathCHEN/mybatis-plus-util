@@ -1,4 +1,4 @@
-package io.github.heathchen.mybatisplus.util.domain;
+package io.github.heathchen.mybatisplus.util.definiton;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryField;
@@ -6,7 +6,6 @@ import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.JoinType;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
-import io.github.heathchen.mybatisplus.util.utils.QueryContextThreadLocal;
 
 import java.lang.reflect.Field;
 
@@ -17,7 +16,17 @@ import java.lang.reflect.Field;
  * @version 1.0
  * @since 2024/03/15
  */
-public class QueryContext<T, E> extends QueryContextThreadLocal {
+public class EntityGernericDefinition<T, E> extends EntityDefinitionThreadLocal implements EntityDefinition {
+
+
+    private AnnotationReader annotationReader;
+
+
+    public EntityGernericDefinition() {
+
+    }
+
+
 
     /**
      * 查询QueryWrapper
@@ -89,7 +98,7 @@ public class QueryContext<T, E> extends QueryContextThreadLocal {
     /**
      * 查询参数类
      */
-    private Class<E> clazz;
+    private Class<E> paramClass;
 
     /**
      * 查询参数值
@@ -106,7 +115,7 @@ public class QueryContext<T, E> extends QueryContextThreadLocal {
      */
     private String tableColumnName;
 
-    public QueryContext(QueryField queryField, Class<E> clazz, Field field, QueryWrapper<T> queryWrapper) {
+    public EntityGernericDefinition(QueryField queryField, Class<E> paramClass, Field field, QueryWrapper<T> queryWrapper) {
         this.queryWrapper = queryWrapper;
         this.queryType = queryField.value();
         this.orColumns = queryField.orColumns();
@@ -125,7 +134,7 @@ public class QueryContext<T, E> extends QueryContextThreadLocal {
         this.orColumns = queryField.orColumns();
         this.sql = queryField.sql();
         this.groupId = queryField.groupId();
-        this.clazz = clazz;
+        this.paramClass = paramClass;
         this.field = field;
     }
 
@@ -274,12 +283,12 @@ public class QueryContext<T, E> extends QueryContextThreadLocal {
         this.field = field;
     }
 
-    public Class<E> getClazz() {
-        return clazz;
+    public Class<E> getParamClass() {
+        return paramClass;
     }
 
-    public void setClazz(Class<E> clazz) {
-        this.clazz = clazz;
+    public void setParamClass(Class<E> paramClass) {
+        this.paramClass = paramClass;
     }
 
     public QueryType getQueryType() {

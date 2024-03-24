@@ -1,7 +1,7 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.domain.QueryContext;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
@@ -25,16 +25,16 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
     /**
      * 构造查询
      *
-     * @param queryContext 查询上下文
+     * @param entityGernericDefinition 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
-        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
-        String tableColumnName = queryContext.getTableColumnName();
+    public <T, E> void buildQueryWrapper(EntityGernericDefinition<T, E> entityGernericDefinition) {
+        QueryWrapper<T> queryWrapper = entityGernericDefinition.getQueryWrapper();
+        String tableColumnName = entityGernericDefinition.getTableColumnName();
 
-        Object startValue = QueryContext.getValueFromQueryParamMap(queryContext.getBetweenStartVal());
-        Object endValue = QueryContext.getValueFromQueryParamMap(queryContext.getBetweenEndVal());
+        Object startValue = EntityGernericDefinition.getValueFromQueryParamMap(entityGernericDefinition.getBetweenStartVal());
+        Object endValue = EntityGernericDefinition.getValueFromQueryParamMap(entityGernericDefinition.getBetweenEndVal());
         if (QueryUtil.checkValue(startValue)) {
             queryWrapper.ge(tableColumnName, startValue);
 
@@ -48,15 +48,15 @@ public class BetweenQueryTypeStrategy extends BaseQueryTypeStrategy implements Q
     /**
      * 清除查询参数
      *
-     * @param queryContext 查询上下文
+     * @param entityGernericDefinition 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T, E> void removeParam(QueryContext<T, E> queryContext) {
-        Field field = queryContext.getField();
-        QueryContext.removeParamFromQueryParamMap(queryContext.getBetweenStartVal());
-        QueryContext.removeParamFromQueryParamMap(queryContext.getBetweenEndVal());
-        QueryContext.removeParamFromQueryParamMap(field.getName());
+    public <T, E> void removeParam(EntityGernericDefinition<T, E> entityGernericDefinition) {
+        Field field = entityGernericDefinition.getField();
+        EntityGernericDefinition.removeParamFromQueryParamMap(entityGernericDefinition.getBetweenStartVal());
+        EntityGernericDefinition.removeParamFromQueryParamMap(entityGernericDefinition.getBetweenEndVal());
+        EntityGernericDefinition.removeParamFromQueryParamMap(field.getName());
     }
 
 

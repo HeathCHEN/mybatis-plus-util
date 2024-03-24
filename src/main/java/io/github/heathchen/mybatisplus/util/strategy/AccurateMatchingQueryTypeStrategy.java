@@ -9,7 +9,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
 import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
-import io.github.heathchen.mybatisplus.util.domain.QueryContext;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.utils.ApplicationContextProvider;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
@@ -61,7 +61,7 @@ public class AccurateMatchingQueryTypeStrategy {
      * @author HeathCHEN
      */
     public static <T> Boolean matchByMethodParam(QueryWrapper<T> queryWrapper) {
-        MatchMode matchMode = QueryContext.getMatchMode();
+        MatchMode matchMode = EntityGernericDefinition.getMatchMode();
 
         if (ObjectUtil.isNotNull(matchMode) && MatchMode.ALL_MATCH_MODE.equals(matchMode)) {
             buildQuery(queryWrapper);
@@ -135,7 +135,7 @@ public class AccurateMatchingQueryTypeStrategy {
      * @author HeathCHEN
      */
     public static <T> void buildQuery(QueryWrapper<T> queryWrapper) {
-        Map<String, Object> objectMap = QueryContext.getQueryParamMap();
+        Map<String, Object> objectMap = EntityGernericDefinition.getQueryParamMap();
         if (CollectionUtil.isNotEmpty(objectMap)) {
             Set<Map.Entry<String, Object>> entries = objectMap.entrySet();
             for (Map.Entry<String, Object> entry : entries) {

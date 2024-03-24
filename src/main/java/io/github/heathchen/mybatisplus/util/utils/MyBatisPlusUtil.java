@@ -18,6 +18,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
+import io.github.heathchen.mybatisplus.util.definiton.EntityDefinitionThreadLocal;
 import io.github.heathchen.mybatisplus.util.domain.*;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
 import io.github.heathchen.mybatisplus.util.strategy.AccurateMatchingQueryTypeStrategy;
@@ -38,7 +40,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 2024/02/26
  */
-public class MyBatisPlusUtil extends QueryContextThreadLocal {
+public class MyBatisPlusUtil extends EntityDefinitionThreadLocal {
 
     private static final Log log = GlobalLogFactory.get().getLog(MyBatisPlusUtil.class);
 
@@ -92,7 +94,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * 只对本次查询生效
      */
     public static void closePage() {
-        QueryContext.setStartPage(Boolean.FALSE);
+        EntityGernericDefinition.setStartPage(Boolean.FALSE);
     }
 
     /**
@@ -100,7 +102,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * 只对本次查询生效
      */
     public static void closeOrder() {
-        QueryContext.setOrderColumn(Boolean.FALSE);
+        EntityGernericDefinition.setOrderColumn(Boolean.FALSE);
     }
 
     //===================================================================================================================================================================
@@ -112,11 +114,11 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @return {@link Integer}
      */
     public static <E> Integer countByReflect(CountBuilder<E> countBuilder) {
-        QueryContext.setMatchMode(countBuilder.getMatchMode());
-        QueryContext.setGroupIds(countBuilder.getGroupIds());
-        QueryContext.setConsumer(countBuilder.getConsumer());
-        QueryContext.setIgnoreParams(countBuilder.getIgnoreParams());
-        QueryContext.setWithoutLike(countBuilder.getWithoutLike());
+        EntityGernericDefinition.setMatchMode(countBuilder.getMatchMode());
+        EntityGernericDefinition.setGroupIds(countBuilder.getGroupIds());
+        EntityGernericDefinition.setConsumer(countBuilder.getConsumer());
+        EntityGernericDefinition.setIgnoreParams(countBuilder.getIgnoreParams());
+        EntityGernericDefinition.setWithoutLike(countBuilder.getWithoutLike());
         return countByReflect(countBuilder.getE());
     }
 
@@ -130,10 +132,10 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @return {@link Integer}
      */
     public static <E> Integer countByReflect(E e, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<?>> consumer, String... ignoreParams) {
-        QueryContext.setConsumer(consumer);
-        QueryContext.setGroupIds(groupIds);
-        QueryContext.setIgnoreParams(ignoreParams);
-        QueryContext.setMatchMode(matchMode);
+        EntityGernericDefinition.setConsumer(consumer);
+        EntityGernericDefinition.setGroupIds(groupIds);
+        EntityGernericDefinition.setIgnoreParams(ignoreParams);
+        EntityGernericDefinition.setMatchMode(matchMode);
         return countByReflect(e);
     }
 
@@ -145,7 +147,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @return {@link Integer}
      */
     public static <E> Integer countByReflect(E e, MatchMode matchMode) {
-        QueryContext.setMatchMode(matchMode);
+        EntityGernericDefinition.setMatchMode(matchMode);
         return countByReflect(e);
     }
 
@@ -157,7 +159,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @return {@link Integer}
      */
     public static <E> Integer countByReflect(E e, String... ignoreParams) {
-        QueryContext.setIgnoreParams(ignoreParams);
+        EntityGernericDefinition.setIgnoreParams(ignoreParams);
         return countByReflect(e);
     }
 
@@ -183,10 +185,10 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <T, E> List<T> queryByReflect(QueryBuilder<E, T> queryBuilder) {
-        QueryContext.setConsumer(queryBuilder.getConsumer());
-        QueryContext.setGroupIds(queryBuilder.getGroupIds());
-        QueryContext.setIgnoreParams(queryBuilder.getIgnoreParams());
-        QueryContext.setMatchMode(queryBuilder.getMatchMode());
+        EntityGernericDefinition.setConsumer(queryBuilder.getConsumer());
+        EntityGernericDefinition.setGroupIds(queryBuilder.getGroupIds());
+        EntityGernericDefinition.setIgnoreParams(queryBuilder.getIgnoreParams());
+        EntityGernericDefinition.setMatchMode(queryBuilder.getMatchMode());
         return queryByReflect(queryBuilder.getE(), queryBuilder.getClazz());
     }
 
@@ -205,10 +207,10 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, MatchMode matchMode, String[] groupIds, Consumer<QueryWrapper<?>> consumer, String... ignoreParams) {
-        QueryContext.setConsumer(consumer);
-        QueryContext.setGroupIds(groupIds);
-        QueryContext.setIgnoreParams(ignoreParams);
-        QueryContext.setMatchMode(matchMode);
+        EntityGernericDefinition.setConsumer(consumer);
+        EntityGernericDefinition.setGroupIds(groupIds);
+        EntityGernericDefinition.setIgnoreParams(ignoreParams);
+        EntityGernericDefinition.setMatchMode(matchMode);
         return queryByReflect(e, clazz);
 
     }
@@ -224,7 +226,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, MatchMode matchMode) {
-        QueryContext.setMatchMode(matchMode);
+        EntityGernericDefinition.setMatchMode(matchMode);
         return queryByReflect(e);
 
     }
@@ -240,7 +242,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      */
     public static <E> List<E> queryByReflect(E e, Collection<String> groupIds) {
         String[] groupIdArr = ArrayUtil.toArray(groupIds, String.class);
-        QueryContext.setGroupIds(groupIdArr);
+        EntityGernericDefinition.setGroupIds(groupIdArr);
         return queryByReflect(e);
     }
 
@@ -269,7 +271,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, String... ignoreParams) {
-        QueryContext.setIgnoreParams(ignoreParams);
+        EntityGernericDefinition.setIgnoreParams(ignoreParams);
         return queryByReflect(e);
     }
 
@@ -313,7 +315,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, Boolean withoutLike) {
-        QueryContext.setWithoutLike(withoutLike);
+        EntityGernericDefinition.setWithoutLike(withoutLike);
         return queryByReflect(e);
     }
 
@@ -329,7 +331,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, Boolean withoutLike) {
-        QueryContext.setWithoutLike(withoutLike);
+        EntityGernericDefinition.setWithoutLike(withoutLike);
         return queryByReflect(e, clazz);
     }
 
@@ -344,8 +346,8 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> List<E> queryByReflect(E e, String[] groupIds, String... ignoreParams) {
-        QueryContext.setGroupIds(groupIds);
-        QueryContext.setIgnoreParams(ignoreParams);
+        EntityGernericDefinition.setGroupIds(groupIds);
+        EntityGernericDefinition.setIgnoreParams(ignoreParams);
         return queryByReflect(e);
     }
 
@@ -360,7 +362,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, String... ignoreParams) {
-        QueryContext.setIgnoreParams(ignoreParams);
+        EntityGernericDefinition.setIgnoreParams(ignoreParams);
         return queryByReflect(e, clazz);
     }
 
@@ -377,7 +379,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      */
     public static <T, E> List<T> queryByReflect(E e, Class<T> clazz, Collection<String> groupIds) {
         String[] groupIdArr = ArrayUtil.toArray(groupIds, String.class);
-        QueryContext.setGroupIds(groupIdArr);
+        EntityGernericDefinition.setGroupIds(groupIdArr);
         return queryByReflect(e, clazz);
     }
 
@@ -392,9 +394,9 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> Boolean checkUniqueByReflect(CheckUniqueBuilder<E> checkUniqueBuilder) {
-        QueryContext.setLimitValue(checkUniqueBuilder.getLimit());
-        QueryContext.setConsumer(checkUniqueBuilder.getConsumer());
-        QueryContext.setGroupIds(checkUniqueBuilder.getGroupIds());
+        EntityGernericDefinition.setLimitValue(checkUniqueBuilder.getLimit());
+        EntityGernericDefinition.setConsumer(checkUniqueBuilder.getConsumer());
+        EntityGernericDefinition.setGroupIds(checkUniqueBuilder.getGroupIds());
         return checkUniqueByReflect(checkUniqueBuilder.getE());
 
     }
@@ -410,9 +412,9 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> Boolean checkUniqueByReflect(E e, Integer limit, Consumer<QueryWrapper<?>> consumer, String... groupIds) {
-        QueryContext.setLimitValue(limit);
-        QueryContext.setConsumer(consumer);
-        QueryContext.setGroupIds(groupIds);
+        EntityGernericDefinition.setLimitValue(limit);
+        EntityGernericDefinition.setConsumer(consumer);
+        EntityGernericDefinition.setGroupIds(groupIds);
         return checkUniqueByReflect(e);
     }
 
@@ -427,8 +429,8 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> Boolean checkUniqueByReflect(E e, Integer limit, String... groupIds) {
-        QueryContext.setLimitValue(limit);
-        QueryContext.setGroupIds(groupIds);
+        EntityGernericDefinition.setLimitValue(limit);
+        EntityGernericDefinition.setGroupIds(groupIds);
         return checkUniqueByReflect(e);
     }
 
@@ -442,7 +444,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> Boolean checkUniqueByReflect(E e, Integer limit) {
-        QueryContext.setLimitValue(limit);
+        EntityGernericDefinition.setLimitValue(limit);
         return checkUniqueByReflect(e);
     }
 
@@ -456,7 +458,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> Boolean checkUniqueByReflect(E e, String... groupIds) {
-        QueryContext.setGroupIds(groupIds);
+        EntityGernericDefinition.setGroupIds(groupIds);
         return checkUniqueByReflect(e);
     }
 
@@ -470,7 +472,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      */
     public static <E> Boolean checkUniqueByReflect(E e) {
         QueryWrapper<E> checkUniqueQueryWrapper = getCheckUniqueQueryWrapper(e);
-        Integer limit = QueryContext.getLimitValue();
+        Integer limit = EntityGernericDefinition.getLimitValue();
         BaseMapper<E> baseMapper = ApplicationContextUtil.getMapperBean(e.getClass());
         int count = baseMapper.selectList(checkUniqueQueryWrapper).size();
         if (ObjectUtil.isNull(limit)) {
@@ -546,8 +548,8 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> QueryWrapper<E> getQueryWrapper(E e) {
-        QueryContext.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
-        QueryContext.removeParamFromQueryParamMap();
+        EntityGernericDefinition.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
+        EntityGernericDefinition.removeParamFromQueryParamMap();
         Class<?> clazz = e.getClass();
         QueryWrapper<E> queryWrapper = new QueryWrapper<E>();
         //剔除查询参数中的分页参数
@@ -558,7 +560,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
         queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper);
         //获取不到注解的,默认做精确匹配
         AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper);
-        Consumer<QueryWrapper<?>> consumer = QueryContext.getConsumer();
+        Consumer<QueryWrapper<?>> consumer = EntityGernericDefinition.getConsumer();
         if (ObjectUtil.isNotNull(consumer)) {
             consumer.accept(queryWrapper);
         }
@@ -580,16 +582,16 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> QueryWrapper<E> getCountQueryWrapper(E e) {
-        String[] ignoreParams = QueryContext.getIgnoreParams();
-        QueryContext.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
-        QueryContext.removeParamFromQueryParamMap(ignoreParams);
+        String[] ignoreParams = EntityGernericDefinition.getIgnoreParams();
+        EntityGernericDefinition.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
+        EntityGernericDefinition.removeParamFromQueryParamMap(ignoreParams);
         Class<?> clazz = e.getClass();
         QueryWrapper<E> queryWrapper = new QueryWrapper<E>();
         //遍历map然后从子级逐级反射获得注解判断比较类型
         queryWrapper = QueryUtil.buildQueryByReflect(clazz, queryWrapper);
         //获取不到注解的,默认做精确匹配
         AccurateMatchingQueryTypeStrategy.buildQuery(clazz, queryWrapper);
-        Consumer<QueryWrapper<?>> consumer = QueryContext.getConsumer();
+        Consumer<QueryWrapper<?>> consumer = EntityGernericDefinition.getConsumer();
         if (ObjectUtil.isNotNull(consumer)) {
             consumer.accept(queryWrapper);
         }
@@ -608,8 +610,8 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> QueryWrapper<E> getCheckUniqueQueryWrapper(E e) {
-        QueryContext.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
-        Consumer<QueryWrapper<?>> consumer = QueryContext.getConsumer();
+        EntityGernericDefinition.setQueryParamMap(BeanUtil.beanToMap(e, false, true));
+        Consumer<QueryWrapper<?>> consumer = EntityGernericDefinition.getConsumer();
         Class<?> clazz = e.getClass();
         Map<String, Map<String, Object>> queryGroupMap = new HashMap<>();
         //遍历map然后从子级逐级反射获得注解判断比较类型
@@ -659,7 +661,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> QueryWrapper<E> getQueryWrapper(E e, String... ignoreParams) {
-        QueryContext.setIgnoreParams(ignoreParams);
+        EntityGernericDefinition.setIgnoreParams(ignoreParams);
         return getQueryWrapper(e);
     }
 
@@ -671,7 +673,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @return {@link QueryWrapper}
      */
     public static <E> QueryWrapper<E> getQueryWrapper(E e, Boolean withoutLike) {
-        QueryContext.setWithoutLike(withoutLike);
+        EntityGernericDefinition.setWithoutLike(withoutLike);
         return getQueryWrapper(e);
     }
 
@@ -701,7 +703,7 @@ public class MyBatisPlusUtil extends QueryContextThreadLocal {
      * @author HeathCHEN
      */
     public static <E> QueryWrapper<E> getQueryWrapper(E e, MatchMode matchMode) {
-        QueryContext.setMatchMode(matchMode);
+        EntityGernericDefinition.setMatchMode(matchMode);
         return getQueryWrapper(e);
     }
 

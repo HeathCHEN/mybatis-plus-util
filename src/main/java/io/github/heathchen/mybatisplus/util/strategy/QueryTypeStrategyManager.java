@@ -1,7 +1,7 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
 import cn.hutool.core.util.ObjectUtil;
-import io.github.heathchen.mybatisplus.util.domain.QueryContext;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,13 +44,13 @@ public class QueryTypeStrategyManager {
     /**
      * 获取对应策略类并执行
      *
-     * @param queryContext 查询上下文
+     * @param entityGernericDefinition 查询上下文
      * @author HeathCHEN
      */
-    public static <T, E> void invokeQueryStrategy(QueryContext<T, E> queryContext) {
-        BaseQueryTypeStrategy queryTypeStrategy = (BaseQueryTypeStrategy) getQueryTypeStrategyToManager(queryContext.getQueryType().getCompareType());
+    public static <T, E> void invokeQueryStrategy(EntityGernericDefinition<T, E> entityGernericDefinition) {
+        BaseQueryTypeStrategy queryTypeStrategy = (BaseQueryTypeStrategy) getQueryTypeStrategyToManager(entityGernericDefinition.getQueryType().getCompareType());
         if (ObjectUtil.isNotNull(queryTypeStrategy)) {
-            queryTypeStrategy.constructQueryWrapper(queryContext);
+            queryTypeStrategy.constructQueryWrapper(entityGernericDefinition);
         }
     }
 

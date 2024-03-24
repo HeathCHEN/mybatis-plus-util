@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.github.heathchen.mybatisplus.util.annotation.QueryConfig;
 import io.github.heathchen.mybatisplus.util.config.MyBatisPlusUtilConfig;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
 import io.github.heathchen.mybatisplus.util.domain.OrderDto;
-import io.github.heathchen.mybatisplus.util.domain.QueryContext;
 import io.github.heathchen.mybatisplus.util.enums.OrderType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,21 +44,21 @@ public class PageHelperUtil {
         HttpServletRequest request = ServletUtils.getRequest();
 
         if (request.getMethod().equals(Method.GET.toString())) {
-            QueryContext.setStartPageIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName()));
-            QueryContext.setIsAscIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
-            QueryContext.setPageSizeIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContext.setPageNumIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContext.setOrderByColumnIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
-            QueryContext.setReasonableIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
+            EntityGernericDefinition.setStartPageIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            EntityGernericDefinition.setIsAscIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            EntityGernericDefinition.setPageSizeIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            EntityGernericDefinition.setPageNumIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            EntityGernericDefinition.setOrderByColumnIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            EntityGernericDefinition.setReasonableIfAbsent(ServletUtils.getParameter(myBatisPlusUtilConfig.getReasonablePropertyName()));
 
         } else {
-            QueryContext.setStartPageIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
-            QueryContext.setIsAscIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
-            QueryContext.setPageSizeIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
-            QueryContext.setPageNumIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
-            QueryContext.setOrderByColumnIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
-            QueryContext.setReasonableIfAbsent(QueryContext.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
-            QueryContext.removeParamFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(),
+            EntityGernericDefinition.setStartPageIfAbsent(EntityGernericDefinition.getValueFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName()));
+            EntityGernericDefinition.setIsAscIfAbsent(EntityGernericDefinition.getValueFromQueryParamMap(myBatisPlusUtilConfig.getIsAscPropertyName()));
+            EntityGernericDefinition.setPageSizeIfAbsent(EntityGernericDefinition.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageSizePropertyName()));
+            EntityGernericDefinition.setPageNumIfAbsent(EntityGernericDefinition.getValueFromQueryParamMap(myBatisPlusUtilConfig.getPageNumPropertyName()));
+            EntityGernericDefinition.setOrderByColumnIfAbsent(EntityGernericDefinition.getValueFromQueryParamMap(myBatisPlusUtilConfig.getOrderByColumnPropertyName()));
+            EntityGernericDefinition.setReasonableIfAbsent(EntityGernericDefinition.getValueFromQueryParamMap(myBatisPlusUtilConfig.getReasonablePropertyName()));
+            EntityGernericDefinition.removeParamFromQueryParamMap(myBatisPlusUtilConfig.getStarPagePropertyName(),
                     myBatisPlusUtilConfig.getIsAscPropertyName(),
                     myBatisPlusUtilConfig.getPageSizePropertyName(),
                     myBatisPlusUtilConfig.getPageNumPropertyName(),
@@ -78,15 +78,15 @@ public class PageHelperUtil {
      */
     public static void checkColumnOrderOnClass(Class<?> clazz) {
         //清除分页插件的排序参数 使用该注解分页
-        Boolean startPage = QueryContext.getStartPage();
+        Boolean startPage = EntityGernericDefinition.getStartPage();
         PageHelper.clearPage();
         if (startPage) {
             com.github.pagehelper.Page<Object> localPage = PageHelper.getLocalPage();
             if (ObjectUtil.isNotNull(localPage)) {
                 PageHelper.startPage(localPage.getPageNum(), localPage.getPageSize());
             } else {
-                Integer pageSize = QueryContext.getPageSize();
-                Integer pageNum = QueryContext.getPageNum();
+                Integer pageSize = EntityGernericDefinition.getPageSize();
+                Integer pageNum = EntityGernericDefinition.getPageNum();
                 if (ObjectUtil.isNotNull(pageSize) && ObjectUtil.isNotNull(pageNum)) {
                     PageHelper.startPage(pageNum, pageSize);
                 }
@@ -108,7 +108,7 @@ public class PageHelperUtil {
             OrderType[] orderTypes = QueryConfig.orderTypes();
             boolean orderColumn = QueryConfig.orderColumn();
 
-            QueryContext.setOrderColumnIfAbsent(orderColumn);
+            EntityGernericDefinition.setOrderColumnIfAbsent(orderColumn);
 
             if (ArrayUtil.isNotEmpty(columns) && orderColumn) {
                 for (int i = 0; i < columns.length; i++) {
@@ -123,7 +123,7 @@ public class PageHelperUtil {
 
                     OrderDto.setOrderType(orderTypes[i]);
                     OrderDto.setOrderPriority(i + 1);
-                    QueryContext.putOrderDtoIntoOrderList(OrderDto);
+                    EntityGernericDefinition.putOrderDtoIntoOrderList(OrderDto);
                 }
 
             }
@@ -134,24 +134,24 @@ public class PageHelperUtil {
     /**
      * 检查是否使用排序
      *
-     * @param queryContext 查询上下文
+     * @param entityGernericDefinition 查询上下文
      * @author HeathCHEN
      */
-    public static <T, E> void checkColumnOrderOnField(QueryContext<T, E> queryContext) {
-        String tableColumnName = queryContext.getTableColumnName();
-        Class<E> clazz = queryContext.getClazz();
-        Field field = queryContext.getField();
+    public static <T, E> void checkColumnOrderOnField(EntityGernericDefinition<T, E> entityGernericDefinition) {
+        String tableColumnName = entityGernericDefinition.getTableColumnName();
+        Class<E> clazz = entityGernericDefinition.getParamClass();
+        Field field = entityGernericDefinition.getField();
 
-        if (OrderType.NONE.equals(queryContext.getOrderType())) {
+        if (OrderType.NONE.equals(entityGernericDefinition.getOrderType())) {
             return;
         }
         OrderDto OrderDto = new OrderDto();
         OrderDto.setTableColumnName(tableColumnName.toUpperCase());
-        OrderDto.setOrderPriority(queryContext.getOrderPriority());
-        OrderDto.setOrderType(queryContext.getOrderType());
+        OrderDto.setOrderPriority(entityGernericDefinition.getOrderPriority());
+        OrderDto.setOrderType(entityGernericDefinition.getOrderType());
         OrderDto.setField(field);
         OrderDto.setClazz(clazz);
-        QueryContext.putIntoOrderListIfOrderDtoAbsent(OrderDto);
+        EntityGernericDefinition.putIntoOrderListIfOrderDtoAbsent(OrderDto);
 
 
     }
@@ -164,13 +164,13 @@ public class PageHelperUtil {
      */
     public static void buildQueryOrder(QueryWrapper<?> queryWrapper) {
 
-        Boolean orderColumn = QueryContext.getOrderColumn();
+        Boolean orderColumn = EntityGernericDefinition.getOrderColumn();
         if (!orderColumn) {
             return;
         }
 
-        String orderByColumn = QueryContext.getOrderByColumn();
-        Boolean isAsc = QueryContext.getIsAsc();
+        String orderByColumn = EntityGernericDefinition.getOrderByColumn();
+        Boolean isAsc = EntityGernericDefinition.getIsAsc();
 
         if (StrUtil.isNotBlank(orderByColumn)) {
             OrderDto OrderDto = new OrderDto();
@@ -181,10 +181,10 @@ public class PageHelperUtil {
             }
             OrderDto.setTableColumnName(TableUtil.checkOrColumnName(orderByColumn).toUpperCase());
             OrderDto.setOrderPriority(-1);
-            QueryContext.putOrderDtoIntoOrderList(OrderDto);
+            EntityGernericDefinition.putOrderDtoIntoOrderList(OrderDto);
         }
 
-        List<OrderDto> orderList = QueryContext.getOrderList();
+        List<OrderDto> orderList = EntityGernericDefinition.getOrderList();
 
         //对查询进行排序
         if (CollectionUtil.isNotEmpty(orderList)) {

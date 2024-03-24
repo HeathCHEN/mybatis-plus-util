@@ -1,4 +1,4 @@
-package io.github.heathchen.mybatisplus.util.utils;
+package io.github.heathchen.mybatisplus.util.definiton;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
@@ -10,6 +10,7 @@ import io.github.heathchen.mybatisplus.util.consts.MyBatisPlusUtilConst;
 import io.github.heathchen.mybatisplus.util.consts.PageAndOrderConst;
 import io.github.heathchen.mybatisplus.util.domain.OrderDto;
 import io.github.heathchen.mybatisplus.util.enums.MatchMode;
+import io.github.heathchen.mybatisplus.util.utils.ApplicationContextProvider;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 2024/02/26
  */
-public class QueryContextThreadLocal {
+public class EntityDefinitionThreadLocal {
 
     /**
      * 查询参数MAP

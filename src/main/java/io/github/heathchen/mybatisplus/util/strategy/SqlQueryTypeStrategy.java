@@ -2,7 +2,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.domain.QueryContext;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 
 /**
@@ -23,15 +23,15 @@ public class SqlQueryTypeStrategy extends BaseQueryTypeStrategy implements Query
     /**
      * 构造查询
      *
-     * @param queryContext 查询上下文
+     * @param entityGernericDefinition 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T, E> void buildQueryWrapper(QueryContext<T, E> queryContext) {
-        QueryWrapper<T> queryWrapper = queryContext.getQueryWrapper();
-        Object queryParam = queryContext.getQueryParam();
-        if (StrUtil.isNotBlank(queryContext.getSql())) {
-            queryWrapper.apply(queryContext.getSql(), queryParam);
+    public <T, E> void buildQueryWrapper(EntityGernericDefinition<T, E> entityGernericDefinition) {
+        QueryWrapper<T> queryWrapper = entityGernericDefinition.getQueryWrapper();
+        Object queryParam = entityGernericDefinition.getQueryParam();
+        if (StrUtil.isNotBlank(entityGernericDefinition.getSql())) {
+            queryWrapper.apply(entityGernericDefinition.getSql(), queryParam);
         }
     }
 }
