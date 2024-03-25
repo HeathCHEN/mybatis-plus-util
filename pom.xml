@@ -6,7 +6,7 @@
 
     <groupId>io.github.heathchen</groupId>
     <artifactId>mybatis-plus-util</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -47,56 +47,56 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>5.3.22</version>
-            <scope>compile</scope>
+            <scope>import</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>5.3.22</version>
-            <scope>compile</scope>
+            <scope>import</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
-            <scope>compile</scope>
+            <scope>import</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-core</artifactId>
             <version>3.4.2</version>
-            <scope>compile</scope>
+            <scope>import</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-annotation</artifactId>
             <version>3.4.2</version>
-            <scope>compile</scope>
+            <scope>import</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-extension</artifactId>
             <version>3.4.2</version>
-            <scope>compile</scope>
+            <scope>import</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
             <version>5.3.2</version>
-            <scope>compile</scope>
+            <scope>import</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.26</version>
-            <scope>compile</scope>
+            <scope>import</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>
