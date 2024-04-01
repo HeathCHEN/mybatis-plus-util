@@ -3,9 +3,10 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.log.GlobalLogFactory;
 import cn.hutool.log.Log;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGenericDefinition;
 import io.github.heathchen.mybatisplus.util.enums.ConditionType;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
+import io.github.heathchen.mybatisplus.util.factory.DefaultQueryWrapperFactory;
 import io.github.heathchen.mybatisplus.util.utils.PageHelperUtil;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 import io.github.heathchen.mybatisplus.util.utils.TableUtil;
@@ -31,110 +32,110 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
 
     public BaseQueryTypeStrategy(QueryType QUERY_TYPE) {
         this();
-        QueryTypeStrategyManager.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
+        DefaultQueryWrapperFactory.putQueryTypeStrategyToManager(QUERY_TYPE.getCompareType(), this);
     }
 
     /**
      * 校验参数配置和构建查询
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
-    <T, E> void constructQueryWrapper(EntityGernericDefinition<T, E> entityGernericDefinition) {
+    public <T, E> void constructQueryWrapper(EntityGenericDefinition<T, E> entityGenericDefinition) {
 
-        QueryType queryType = entityGernericDefinition.getQueryType();
+        QueryType queryType = entityGenericDefinition.getQueryType();
 
         try {
             //检测是否分组
-            if (checkIfNotInGroup(entityGernericDefinition)) {
+            if (checkIfNotInGroup(entityGenericDefinition)) {
                 return;
             }
             //准备参数
-            prepareContext(entityGernericDefinition);
+            prepareContext(entityGenericDefinition);
             //BETWEEN和NOT_BETWEEN的查询不校验查询参数
             if (queryType.equals(QueryType.BETWEEN) || queryType.equals(QueryType.NOT_BETWEEN)) {
-                buildQueryWrapper(entityGernericDefinition);
+                buildQueryWrapper(entityGenericDefinition);
             } else {
                 //校验参数是否为空
-                if (QueryUtil.checkValue(entityGernericDefinition.getQueryParam())) {
+                if (QueryUtil.checkValue(entityGenericDefinition.getQueryParam())) {
                     //构建QueryWrapper
-                    buildQueryWrapper(entityGernericDefinition);
+                    buildQueryWrapper(entityGenericDefinition);
                 } else {
                     //检查值空时是否查询
-                    checkConditionType(entityGernericDefinition);
+                    checkConditionType(entityGenericDefinition);
                 }
             }
             //检查是否排序
-            checkOrder(entityGernericDefinition);
+            checkOrder(entityGenericDefinition);
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw, true));
-            log.error("构造查询异常,类名:{},字段名:{},值:{},异常原因:{},构筑上下文:{}", entityGernericDefinition.getParamClass().getName(), entityGernericDefinition.getField().getName(), entityGernericDefinition.getQueryParam(), sw.toString(), entityGernericDefinition.toString());
+            log.error("构造查询异常,类名:{},字段名:{},值:{},异常原因:{},构筑上下文:{}", entityGenericDefinition.getParamClass().getName(), entityGenericDefinition.getField().getName(), entityGenericDefinition.getQueryParam(), sw.toString(), entityGenericDefinition.toString());
         } finally {
             //清除已匹配的查询参数
-            removeParam(entityGernericDefinition);
+            removeParam(entityGenericDefinition);
         }
     }
 
     /**
      * 检测分组
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    public <T, E> Boolean checkIfNotInGroup(EntityGernericDefinition<T, E> entityGernericDefinition) {
-        return !QueryUtil.checkIfInGroup(entityGernericDefinition);
+    public <T, E> Boolean checkIfNotInGroup(EntityGenericDefinition<T, E> entityGenericDefinition) {
+        return !QueryUtil.checkIfInGroup(entityGenericDefinition);
     }
 
     /**
      * 检查排序
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
-    public <T, E> void checkOrder(EntityGernericDefinition<T, E> entityGernericDefinition) {
+    public <T, E> void checkOrder(EntityGenericDefinition<T, E> entityGenericDefinition) {
         //检查是否使用排序
-        PageHelperUtil.checkColumnOrderOnField(entityGernericDefinition);
+        PageHelperUtil.checkColumnOrderOnField(entityGenericDefinition);
     }
 
     /**
      * 准备参数
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
-    public <T, E> void prepareContext(EntityGernericDefinition<T, E> entityGernericDefinition) {
+    public <T, E> void prepareContext(EntityGenericDefinition<T, E> entityGenericDefinition) {
         //获取查询值
-        entityGernericDefinition.setQueryParam(EntityGernericDefinition.getValueFromQueryParamMap(entityGernericDefinition.getField().getName()));
+        entityGenericDefinition.setQueryParam(EntityGenericDefinition.getValueFromQueryParamMap(entityGenericDefinition.getField().getName()));
         //获取真实表字段名
-        entityGernericDefinition.setTableColumnName(TableUtil.getTableColumnName(entityGernericDefinition.getParamClass(), entityGernericDefinition.getField()));
+        entityGenericDefinition.setTableColumnName(TableUtil.getTableColumnName(entityGenericDefinition.getParamClass(), entityGenericDefinition.getField()));
     }
 
     /**
      * 清除查询参数
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T, E> void removeParam(EntityGernericDefinition<T, E> entityGernericDefinition) {
-        Field field = entityGernericDefinition.getField();
+    public <T, E> void removeParam(EntityGenericDefinition<T, E> entityGenericDefinition) {
+        Field field = entityGenericDefinition.getField();
         //从线程中移除参数
-        EntityGernericDefinition.removeParamFromQueryParamMap(field.getName());
+        EntityGenericDefinition.removeParamFromQueryParamMap(field.getName());
     }
 
     /**
      * 检查查询值状态
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
 
-    public <T, E> void checkConditionType(EntityGernericDefinition<T, E> entityGernericDefinition) {
-        ConditionType conditionType = entityGernericDefinition.getConditionType();
-        QueryWrapper<T> queryWrapper = entityGernericDefinition.getQueryWrapper();
-        String tableColumnName = entityGernericDefinition.getTableColumnName();
+    public <T, E> void checkConditionType(EntityGenericDefinition<T, E> entityGenericDefinition) {
+        ConditionType conditionType = entityGenericDefinition.getConditionType();
+        QueryWrapper<T> queryWrapper = entityGenericDefinition.getQueryWrapper();
+        String tableColumnName = entityGenericDefinition.getTableColumnName();
 
         if (conditionType.equals(ConditionType.TABLE_COLUMN_IS_NULL)) {
             queryWrapper.isNull(tableColumnName);
@@ -148,15 +149,15 @@ public abstract class BaseQueryTypeStrategy implements QueryTypeStrategy {
     /**
      * 检查是否排除模糊查询
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    public <T, E> Boolean checkWithoutLike(EntityGernericDefinition<T, E> entityGernericDefinition) {
-        Boolean withoutLike = EntityGernericDefinition.getWithoutLike();
+    public <T, E> Boolean checkWithoutLike(EntityGenericDefinition<T, E> entityGenericDefinition) {
+        Boolean withoutLike = EntityGenericDefinition.getWithoutLike();
         if (withoutLike) {
-            QueryTypeStrategy EqQueryTypeStrategy = QueryTypeStrategyManager.getQueryTypeStrategyToManager(QueryType.EQ.getCompareType());
-            EqQueryTypeStrategy.buildQueryWrapper(entityGernericDefinition);
+            QueryTypeStrategy EqQueryTypeStrategy = DefaultQueryWrapperFactory.getQueryTypeStrategyToManager(QueryType.EQ.getCompareType());
+            EqQueryTypeStrategy.buildQueryWrapper(entityGenericDefinition);
 
         }
 

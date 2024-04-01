@@ -1,7 +1,7 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGenericDefinition;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 import io.github.heathchen.mybatisplus.util.utils.QueryUtil;
 
@@ -25,17 +25,17 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
     /**
      * 构造查询
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T, E> void buildQueryWrapper(EntityGernericDefinition<T, E> entityGernericDefinition) {
+    public <T, E> void buildQueryWrapper(EntityGenericDefinition<T, E> entityGenericDefinition) {
 
-        QueryWrapper<T> queryWrapper = entityGernericDefinition.getQueryWrapper();
-        String tableColumnName = entityGernericDefinition.getTableColumnName();
+        QueryWrapper<T> queryWrapper = entityGenericDefinition.getQueryWrapper();
+        String tableColumnName = entityGenericDefinition.getTableColumnName();
 
-        Object notBetweenStartValue = EntityGernericDefinition.getValueFromQueryParamMap(entityGernericDefinition.getNotBetweenStartVal());
-        Object notBetweenEndValue = EntityGernericDefinition.getValueFromQueryParamMap(entityGernericDefinition.getNotBetweenEndVal());
+        Object notBetweenStartValue = EntityGenericDefinition.getValueFromQueryParamMap(entityGenericDefinition.getNotBetweenStartVal());
+        Object notBetweenEndValue = EntityGenericDefinition.getValueFromQueryParamMap(entityGenericDefinition.getNotBetweenEndVal());
 
         if (QueryUtil.checkValue(notBetweenStartValue)) {
             queryWrapper.le(tableColumnName, notBetweenStartValue);
@@ -49,14 +49,14 @@ public class NotBetweenQueryTypeStrategy extends BaseQueryTypeStrategy implement
     /**
      * 清除查询参数
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T, E> void removeParam(EntityGernericDefinition<T, E> entityGernericDefinition) {
-        Field field = entityGernericDefinition.getField();
-        EntityGernericDefinition.removeParamFromQueryParamMap(entityGernericDefinition.getNotBetweenStartVal());
-        EntityGernericDefinition.removeParamFromQueryParamMap(entityGernericDefinition.getNotBetweenEndVal());
-        EntityGernericDefinition.removeParamFromQueryParamMap(field.getName());
+    public <T, E> void removeParam(EntityGenericDefinition<T, E> entityGenericDefinition) {
+        Field field = entityGenericDefinition.getField();
+        EntityGenericDefinition.removeParamFromQueryParamMap(entityGenericDefinition.getNotBetweenStartVal());
+        EntityGenericDefinition.removeParamFromQueryParamMap(entityGenericDefinition.getNotBetweenEndVal());
+        EntityGenericDefinition.removeParamFromQueryParamMap(field.getName());
     }
 }

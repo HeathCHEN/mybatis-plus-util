@@ -103,8 +103,6 @@ public class MyBatisPlusUtilConfig {
 
     public MyBatisPlusUtilConfig() {
         super();
-        //初始化策略类
-        initStrategy();
         //设置全局的日志工厂
         if (ObjectUtil.isNull(GlobalLogFactory.get())) {
             GlobalLogFactory.set(Slf4jLogFactory.class);
@@ -112,28 +110,6 @@ public class MyBatisPlusUtilConfig {
 
     }
 
-    /**
-     * 初始化策略类
-     *
-     * @author HeathCHEN
-     */
-    public void initStrategy() {
-        new BetweenQueryTypeStrategy();
-        new EqQueryTypeStrategy();
-        new GreaterEqualQueryTypeStrategy();
-        new GreaterThanQueryTypeStrategy();
-        new InQueryTypeStrategy();
-        new LessEqualQueryTypeStrategy();
-        new LessThanQueryTypeStrategy();
-        new LikeLeftQueryTypeStrategy();
-        new LikeRightQueryTypeStrategy();
-        new LikeQueryTypeStrategy();
-        new NotBetweenQueryTypeStrategy();
-        new NotEqQueryTypeStrategy();
-        new NotInQueryTypeStrategy();
-        new NotLikeQueryTypeStrategy();
-        new SqlQueryTypeStrategy();
-    }
 
     public String getGlobalMatchMode() {
 

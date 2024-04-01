@@ -4,7 +4,7 @@ public class EntityDefinitionUtil {
 
 
     public static void registerEntityDefinition(EntityDefinition entityDefinition, EntityDefinitionRegistry registry) {
-        String name = ((EntityGernericDefinition) entityDefinition).getParamClass().getSimpleName();
+        String name = ((EntityGenericDefinition) entityDefinition).getParamClass().getSimpleName();
         registry.registerBeanDefinition(name, entityDefinition);
 
     }

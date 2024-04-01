@@ -16,16 +16,15 @@ import java.lang.reflect.Field;
  * @version 1.0
  * @since 2024/03/15
  */
-public class EntityGernericDefinition<T, E> extends EntityDefinitionThreadLocal implements EntityDefinition {
+public class EntityGenericDefinition<T, E> extends EntityDefinitionThreadLocal implements EntityDefinition {
 
 
     private AnnotationReader annotationReader;
 
 
-    public EntityGernericDefinition() {
+    public EntityGenericDefinition() {
 
     }
-
 
 
     /**
@@ -115,7 +114,7 @@ public class EntityGernericDefinition<T, E> extends EntityDefinitionThreadLocal 
      */
     private String tableColumnName;
 
-    public EntityGernericDefinition(QueryField queryField, Class<E> paramClass, Field field, QueryWrapper<T> queryWrapper) {
+    public EntityGenericDefinition(QueryField queryField, Class<E> paramClass, Field field, QueryWrapper<T> queryWrapper) {
         this.queryWrapper = queryWrapper;
         this.queryType = queryField.value();
         this.orColumns = queryField.orColumns();

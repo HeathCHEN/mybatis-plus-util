@@ -9,7 +9,7 @@ public class AnnotationReader {
     }
 
     public void register(Class<?> paramClass){
-        EntityGernericDefinition<Object, Object> entityDefinition = new EntityGernericDefinition<>();
+        EntityGenericDefinition<Object, Object> entityDefinition = new EntityGenericDefinition<>();
 
 
 

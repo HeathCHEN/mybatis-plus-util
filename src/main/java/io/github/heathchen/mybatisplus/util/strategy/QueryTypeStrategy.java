@@ -1,6 +1,6 @@
 package io.github.heathchen.mybatisplus.util.strategy;
 
-import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGenericDefinition;
 
 /**
  * 查询策略类接口
@@ -15,43 +15,43 @@ public interface QueryTypeStrategy {
     /**
      * 检测分组
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @return {@link Boolean }
      * @author HeathCHEN
      */
-    <T, E> Boolean checkIfNotInGroup(EntityGernericDefinition<T, E> entityGernericDefinition);
+    <T, E> Boolean checkIfNotInGroup(EntityGenericDefinition<T, E> entityGenericDefinition);
 
     /**
      * 构造查询
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
-    <T, E> void buildQueryWrapper(EntityGernericDefinition<T, E> entityGernericDefinition);
+    <T, E> void buildQueryWrapper(EntityGenericDefinition<T, E> entityGenericDefinition);
 
     /**
      * 检查字段值状态
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
-    <T, E> void checkConditionType(EntityGernericDefinition<T, E> entityGernericDefinition);
+    <T, E> void checkConditionType(EntityGenericDefinition<T, E> entityGenericDefinition);
 
     /**
      * 清除查询参数
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
-    <T, E> void removeParam(EntityGernericDefinition<T, E> entityGernericDefinition);
+    <T, E> void removeParam(EntityGenericDefinition<T, E> entityGenericDefinition);
 
 
     /**
      * 检查排序
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
-    <T, E> void checkOrder(EntityGernericDefinition<T, E> entityGernericDefinition);
+    <T, E> void checkOrder(EntityGenericDefinition<T, E> entityGenericDefinition);
 
 }

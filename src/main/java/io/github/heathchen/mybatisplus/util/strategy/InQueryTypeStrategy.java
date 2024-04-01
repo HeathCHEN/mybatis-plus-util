@@ -3,7 +3,7 @@ package io.github.heathchen.mybatisplus.util.strategy;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.heathchen.mybatisplus.util.definiton.EntityGernericDefinition;
+import io.github.heathchen.mybatisplus.util.definiton.EntityGenericDefinition;
 import io.github.heathchen.mybatisplus.util.enums.QueryType;
 
 import java.util.Collection;
@@ -25,14 +25,14 @@ public class InQueryTypeStrategy extends BaseQueryTypeStrategy implements QueryT
     /**
      * 构造查询
      *
-     * @param entityGernericDefinition 查询上下文
+     * @param entityGenericDefinition 查询上下文
      * @author HeathCHEN
      */
     @Override
-    public <T, E> void buildQueryWrapper(EntityGernericDefinition<T, E> entityGernericDefinition) {
-        QueryWrapper<T> queryWrapper = entityGernericDefinition.getQueryWrapper();
-        String tableColumnName = entityGernericDefinition.getTableColumnName();
-        Object queryParam = entityGernericDefinition.getQueryParam();
+    public <T, E> void buildQueryWrapper(EntityGenericDefinition<T, E> entityGenericDefinition) {
+        QueryWrapper<T> queryWrapper = entityGenericDefinition.getQueryWrapper();
+        String tableColumnName = entityGenericDefinition.getTableColumnName();
+        Object queryParam = entityGenericDefinition.getQueryParam();
 
         if (queryParam instanceof Collection) {
             Collection<?> values = (Collection<?>) queryParam;
